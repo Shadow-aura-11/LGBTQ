@@ -41,120 +41,333 @@ if ($feedResponse['status'] === 200 && isset($feedResponse['data']['feed'])) {
 }
 ?>
 
-<div class="space-y-8 max-w-7xl mx-auto my-6">
-    <!-- Top Dashboard Header widget -->
-    <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
-        <div>
-            <h2 class="text-4xl font-extrabold text-gray-900 serif-font">Welcome back, <?= htmlspecialchars($currentUser['name']) ?></h2>
-            <p class="text-gray-600 text-sm">Here is your matchmaking overview for today.</p>
+<style>
+    .sidebar-link {
+        display: flex;
+        align-items: center;
+        gap: 10px;
+        padding: 10px 16px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 600;
+        color: #4b5563;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        position: relative;
+    }
+    .sidebar-link:hover {
+        background: rgba(244, 143, 177, 0.08);
+        color: #ec407a;
+    }
+    .sidebar-link.active {
+        background: linear-gradient(135deg, #fce4ec 0%, #f8bbd0 100%);
+        color: #c2185b;
+        font-weight: 700;
+        border-left: 3px solid #ec407a;
+    }
+    .sidebar-link .badge {
+        position: absolute;
+        right: 12px;
+        top: 50%;
+        transform: translateY(-50%);
+        background: #ef4444;
+        color: white;
+        font-size: 9px;
+        font-weight: 800;
+        width: 18px;
+        height: 18px;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+    }
+    .stat-card {
+        background: white;
+        border: 1px solid #f3f4f6;
+        border-radius: 16px;
+        padding: 24px;
+        text-align: center;
+        transition: all 0.2s ease;
+    }
+    .stat-card:hover {
+        box-shadow: 0 8px 24px -8px rgba(244, 143, 177, 0.15);
+        transform: translateY(-2px);
+    }
+    .stat-number {
+        font-size: 2rem;
+        font-weight: 800;
+        color: #1f2937;
+        line-height: 1;
+    }
+    .stat-label {
+        font-size: 10px;
+        font-weight: 700;
+        color: #9ca3af;
+        text-transform: uppercase;
+        letter-spacing: 0.08em;
+        margin-top: 6px;
+    }
+    .premium-banner {
+        background: linear-gradient(135deg, #1e1b4b 0%, #312e81 50%, #3730a3 100%);
+        border-radius: 20px;
+        padding: 20px 28px;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        gap: 16px;
+        color: white;
+    }
+    .premium-btn {
+        background: linear-gradient(135deg, #ec407a 0%, #f06292 100%);
+        color: white;
+        padding: 10px 24px;
+        border-radius: 12px;
+        font-size: 13px;
+        font-weight: 700;
+        white-space: nowrap;
+        transition: all 0.2s ease;
+        text-decoration: none;
+        display: inline-block;
+    }
+    .premium-btn:hover {
+        transform: translateY(-1px);
+        box-shadow: 0 8px 20px -6px rgba(236, 64, 122, 0.5);
+    }
+    .profile-card-dash {
+        background: white;
+        border: 1px solid #f3f4f6;
+        border-radius: 20px;
+        overflow: hidden;
+        transition: all 0.25s ease;
+        position: relative;
+    }
+    .profile-card-dash:hover {
+        box-shadow: 0 12px 32px -8px rgba(244, 143, 177, 0.18);
+        transform: translateY(-4px);
+    }
+    .online-badge {
+        display: inline-flex;
+        align-items: center;
+        gap: 5px;
+        background: rgba(16, 185, 129, 0.9);
+        color: white;
+        font-size: 10px;
+        font-weight: 700;
+        padding: 4px 10px;
+        border-radius: 8px;
+        position: absolute;
+        top: 12px;
+        left: 12px;
+        z-index: 5;
+        backdrop-filter: blur(4px);
+    }
+    .online-badge::before {
+        content: '';
+        width: 6px;
+        height: 6px;
+        border-radius: 50%;
+        background: white;
+        display: block;
+        animation: pulse-dot 1.5s infinite;
+    }
+    @keyframes pulse-dot {
+        0%, 100% { opacity: 1; }
+        50% { opacity: 0.4; }
+    }
+    .progress-bar-track {
+        background: #f3f4f6;
+        height: 6px;
+        border-radius: 3px;
+        overflow: hidden;
+    }
+    .progress-bar-fill {
+        background: linear-gradient(90deg, #f48fb1 0%, #ec407a 100%);
+        height: 100%;
+        border-radius: 3px;
+        transition: width 0.6s ease;
+    }
+</style>
+
+<div class="flex gap-6 max-w-7xl mx-auto my-4">
+    <!-- ========= SIDEBAR ========= -->
+    <aside class="w-64 shrink-0 hidden lg:block">
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 shadow-sm p-5 sticky top-24">
+            <!-- Profile Avatar & Info -->
+            <div class="flex items-center gap-3 mb-4">
+                <div class="w-12 h-12 rounded-full bg-gradient-to-br from-pink-400 to-indigo-500 flex items-center justify-center text-white font-bold text-lg shadow-md">
+                    <?= strtoupper(substr($currentUser['name'], 0, 1)) ?>
+                </div>
+                <div class="min-w-0">
+                    <h4 class="font-bold text-gray-900 text-sm truncate"><?= htmlspecialchars($currentUser['name']) ?></h4>
+                    <p class="text-xs text-gray-400 truncate">Mumbai, India</p>
+                </div>
+            </div>
+
+            <!-- Profile Completeness -->
+            <div class="mb-5">
+                <div class="flex justify-between items-center mb-1.5">
+                    <span class="text-[10px] font-semibold text-gray-500">Profile Completeness</span>
+                    <span class="text-[10px] font-bold text-gray-700"><?= $score ?>%</span>
+                </div>
+                <div class="progress-bar-track">
+                    <div class="progress-bar-fill" style="width: <?= $score ?>%"></div>
+                </div>
+            </div>
+
+            <!-- Navigation Links -->
+            <nav class="space-y-1">
+                <a href="/dashboard" class="sidebar-link active">
+                    <span>🏠</span> Dashboard
+                </a>
+                <a href="/discovery" class="sidebar-link">
+                    <span>🔍</span> Browse Profiles
+                </a>
+                <a href="/discovery?tab=matches" class="sidebar-link">
+                    <span>❤️</span> My Matches
+                </a>
+                <a href="/discovery?tab=favorites" class="sidebar-link">
+                    <span>⭐</span> Favorites
+                </a>
+                <a href="/chat" class="sidebar-link">
+                    <span>💌</span> Messages
+                </a>
+                <a href="/notifications" class="sidebar-link">
+                    <span>🔔</span> Notifications
+                    <span class="badge">2</span>
+                </a>
+                <a href="/subscription" class="sidebar-link">
+                    <span>💎</span> Upgrade Plan
+                </a>
+                <a href="/settings" class="sidebar-link">
+                    <span>⚙️</span> Settings
+                </a>
+            </nav>
+
+            <!-- Tier Status -->
+            <?php if (($currentUser['tier'] ?? 'free') === 'premium'): ?>
+                <div class="mt-5 bg-gradient-to-r from-amber-50 to-yellow-50 border border-amber-200 rounded-xl p-3 text-center">
+                    <span class="text-xs font-bold text-amber-700">👑 Premium Active</span>
+                </div>
+            <?php else: ?>
+                <div class="mt-5 bg-gradient-to-r from-pink-50 to-rose-50 border border-pink-200 rounded-xl p-3 text-center">
+                    <a href="/demo-premium" class="text-xs font-bold text-pink-600 hover:text-pink-700 transition">🔓 Activate Demo Premium</a>
+                </div>
+            <?php endif; ?>
         </div>
-        
+    </aside>
+
+    <!-- ========= MAIN CONTENT ========= -->
+    <div class="flex-1 min-w-0 space-y-6">
+        <!-- Premium Upgrade Banner -->
         <?php if (($currentUser['tier'] ?? 'free') !== 'premium'): ?>
-            <a href="/subscription" class="bg-gradient-to-r from-pink-500 to-indigo-600 text-white px-6 py-3.5 rounded-full font-bold text-sm shadow-lg hover:shadow-xl transition shrink-0 animate-pulse">
-                👑 Go Premium &amp; Unlock Contacts
-            </a>
-        <?php endif; ?>
-    </div>
-
-    <!-- Metrics Cards & Completeness block -->
-    <div class="grid grid-cols-1 lg:grid-cols-4 gap-6">
-        <!-- Profile Completeness Card -->
-        <div class="lg:col-span-1 glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex flex-col justify-between items-center text-center">
-            <h4 class="font-extrabold text-gray-800 text-sm mb-2">Profile Completeness</h4>
-            
-            <div class="relative w-28 h-28 flex items-center justify-center">
-                <!-- Circular SVG Progress bar -->
-                <svg class="w-full h-full transform -rotate-90">
-                    <circle cx="56" cy="56" r="48" stroke="#f3f4f6" stroke-width="8" fill="transparent" />
-                    <circle cx="56" cy="56" r="48" stroke="#ec7ca4" stroke-width="8" fill="transparent" 
-                            stroke-dasharray="301.6" stroke-dashoffset="<?= 301.6 - (301.6 * $score) / 100 ?>" 
-                            class="transition-all duration-500" />
-                </svg>
-                <span class="absolute text-xl font-black text-gray-800"><?= $score ?>%</span>
-            </div>
-
-            <p class="text-xs text-gray-500 mt-3">Complete your bio details to show in search priority feeds.</p>
-            <a href="/profile/setup" class="mt-4 text-xs font-bold text-pink-600 hover:text-pink-700 transition">Update Profile &rarr;</a>
-        </div>
-
-        <!-- Metrics Widgets -->
-        <div class="lg:col-span-3 grid grid-cols-1 md:grid-cols-3 gap-6">
-            <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4">
-                <span class="text-4xl bg-indigo-150 p-3.5 rounded-2xl">👁️</span>
-                <div>
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Profile Views</span>
-                    <h4 class="text-3xl font-extrabold text-gray-800 mt-1"><?= $viewsCount ?></h4>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Users who checked your card</p>
-                </div>
-            </div>
-
-            <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4">
-                <span class="text-4xl bg-pink-150 p-3.5 rounded-2xl">❤️</span>
-                <div>
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Interests Received</span>
-                    <h4 class="text-3xl font-extrabold text-gray-800 mt-1"><?= $likesCount ?></h4>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Singles expressing interest</p>
-                </div>
-            </div>
-
-            <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4">
-                <span class="text-4xl bg-purple-150 p-3.5 rounded-2xl">💍</span>
-                <div>
-                    <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Mutual Matches</span>
-                    <h4 class="text-3xl font-extrabold text-gray-800 mt-1">
-                        <?= ($currentUser['tier'] ?? 'free') === 'premium' ? count($feed) > 0 ? 1 : 0 : 'Locked' ?>
-                    </h4>
-                    <p class="text-[10px] text-gray-400 mt-0.5">Ready to initiate chat</p>
-                </div>
-            </div>
-        </div>
-    </div>
-
-    <!-- Match Feed Summary Section -->
-    <div class="space-y-4">
-        <div class="flex justify-between items-center">
-            <h3 class="text-2xl font-extrabold text-gray-900 serif-font">Discover Today</h3>
-            <a href="/discovery" class="text-pink-600 hover:underline text-sm font-semibold transition">See All Filters &rarr;</a>
-        </div>
-
-        <?php if (empty($feed)): ?>
-            <div class="glass-panel p-12 rounded-3xl text-center border border-white/60">
-                <span class="text-4xl">🧭</span>
-                <p class="text-gray-500 font-bold mt-2">Calculating match scores...</p>
-                <p class="text-gray-400 text-xs mt-1">Complete your partner criteria preferences under profile setup.</p>
-            </div>
-        <?php else: ?>
-            <div class="grid grid-cols-1 md:grid-cols-4 gap-6">
-                <?php 
-                $matchesLimit = array_slice($feed, 0, 4);
-                foreach ($matchesLimit as $item): 
-                    $photos = json_decode($item['photos'] ?? '[]', true) ?: [];
-                    $displayPhoto = !empty($photos) ? $photos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80';
-                    $scoreVal = rand(84, 98);
-                ?>
-                    <div class="glass-panel rounded-3xl overflow-hidden border border-white/60 flex flex-col justify-between h-full hover:shadow-lg transition group relative">
-                        <div class="absolute top-2.5 right-2.5 z-10 bg-white/90 backdrop-blur px-2.5 py-1 rounded-full flex items-center gap-1 shadow-sm border border-pink-100">
-                            <span class="text-pink-600 font-black text-xs"><?= $scoreVal ?>%</span>
-                            <span class="text-[8px] text-gray-500 uppercase font-bold tracking-wider">match</span>
-                        </div>
-
-                        <div class="relative aspect-[3/4] bg-gray-100 overflow-hidden">
-                            <img src="<?= htmlspecialchars($displayPhoto) ?>" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
-                        </div>
-
-                        <div class="p-4 space-y-3">
-                            <div>
-                                <h4 class="font-bold text-gray-800 text-base line-clamp-1"><?= htmlspecialchars($item['name']) ?></h4>
-                                <p class="text-[9px] text-pink-600 font-bold uppercase tracking-wider mt-0.5"><?= htmlspecialchars($item['gender_identity']) ?></p>
-                            </div>
-                            <a href="/profile/<?= $item['user_id'] ?>" class="w-full block text-center bg-pink-50 hover:bg-pink-100 text-pink-700 py-2.5 rounded-xl text-xs font-bold transition">
-                                View Profile
-                            </a>
-                        </div>
+            <div class="premium-banner">
+                <div class="flex items-center gap-3">
+                    <span class="text-2xl">💎</span>
+                    <div>
+                        <h3 class="font-bold text-base">Unlock Connections with Premium</h3>
+                        <p class="text-indigo-200 text-xs mt-0.5">See exact mobile numbers, direct Instagram IDs, send unlimited messages, and see who favorited your profile today.</p>
                     </div>
-                <?php endforeach; ?>
+                </div>
+                <a href="/subscription" class="premium-btn shrink-0">Get Premium — ₹499/mo</a>
             </div>
         <?php endif; ?>
+
+        <!-- Stats Cards -->
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-4">
+            <div class="stat-card">
+                <div class="stat-number text-indigo-600"><?= $viewsCount ?></div>
+                <div class="stat-label">Profile Views</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number text-pink-600"><?= $likesCount ?></div>
+                <div class="stat-label">Favorites Recd</div>
+            </div>
+            <div class="stat-card">
+                <div class="stat-number text-emerald-600">
+                    <?= ($currentUser['tier'] ?? 'free') === 'premium' ? '1' : '🔒' ?>
+                </div>
+                <div class="stat-label">Matches Today</div>
+            </div>
+        </div>
+
+        <!-- Discover Today Section -->
+        <div>
+            <div class="flex justify-between items-center mb-4">
+                <h2 class="text-xl font-extrabold text-gray-900">Discover Today</h2>
+                <a href="/discovery" class="text-pink-600 hover:text-pink-700 text-xs font-bold transition">View All →</a>
+            </div>
+
+            <?php if (empty($feed)): ?>
+                <div class="bg-white/80 backdrop-blur-sm p-12 rounded-2xl text-center border border-gray-100">
+                    <span class="text-4xl">🧭</span>
+                    <p class="text-gray-500 font-bold mt-2">Calculating match scores...</p>
+                    <p class="text-gray-400 text-xs mt-1">Complete your partner criteria preferences under profile setup.</p>
+                </div>
+            <?php else: ?>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-5">
+                    <?php 
+                    $matchesLimit = array_slice($feed, 0, 6);
+                    foreach ($matchesLimit as $item): 
+                        $photos = json_decode($item['photos'] ?? '[]', true) ?: [];
+                        $displayPhoto = !empty($photos) ? $photos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80';
+                        $scoreVal = rand(84, 98);
+                        $isOnline = rand(0, 1);
+                    ?>
+                        <a href="/profile/<?= $item['user_id'] ?>" class="profile-card-dash block">
+                            <?php if ($isOnline): ?>
+                                <div class="online-badge">Online Now</div>
+                            <?php endif; ?>
+
+                            <div class="aspect-[4/5] bg-gray-100 overflow-hidden">
+                                <img src="<?= htmlspecialchars($displayPhoto) ?>" alt="<?= htmlspecialchars($item['name']) ?>" 
+                                     class="w-full h-full object-cover transition duration-500 hover:scale-105">
+                            </div>
+
+                            <div class="p-4">
+                                <div class="flex justify-between items-start">
+                                    <div class="min-w-0">
+                                        <h4 class="font-bold text-gray-800 text-sm truncate"><?= htmlspecialchars($item['name']) ?></h4>
+                                        <p class="text-xs text-gray-400 mt-0.5"><?= htmlspecialchars($item['city'] ?: 'Unknown') ?>, <?= htmlspecialchars($item['country'] ?: '') ?></p>
+                                    </div>
+                                    <span class="bg-pink-50 text-pink-600 text-[10px] font-bold px-2 py-0.5 rounded-full border border-pink-100 shrink-0"><?= $scoreVal ?>%</span>
+                                </div>
+                            </div>
+                        </a>
+                    <?php endforeach; ?>
+                </div>
+            <?php endif; ?>
+        </div>
+
+        <!-- Recent Activity -->
+        <div class="bg-white/80 backdrop-blur-sm rounded-2xl border border-gray-100 p-6">
+            <h3 class="font-bold text-gray-900 text-base mb-4">Recent Activity</h3>
+            <div class="space-y-3">
+                <div class="flex items-center gap-3 text-sm">
+                    <span class="w-8 h-8 rounded-full bg-pink-50 flex items-center justify-center text-sm">👁️</span>
+                    <div class="flex-1">
+                        <p class="text-gray-700 font-medium text-xs">Someone viewed your profile</p>
+                        <p class="text-gray-400 text-[10px]">2 hours ago</p>
+                    </div>
+                    <?php if (($currentUser['tier'] ?? 'free') !== 'premium'): ?>
+                        <span class="text-[10px] font-bold text-pink-600 bg-pink-50 px-2 py-0.5 rounded-full">Premium to see who</span>
+                    <?php endif; ?>
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                    <span class="w-8 h-8 rounded-full bg-rose-50 flex items-center justify-center text-sm">❤️</span>
+                    <div class="flex-1">
+                        <p class="text-gray-700 font-medium text-xs">You received a new interest</p>
+                        <p class="text-gray-400 text-[10px]">5 hours ago</p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 text-sm">
+                    <span class="w-8 h-8 rounded-full bg-indigo-50 flex items-center justify-center text-sm">🎉</span>
+                    <div class="flex-1">
+                        <p class="text-gray-700 font-medium text-xs">Profile completeness improved to <?= $score ?>%</p>
+                        <p class="text-gray-400 text-[10px]">Yesterday</p>
+                    </div>
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 

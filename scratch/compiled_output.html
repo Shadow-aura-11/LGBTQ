@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="Proud Hearts is a premium, safe, and inclusive matrimony platform designed exclusively for the LGBTQ+ community. Express interests, chat in real-time, and find your soulmate.">
+    <meta name="keywords" content="LGBTQ matrimony, queer matchmaking, gay marriage, lesbian matchmaking, non-binary partnership, inclusive matrimony">
+    <meta name="robots" content="index, follow">
+    <title>Proud Hearts — Inclusive LGBTQ+ Matrimony</title>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&family=Playfair+Display:ital,wght@0,700;1,700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Outfit', sans-serif;
+            background: linear-gradient(135deg, #FFF1F6 0%, #FFE4EC 50%, #F8EEFF 100%);
+            min-height: 100vh;
+        }
+        .serif-font {
+            font-family: 'Playfair Display', serif;
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #F48FB1 0%, #ec7ca4 100%);
+            color: white;
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 20px -10px rgba(236, 124, 164, 0.5);
+            background: linear-gradient(135deg, #ec7ca4 0%, #e0608c 100%);
+        }
+        .glass-panel {
+            background: rgba(255, 255, 255, 0.7);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.4);
+            box-shadow: 0 8px 32px 0 rgba(244, 143, 177, 0.08);
+        }
+        .card-premium {
+            transition: all 0.3s ease;
+        }
+        .card-premium:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 20px 40px -15px rgba(244, 143, 177, 0.2);
+        }
+    </style>
+</head>
+<body class="flex flex-col min-h-screen text-gray-800">
+    <!-- Navbar -->
+    <nav class="glass-panel sticky top-0 z-50 px-6 py-4 shadow-sm border-b border-white/20">
+        <div class="max-w-7xl mx-auto flex justify-between items-center">
+            <!-- Brand Logo -->
+            <a href="" class="flex items-center gap-2 group">
+                <span class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-600 tracking-tight transition group-hover:scale-105 duration-300">
+                    Proud Hearts 💖
+                </span>
+            </a>
+
+            <!-- Navigation Links -->
+            <div class="flex items-center gap-6">
+                
+                    <a href="/discovery" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
+                        🧭 Discover
+                    </a>
+                    <a href="/chat" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
+                        💬 Chat
+                    </a>
+                    <a href="/notifications" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1 relative">
+                        🔔 Alerts
+                        <span id="nav-notif-dot" class="hidden absolute -top-1 -right-2 bg-red-500 w-2.5 h-2.5 rounded-full ring-2 ring-white"></span>
+                    </a>
+                    <a href="/profile/setup" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
+                        👤 Profile
+                    </a>
+                    
+                    
+                        <a href="/admin" class="bg-indigo-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-indigo-700 transition">🛡️ Admin</a>
+                    
+
+                    <!-- Tier Badge -->
+                    
+                        <span class="bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-sm flex items-center gap-1">👑 Premium</span>
+                    
+
+                    <div class="border-l border-gray-200 h-6 mx-1"></div>
+                    <a href="/logout" class="text-red-500 hover:text-red-700 text-sm font-semibold transition">Logout</a>
+                
+            </div>
+        </div>
+    </nav>
+
+    <!-- Toast Alerts Container -->
+    <div id="toast-container" class="fixed bottom-5 right-5 z-50 flex flex-col gap-3 max-w-sm"></div>
+
+    <!-- Live Toast Javascript -->
+    <script>
+        
+            // Boot WebSockets Connection
+            const token = "mock_token";
+            const wsUrl = "ws://" + window.location.host + "/ws/?token=" + encodeURIComponent(token);
+            const ws = new WebSocket(wsUrl);
+
+            ws.onmessage = function(event) {
+                const data = JSON.parse(event.data);
+                if (data.type === 'notification') {
+                    showToast(data.notification.title, data.notification.message);
+                    const dot = document.getElementById('nav-notif-dot');
+                    if (dot) dot.classList.remove('hidden');
+                } else if (data.type === 'message') {
+                    showToast("New Message", data.message.message);
+                }
+            };
+
+            function showToast(title, message) {
+                const container = document.getElementById('toast-container');
+                const toast = document.createElement('div');
+                toast.className = 'glass-panel bg-white/90 p-4 rounded-xl shadow-lg border-l-4 border-pink-500 transform translate-y-5 opacity-0 transition duration-300';
+                toast.innerHTML = `
+                    <h4 class="font-bold text-gray-800 text-sm">${title}</h4>
+                    <p class="text-gray-600 text-xs mt-1">${message}</p>
+                `;
+                container.appendChild(toast);
+                setTimeout(() => {
+                    toast.classList.remove('translate-y-5', 'opacity-0');
+                }, 100);
+
+                setTimeout(() => {
+                    toast.classList.add('opacity-0');
+                    setTimeout(() => toast.remove(), 300);
+                }, 5000);
+            }
+        
+    </script>
+
+    <main class="flex-grow max-w-7xl w-full mx-auto p-6">
+
+
+<!-- Discovery Top Banner -->
+<div class="relative overflow-hidden rounded-3xl mb-10 bg-gradient-to-r from-pink-500/10 via-purple-500/5 to-indigo-500/10 p-8 md:p-12 border border-white/40 shadow-sm flex flex-col md:flex-row justify-between items-center gap-6">
+    <div class="space-y-3 max-w-xl text-center md:text-left">
+        <span class="bg-pink-100 text-pink-700 text-xs px-3 py-1.5 rounded-full font-bold uppercase tracking-wider">Compass Match Engine</span>
+        <h2 class="text-3xl md:text-5xl font-black text-gray-900 leading-tight serif-font">Explore Highly Compatible Partners</h2>
+        <p class="text-gray-600 text-sm md:text-base">We calculate compatibility scores dynamically using orientation, lifestyle intent, and pronouns representation.</p>
+    </div>
+    <div class="shrink-0 flex items-center justify-center bg-white/80 w-24 h-24 rounded-full shadow-md border border-pink-200">
+        <span class="text-4xl animate-bounce">🧭</span>
+    </div>
+</div>
+
+<div class="grid grid-cols-1 lg:grid-cols-4 gap-8">
+    <!-- Filters Sidebar -->
+    <div class="lg:col-span-1 space-y-6">
+        <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm h-fit">
+            <h3 class="font-bold text-gray-800 text-base mb-4 flex items-center gap-2 pb-3 border-b border-gray-100">
+                <span>⚙️</span> Match Settings
+            </h3>
+            
+            <form method="GET" action="/discovery" class="space-y-4">
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Gender Identity</label>
+                    <select name="gender_identity" class="w-full px-3 py-2.5 rounded-xl border border-gray-300 bg-white/50 text-sm outline-none transition focus:ring-2 focus:ring-pink-300">
+                        <option value="">Any</option>
+                        <option value="man" >Man</option>
+                        <option value="woman" >Woman</option>
+                        <option value="non-binary" >Non-Binary</option>
+                        <option value="transgender man" >Transgender Man</option>
+                        <option value="transgender woman" >Transgender Woman</option>
+                        <option value="genderqueer" >Genderqueer</option>
+                    </select>
+                </div>
+
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Sexual Orientation</label>
+                    <select name="sexual_orientation" class="w-full px-3 py-2.5 rounded-xl border border-gray-300 bg-white/50 text-sm outline-none transition focus:ring-2 focus:ring-pink-300">
+                        <option value="">Any</option>
+                        <option value="gay" >Gay</option>
+                        <option value="lesbian" >Lesbian</option>
+                        <option value="bisexual" >Bisexual</option>
+                        <option value="pansexual" >Pansexual</option>
+                        <option value="queer" >Queer</option>
+                    </select>
+                </div>
+
+                <div class="grid grid-cols-2 gap-2">
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Min Age</label>
+                        <input type="number" name="min_age" value="" min="18" max="99" class="w-full px-3 py-2.5 rounded-xl border border-gray-300 bg-white/50 text-sm outline-none transition focus:ring-2 focus:ring-pink-300">
+                    </div>
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Max Age</label>
+                        <input type="number" name="max_age" value="" min="18" max="99" class="w-full px-3 py-2.5 rounded-xl border border-gray-300 bg-white/50 text-sm outline-none transition focus:ring-2 focus:ring-pink-300">
+                    </div>
+                </div>
+
+                <div class="border-t border-gray-200/50 pt-4 space-y-4">
+                    <div class="flex justify-between items-center">
+                        <span class="text-xs font-bold text-gray-700 uppercase">Premium Filters</span>
+                        
+                            <span class="bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-[9px] px-2 py-0.5 rounded font-extrabold uppercase shadow-sm">👑 VIP</span>
+                        
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">City Location</label>
+                        <input type="text" name="city" value="" placeholder="e.g. London" 
+                               >
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Relationship Intent</label>
+                        <select name="relationship_intent" 
+                                >
+                            <option value="">Any</option>
+                            <option value="friendship" >Friendship</option>
+                            <option value="dating" >Dating</option>
+                            <option value="long-term" >Long-Term</option>
+                            <option value="marriage" >Marriage</option>
+                        </select>
+                    </div>
+                </div>
+
+                <button type="submit" class="w-full btn-primary py-3 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition">
+                    Search Matches
+                </button>
+            </form>
+        </div>
+
+        <!-- Premium CTA widget -->
+        
+            <div class="bg-gradient-to-tr from-pink-500 to-indigo-600 p-6 rounded-3xl text-white shadow-xl relative overflow-hidden border border-pink-400/20">
+                <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full"></div>
+                <h4 class="font-extrabold text-lg flex items-center gap-2">👑 VIP Lounge</h4>
+                <p class="text-xs text-pink-100 mt-2 leading-relaxed">Upgrade to view and download user high-res photos, access direct phone/email contacts, and message matches in real-time!</p>
+                <a href="/subscription" class="mt-4 w-full block text-center bg-white text-pink-600 py-2.5 rounded-xl text-xs font-bold hover:bg-pink-50 transition shadow">Upgrade Now</a>
+            </div>
+        
+    </div>
+
+    <!-- Match Feed Results -->
+    <div class="lg:col-span-3 space-y-6">
+        
+            <div class="glass-panel p-16 rounded-3xl text-center border border-white/60">
+                <span class="text-5xl">🔭</span>
+                <p class="text-gray-500 text-lg font-bold mt-4">Looking for connections...</p>
+                <p class="text-gray-400 text-sm mt-1">Try broadening your filters or clearing search criteria to show more profiles.</p>
+                <a href="/discovery" class="mt-4 inline-block text-pink-600 hover:text-pink-700 font-semibold text-sm transition">Reset Feed &larr;</a>
+            </div>
+        
+    </div>
+</div>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="glass-panel mt-auto py-8 text-center text-gray-500 text-sm border-t border-gray-200/50">
+        <div class="max-w-7xl mx-auto px-6">
+            <p>&copy;  Proud Hearts. Celebrating all love equally. 🌈</p>
+            <p class="text-xs text-gray-400 mt-2">Built with modern PHP microservices &amp; design principles.</p>
+        </div>
+    </footer>
+</body>
+</html>
+

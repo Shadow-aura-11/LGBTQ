@@ -538,13 +538,14 @@ function parseViewLoops(content, ctx) {
         const match = content.match(loopRegex);
         if (match) {
             let compiledLimit = '';
-            const limitItems = (ctx.feed || []).slice(0, 4);
+            const limitItems = (ctx.feed || []).slice(0, 6);
             limitItems.forEach(item => {
                 let block = match[1];
                 const age = item.date_of_birth ? (new Date().getFullYear() - new Date(item.date_of_birth).getFullYear()) : 25;
                 const photos = JSON.parse(item.photos || '[]');
                 const displayPhoto = photos.length > 0 ? photos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80';
                 const genderDisp = item.gender_identity === 'other' ? (item.gender_custom || 'Other') : item.gender_identity;
+                const isOnline = Math.random() > 0.5;
                 
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['name'\]\)\s*\?>/g, item.name || 'Anonymous');
                 block = block.replace(/<\?=\s*date_diff[\s\S]*?\?>/g, age);
@@ -557,6 +558,11 @@ function parseViewLoops(content, ctx) {
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$displayPhoto\)\s*\?>/g, displayPhoto);
                 block = block.replace(/<\?=\s*\$item\['user_id'\]\s*\?>/g, item.user_id);
                 block = block.replace(/<\?=\s*\$scoreVal\s*\?>/g, Math.floor(Math.random() * (98 - 84 + 1)) + 84);
+                // Handle direct $item['city'] and $item['country'] without ternary
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['city'\]\)\s*\?>/g, item.city || 'Unknown');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['country'\]\)\s*\?>/g, item.country || '');
+                // Handle inline if/endif for $isOnline
+                block = block.replace(/<\?php\s+if\s*\(\$isOnline\):\s*\?>([\s\S]*?)<\?php\s+endif;\s*\?>/g, isOnline ? '$1' : '');
                 
                 compiledLimit += block;
             });
@@ -1216,7 +1222,7 @@ const server = http.createServer((req, res) => {
             }
             const token = `user_${loggedUser.id}_role_${loggedUser.role}_tier_premium_${loggedUser.name}`;
             res.writeHead(302, { 
-                'Location': '/discovery', 
+                'Location': '/dashboard', 
                 'Set-Cookie': `jwt_token=${token}; path=/; max-age=3600; SameSite=Lax` 
             });
             return res.end();
@@ -1227,16 +1233,19 @@ const server = http.createServer((req, res) => {
         }
         if (pathname === '/login') {
             if (loggedUser) {
-                const target = loggedUser.role === 'admin' ? '/admin' : '/discovery';
+                const target = loggedUser.role === 'admin' ? '/admin' : '/dashboard';
                 res.writeHead(302, { 'Location': target });
                 return res.end();
             }
+            // Standalone login page - serve as raw HTML (no header/footer PHP compilation)
+            const loginPath = path.join(__dirname, 'frontend', 'views', 'login.php');
+            const loginHtml = fs.readFileSync(loginPath, 'utf8');
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            return res.end(renderPHP('login.php', req));
+            return res.end(loginHtml);
         }
         if (pathname === '/register') {
             if (loggedUser) {
-                const target = loggedUser.role === 'admin' ? '/admin' : '/discovery';
+                const target = loggedUser.role === 'admin' ? '/admin' : '/dashboard';
                 res.writeHead(302, { 'Location': target });
                 return res.end();
             }
