@@ -317,11 +317,13 @@ if ($profile && !empty($profile['photos'])) {
                             $isOnline = rand(0, 1);
                         ?>
                             <a href="/profile/<?= $item['user_id'] ?>" class="discover-card block">
-                                <div class="relative aspect-[4/5] bg-gray-50">
+                                <div class="relative aspect-[4/5] bg-gray-55">
                                     <!-- Online badge overlay -->
+                                    <?php if ($isOnline): ?>
                                     <div class="absolute top-3 left-3 z-10">
                                         <div class="online-pill">Online Now</div>
                                     </div>
+                                    <?php endif; ?>
 
                                     <img src="<?= htmlspecialchars($displayPhoto) ?>" alt="<?= htmlspecialchars($item['name']) ?>" 
                                          class="w-full h-full object-cover transition duration-500 hover:scale-105">
@@ -331,7 +333,7 @@ if ($profile && !empty($profile['photos'])) {
                                     <div class="flex justify-between items-start gap-2">
                                         <div class="min-w-0">
                                             <h4 class="font-extrabold text-gray-800 text-base truncate"><?= htmlspecialchars($item['name']) ?></h4>
-                                            <p class="text-xs text-gray-400 mt-1 font-medium"><?= htmlspecialchars($item['city'] ?: 'Unknown') ?>, <?= htmlspecialchars($item['country'] ?: '') ?></p>
+                                            <p class="text-xs text-gray-400 mt-1 font-medium"><?= htmlspecialchars($item['city']) ?>, <?= htmlspecialchars($item['country']) ?></p>
                                         </div>
                                         <span class="bg-pink-50 text-pink-600 text-xs font-extrabold px-2.5 py-1 rounded-full border border-pink-100 shrink-0">
                                             <?= $scoreVal ?>% Match
