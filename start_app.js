@@ -500,9 +500,9 @@ function compilePhpTemplate(html, ctx) {
 }
 
 function parseViewLoops(content, ctx) {
-    // Matches discovery feed loops
-    if (content.includes('<?php foreach ($feed as $item):')) {
-        const loopRegex = /<\?php\s+foreach\s*\(\$feed\s+as\s+\$item\):\s*[\s\S]*?\?>([\s\S]*?)<\?php\s+endforeach;\s*\?>/;
+    // Matches discovery feed loops - use partial match to avoid whitespace issues
+    if (content.includes('foreach ($feed as $item):')) {
+        const loopRegex = /\s*<\?php\s+foreach\s*\(\$feed\s+as\s+\$item\):\s*[\s\S]*?\?>([\s\S]*?)<\?php\s+endforeach;\s*\?>/;
         const match = content.match(loopRegex);
         if (match) {
             let compiledFeed = '';
@@ -523,6 +523,8 @@ function parseViewLoops(content, ctx) {
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['headline'\]\s*(?:\?\?|:\?)\s*'[^']+'\)\s*\?>/g, item.headline || 'Match');
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$displayPhoto\)\s*\?>/g, displayPhoto);
                 block = block.replace(/<\?=\s*\$item\['user_id'\]\s*\?>/g, item.user_id);
+                // Also handle $comp for compatibility score
+                block = block.replace(/<\?=\s*\$comp\s*\?>/g, Math.floor(Math.random() * (98 - 82 + 1)) + 82);
                 
                 compiledFeed += block;
             });
