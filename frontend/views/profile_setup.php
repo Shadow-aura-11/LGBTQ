@@ -247,6 +247,7 @@ if (count($photos) > 0) $score += 15;
         const payload = {
             headline: document.getElementById('headline').value,
             about_me: document.getElementById('about_me').value,
+            pronouns: document.getElementById('pronouns').value,
             height: document.getElementById('height').value,
             religion: document.getElementById('religion').value,
             mother_tongue: document.getElementById('mother_tongue').value,
