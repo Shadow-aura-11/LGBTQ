@@ -534,7 +534,7 @@ function parseViewLoops(content, ctx) {
 
     // Matches dashboard matchesLimit loops
     if (content.includes('foreach ($matchesLimit as $item):')) {
-        const loopRegex = /<\?php\s+[\s\S]*?foreach\s*\(\$matchesLimit\s+as\s+\$item\):\s*[\s\S]*?\?>([\s\S]*?)<\?php\s+endforeach;\s*\?>/;
+        const loopRegex = /<\?php\s+(?:(?!<\?php)[\s\S])*?foreach\s*\(\$matchesLimit\s+as\s+\$item\):\s*[\s\S]*?\?>([\s\S]*?)<\?php\s+endforeach;\s*\?>/;
         const match = content.match(loopRegex);
         if (match) {
             let compiledLimit = '';
