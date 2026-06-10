@@ -1084,7 +1084,7 @@ const server = http.createServer((req, res) => {
             }
             const token = `user_${loggedUser.id}_role_${loggedUser.role}_tier_premium_${loggedUser.name}`;
             res.writeHead(302, { 
-                'Location': '/dashboard', 
+                'Location': '/discovery', 
                 'Set-Cookie': `jwt_token=${token}; path=/; max-age=3600; SameSite=Lax` 
             });
             return res.end();
@@ -1094,10 +1094,12 @@ const server = http.createServer((req, res) => {
             return res.end(renderPHP('landing.php', req));
         }
         if (pathname === '/login') {
+            if (loggedUser) { res.writeHead(302, { 'Location': '/discovery' }); return res.end(); }
             res.writeHead(200, { 'Content-Type': 'text/html' });
             return res.end(renderPHP('login.php', req));
         }
         if (pathname === '/register') {
+            if (loggedUser) { res.writeHead(302, { 'Location': '/discovery' }); return res.end(); }
             res.writeHead(200, { 'Content-Type': 'text/html' });
             return res.end(renderPHP('register.php', req));
         }

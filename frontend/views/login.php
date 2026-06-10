@@ -69,7 +69,7 @@
             const data = await res.json();
             if (data.success) {
                 document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
-                window.location.href = '/dashboard';
+                window.location.href = '/discovery';
             } else {
                 errBox.innerText = data.error || 'Demo Login failed.';
                 errBox.classList.remove('hidden');
@@ -98,7 +98,7 @@
             
             if (data.success) {
                 document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
-                window.location.href = '/dashboard';
+                window.location.href = '/discovery';
             } else {
                 errBox.innerText = data.error || 'Invalid credentials.';
                 errBox.classList.remove('hidden');
@@ -123,7 +123,7 @@
 
             if (data.success) {
                 document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
-                window.location.href = '/dashboard';
+                window.location.href = '/discovery';
             } else {
                 errBox.innerText = data.error || 'Google login failed.';
                 errBox.classList.remove('hidden');

@@ -50,7 +50,7 @@
     <nav class="glass-panel sticky top-0 z-50 px-6 py-4 shadow-sm border-b border-white/20">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <!-- Brand Logo -->
-            <a href="<?= $currentUser ? '/dashboard' : '/' ?>" class="flex items-center gap-2 group">
+            <a href="<?= $currentUser ? '/discovery' : '/' ?>" class="flex items-center gap-2 group">
                 <span class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-600 tracking-tight transition group-hover:scale-105 duration-300">
                     Proud Hearts 💖
                 </span>

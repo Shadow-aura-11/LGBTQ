@@ -405,7 +405,7 @@
             const data = await res.json();
             if (data.success) {
                 document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
-                window.location.href = '/dashboard';
+                window.location.href = '/discovery';
             } else {
                 alert('Demo Login failed: ' + data.error);
             }
