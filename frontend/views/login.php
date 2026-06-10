@@ -50,6 +50,13 @@
             <button type="button" onclick="demoLogin('admin@lgbtqmatrimony.local', 'AdminSecure2026!')" class="bg-indigo-600 hover:bg-indigo-700 text-white py-2.5 rounded-xl text-[10px] font-bold transition shadow-sm">Admin</button>
         </div>
 
+        <div class="mt-4 text-[10px] text-gray-500 bg-white/40 p-3 rounded-2xl border border-white/50 space-y-1">
+            <p class="font-bold text-gray-700 text-center uppercase tracking-wider mb-1">Demo Credentials</p>
+            <p><strong>Admin:</strong> admin@lgbtqmatrimony.local / AdminSecure2026!</p>
+            <p><strong>Premium:</strong> jordan@lgbtqmatrimony.local / password</p>
+            <p><strong>Free User:</strong> sam@lgbtqmatrimony.local / password</p>
+        </div>
+
         <p class="text-center text-xs text-gray-500 mt-8">
             Don't have an account? <a href="/register" class="text-pink-600 font-bold hover:underline">Register free</a>
         </p>

@@ -37,7 +37,7 @@ if (fs.existsSync(DB_FILE)) {
 }
 
 // Force-seed if db has few users
-if (db.users.length < 5) {
+if (db.users.length < 15) {
     db.users = [];
     db.profiles = [];
     
@@ -122,7 +122,115 @@ if (db.users.length < 5) {
         city: "Mumbai", country: "India", relationship_intent: "marriage", about_me: "Passionate about child healthcare, classical dance, and mountain hiking. Looking for an honest, goal-oriented partner to build a future together.",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=300&q=80"])
     });
-    
+
+    // 9. Chris Lopez
+    db.users.push({ id: 10, name: "Chris Lopez", email: "chris@lgbtqmatrimony.local", password: "password", role: "user", tier: "premium" });
+    db.profiles.push({
+        user_id: 10, name: "Chris Lopez", headline: "Searching for mutual friendship & outdoor adventures 🏞️", pronouns: "they/them",
+        date_of_birth: "1995-07-14", gender_identity: "non-binary", gender_custom: "", sexual_orientation: "pansexual",
+        city: "Chicago", country: "USA", relationship_intent: "friendship", about_me: "Love record stores, vintage style, and biking. Let's hang out and talk music.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 10. Sophie Dubois
+    db.users.push({ id: 11, name: "Sophie Dubois", email: "sophie@lgbtqmatrimony.local", password: "password", role: "user", tier: "free" });
+    db.profiles.push({
+        user_id: 11, name: "Sophie Dubois", headline: "Let's explore Paris and enjoy red wine 🍷", pronouns: "she/her",
+        date_of_birth: "1993-11-02", gender_identity: "woman", gender_custom: "", sexual_orientation: "bisexual",
+        city: "Paris", country: "France", relationship_intent: "dating", about_me: "Literature student and coffee enthusiast. Searching for deep matching conversations.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 11. Leo Sterling
+    db.users.push({ id: 12, name: "Leo Sterling", email: "leo@lgbtqmatrimony.local", password: "password", role: "user", tier: "premium" });
+    db.profiles.push({
+        user_id: 12, name: "Leo Sterling", headline: "Trans man searching for long-term connection 💫", pronouns: "he/him",
+        date_of_birth: "1991-03-24", gender_identity: "transgender man", gender_custom: "", sexual_orientation: "queer",
+        city: "New York", country: "USA", relationship_intent: "long-term", about_me: "Architect and writer. Looking for a partner who values mutual growth and creativity.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 12. Zara Ahmed
+    db.users.push({ id: 13, name: "Zara Ahmed", email: "zara@lgbtqmatrimony.local", password: "password", role: "user", tier: "premium" });
+    db.profiles.push({
+        user_id: 13, name: "Zara Ahmed", headline: "Ready for commitment and family life 💍", pronouns: "she/her",
+        date_of_birth: "1992-05-18", gender_identity: "transgender woman", gender_custom: "", sexual_orientation: "lesbian",
+        city: "London", country: "UK", relationship_intent: "marriage", about_me: "Clinical psychologist. Love cooking, opera, and family gatherings. Looking for a woman ready to settle down.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 13. Riley Park
+    db.users.push({ id: 14, name: "Riley Park", email: "riley@lgbtqmatrimony.local", password: "password", role: "user", tier: "free" });
+    db.profiles.push({
+        user_id: 14, name: "Riley Park", headline: "Let's share matcha lattes and design ideas 🎨", pronouns: "they/them",
+        date_of_birth: "1998-09-09", gender_identity: "genderqueer", gender_custom: "", sexual_orientation: "queer",
+        city: "Seoul", country: "South Korea", relationship_intent: "friendship", about_me: "UX designer. Loves photography, indie gaming, and plant shopping.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 14. Marcus Aurelius
+    db.users.push({ id: 15, name: "Marcus Aurelius", email: "marcus@lgbtqmatrimony.local", password: "password", role: "user", tier: "premium" });
+    db.profiles.push({
+        user_id: 15, name: "Marcus Aurelius", headline: "Seeking compatibility and lifetime partnership 🏛️", pronouns: "he/him",
+        date_of_birth: "1989-08-23", gender_identity: "man", gender_custom: "", sexual_orientation: "gay",
+        city: "Rome", country: "Italy", relationship_intent: "marriage", about_me: "Historian and runner. Values honesty, philosophy, and quiet evenings with books.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 15. Nina Simone
+    db.users.push({ id: 16, name: "Nina Simone", email: "nina@lgbtqmatrimony.local", password: "password", role: "user", tier: "free" });
+    db.profiles.push({
+        user_id: 16, name: "Nina Simone", headline: "Musician looking for deep love and harmony 🎹", pronouns: "she/her",
+        date_of_birth: "1994-06-12", gender_identity: "woman", gender_custom: "", sexual_orientation: "lesbian",
+        city: "Los Angeles", country: "USA", relationship_intent: "long-term", about_me: "Jazz pianist. Love vinyl records, beach walks, and vegan dining. Let's make music together.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 16. Jamie Oliver
+    db.users.push({ id: 17, name: "Jamie Oliver", email: "jamie@lgbtqmatrimony.local", password: "password", role: "user", tier: "free" });
+    db.profiles.push({
+        user_id: 17, name: "Jamie Oliver", headline: "Lover of good food, slow Sunday mornings, and cozy dates 🍳", pronouns: "they/them",
+        date_of_birth: "1996-01-30", gender_identity: "non-binary", gender_custom: "", sexual_orientation: "bisexual",
+        city: "London", country: "UK", relationship_intent: "dating", about_me: "Chef. Loves food trucks, comedy shows, and hosting dinners.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 17. Priya Sharma
+    db.users.push({ id: 18, name: "Priya Sharma", email: "priya@lgbtqmatrimony.local", password: "password", role: "user", tier: "premium" });
+    db.profiles.push({
+        user_id: 18, name: "Priya Sharma", headline: "Searching for my forever partner and co-dreamer 🌌", pronouns: "she/her",
+        date_of_birth: "1995-10-15", gender_identity: "woman", gender_custom: "", sexual_orientation: "pansexual",
+        city: "Delhi", country: "India", relationship_intent: "marriage", about_me: "Corporate lawyer. Enjoys theater, classical music, and driving. Looking for an ambitious and kind-hearted partner.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 18. Lucas Silva
+    db.users.push({ id: 19, name: "Lucas Silva", email: "lucas@lgbtqmatrimony.local", password: "password", role: "user", tier: "free" });
+    db.profiles.push({
+        user_id: 19, name: "Lucas Silva", headline: "Let's dance samba and travel the world together ✈️", pronouns: "he/him",
+        date_of_birth: "1993-02-14", gender_identity: "man", gender_custom: "", sexual_orientation: "bisexual",
+        city: "Sao Paulo", country: "Brazil", relationship_intent: "dating", about_me: "Dancer and physical therapist. Lover of nature, fitness, and beach volleyball.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 19. Casey Smith
+    db.users.push({ id: 20, name: "Casey Smith", email: "casey@lgbtqmatrimony.local", password: "password", role: "user", tier: "premium" });
+    db.profiles.push({
+        user_id: 20, name: "Casey Smith", headline: "Seeking standard matching parameters and slow romance 🕯️", pronouns: "they/them",
+        date_of_birth: "1992-06-25", gender_identity: "genderqueer", gender_custom: "", sexual_orientation: "pansexual",
+        city: "Sydney", country: "Australia", relationship_intent: "long-term", about_me: "Landscape designer. Loves hiking, poetry, and sustainable living.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80"])
+    });
+
+    // 20. Kim Nguyen
+    db.users.push({ id: 21, name: "Kim Nguyen", email: "kim@lgbtqmatrimony.local", password: "password", role: "user", tier: "premium" });
+    db.profiles.push({
+        user_id: 21, name: "Kim Nguyen", headline: "Let's explore coffee shops and local art exhibits 🎨", pronouns: "she/her",
+        date_of_birth: "1997-12-05", gender_identity: "transgender woman", gender_custom: "", sexual_orientation: "bisexual",
+        city: "Hanoi", country: "Vietnam", relationship_intent: "dating", about_me: "Curator. Loves modern art, traditional coffee, and indie bands.",
+        photos: JSON.stringify(["https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"])
+    });
+
     saveDb();
 }
 
@@ -753,15 +861,15 @@ const server = http.createServer((req, res) => {
             // Basic filtering
             const gender = parsedUrl.searchParams.get('gender_identity');
             const orientation = parsedUrl.searchParams.get('sexual_orientation');
-            if (gender) matches = matches.filter(p => p.gender_identity === gender);
-            if (orientation) matches = matches.filter(p => p.sexual_orientation === orientation);
+            if (gender && gender.trim() !== '') matches = matches.filter(p => p.gender_identity === gender);
+            if (orientation && orientation.trim() !== '') matches = matches.filter(p => p.sexual_orientation === orientation);
 
             // Gated Premium filters
             if (user.tier === 'premium') {
                 const city = parsedUrl.searchParams.get('city');
                 const intent = parsedUrl.searchParams.get('relationship_intent');
-                if (city) matches = matches.filter(p => p.city && p.city.toLowerCase().includes(city.toLowerCase()));
-                if (intent) matches = matches.filter(p => p.relationship_intent === intent);
+                if (city && city.trim() !== '') matches = matches.filter(p => p.city && p.city.toLowerCase().includes(city.toLowerCase().trim()));
+                if (intent && intent.trim() !== '') matches = matches.filter(p => p.relationship_intent === intent);
             }
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -1143,8 +1251,8 @@ const server = http.createServer((req, res) => {
             // Basic filtering if applied
             const gender = parsedUrl.searchParams.get('gender_identity');
             const orientation = parsedUrl.searchParams.get('sexual_orientation');
-            if (gender) matches = matches.filter(p => p.gender_identity === gender);
-            if (orientation) matches = matches.filter(p => p.sexual_orientation === orientation);
+            if (gender && gender.trim() !== '') matches = matches.filter(p => p.gender_identity === gender);
+            if (orientation && orientation.trim() !== '') matches = matches.filter(p => p.sexual_orientation === orientation);
 
             res.writeHead(200, { 'Content-Type': 'text/html' });
             return res.end(renderPHP('browse.php', req, { feed: matches }));
