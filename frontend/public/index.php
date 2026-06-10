@@ -64,6 +64,8 @@ switch ($uri) {
         require __DIR__ . '/../views/register.php';
         break;
     case '/dashboard':
+        require __DIR__ . '/../views/dashboard.php';
+        break;
     case '/discovery':
         require __DIR__ . '/../views/browse.php';
         break;

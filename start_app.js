@@ -317,9 +317,82 @@ function renderPHP(viewName, req, context = {}) {
     const currentUser = getUserFromToken(cookies['jwt_token']);
     const token = cookies['jwt_token'] || '';
 
+    // Mock implementation of makeApiRequest inside JavaScript render context to execute mock endpoints locally
+    const makeApiRequest = (method, apiPath, data = [], requestToken = null) => {
+        console.log(`[SSR API Request] ${method} ${apiPath}`);
+        
+        // Mock /api/v1/discovery/feed
+        if (apiPath.startsWith('/api/v1/discovery/feed')) {
+            const urlObj = new URL(apiPath, 'http://localhost');
+            const user = getUserFromToken(requestToken || token);
+            const userId = user ? user.id : 0;
+            let matches = db.profiles.filter(p => p.user_id !== userId);
+            
+            const gender = urlObj.searchParams.get('gender_identity');
+            const orientation = urlObj.searchParams.get('sexual_orientation');
+            if (gender && gender.trim() !== '') matches = matches.filter(p => p.gender_identity === gender);
+            if (orientation && orientation.trim() !== '') matches = matches.filter(p => p.sexual_orientation === orientation);
+
+            if (user && user.tier === 'premium') {
+                const city = urlObj.searchParams.get('city');
+                const intent = urlObj.searchParams.get('relationship_intent');
+                if (city && city.trim() !== '') matches = matches.filter(p => p.city && p.city.toLowerCase().includes(city.toLowerCase().trim()));
+                if (intent && intent.trim() !== '') matches = matches.filter(p => p.relationship_intent === intent);
+            }
+            return {
+                status: 200,
+                data: { success: true, feed: matches }
+            };
+        }
+
+        // Mock /api/v1/profiles/me
+        if (apiPath === '/api/v1/profiles/me') {
+            const user = getUserFromToken(requestToken || token);
+            const profile = db.profiles.find(p => p.user_id === (user ? user.id : 0));
+            return {
+                status: 200,
+                data: { success: true, profile }
+            };
+        }
+
+        // Mock /api/v1/activity/views
+        if (apiPath === '/api/v1/activity/views') {
+            const user = getUserFromToken(requestToken || token);
+            const views = db.activity_logs.filter(a => a.target_id === (user ? user.id : 0) && a.action_type === 'view');
+            return {
+                status: 200,
+                data: { success: true, views }
+            };
+        }
+
+        // Mock /api/v1/activity/interests/received
+        if (apiPath === '/api/v1/activity/interests/received') {
+            const user = getUserFromToken(requestToken || token);
+            const interests = db.activity_logs.filter(a => a.target_id === (user ? user.id : 0) && a.action_type === 'interest');
+            return {
+                status: 200,
+                data: { success: true, interests }
+            };
+        }
+
+        // Mock /api/v1/moderation/admin/reports
+        if (apiPath === '/api/v1/moderation/admin/reports') {
+            return {
+                status: 200,
+                data: { success: true, reports: db.reports }
+            };
+        }
+
+        return {
+            status: 404,
+            data: { success: false, error: 'Endpoint not mocked' }
+        };
+    };
+
     const ctx = {
         currentUser,
         token,
+        makeApiRequest,
         ...context
     };
 
