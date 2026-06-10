@@ -20,6 +20,10 @@ $feed = [];
 if ($feedResponse['status'] === 200 && isset($feedResponse['data']['feed'])) {
     $feed = $feedResponse['data']['feed'];
 }
+// Fallback connection directly to local database feed injected in context
+if (empty($feed) && isset($context['feed'])) {
+    $feed = $context['feed'];
+}
 ?>
 
 <!-- Discovery Top Banner -->
