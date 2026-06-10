@@ -461,16 +461,22 @@ function compilePhpTemplate(html, ctx) {
         } else if (tagContent.startsWith('php')) {
             const phpCode = tagContent.substring(3).trim();
             if (phpCode.startsWith('if')) {
-                const condMatch = phpCode.match(/if\s*\(([^)]+)\):/);
-                const condStr = condMatch ? condMatch[1].trim() : 'true';
-                stack.push(evaluateCondition(condStr, ctx));
+                // To support nested parentheses in if conditions, match up to the trailing ):
+                // Match "if" then an opening parenthesis, any content, and ending with "):"
+                const condMatch = phpCode.match(/^if\s*\(([\s\S]*)\):$/);
+                if (condMatch) {
+                    const condStr = condMatch[1].trim();
+                    stack.push(evaluateCondition(condStr, ctx));
+                }
             } else if (phpCode.startsWith('else:')) {
                 if (stack.length > 0) {
                     const last = stack.pop();
                     stack.push(!last);
                 }
             } else if (phpCode.startsWith('endif;')) {
-                stack.pop();
+                if (stack.length > 0) {
+                    stack.pop();
+                }
             }
         }
     }
@@ -1202,12 +1208,20 @@ const server = http.createServer((req, res) => {
             return res.end(renderPHP('landing.php', req));
         }
         if (pathname === '/login') {
-            if (loggedUser) { res.writeHead(302, { 'Location': '/discovery' }); return res.end(); }
+            if (loggedUser) {
+                const target = loggedUser.role === 'admin' ? '/admin' : '/discovery';
+                res.writeHead(302, { 'Location': target });
+                return res.end();
+            }
             res.writeHead(200, { 'Content-Type': 'text/html' });
             return res.end(renderPHP('login.php', req));
         }
         if (pathname === '/register') {
-            if (loggedUser) { res.writeHead(302, { 'Location': '/discovery' }); return res.end(); }
+            if (loggedUser) {
+                const target = loggedUser.role === 'admin' ? '/admin' : '/discovery';
+                res.writeHead(302, { 'Location': target });
+                return res.end();
+            }
             res.writeHead(200, { 'Content-Type': 'text/html' });
             return res.end(renderPHP('register.php', req));
         }
@@ -1247,6 +1261,7 @@ const server = http.createServer((req, res) => {
         if (pathname === '/discovery') {
             if (!loggedUser) { res.writeHead(302, { 'Location': '/login' }); return res.end(); }
             let matches = db.profiles.filter(p => p.user_id !== loggedUser.id);
+            console.log("Discovery route matches count:", matches.length, "loggedUser.id:", loggedUser.id);
             
             // Basic filtering if applied
             const gender = parsedUrl.searchParams.get('gender_identity');

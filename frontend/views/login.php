@@ -68,22 +68,22 @@
         const errBox = document.getElementById('error-box');
         errBox.classList.add('hidden');
         try {
-            const res = await fetch('/api/v1/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            if (data.success) {
-                document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
-                window.location.href = '/discovery';
-            } else {
-                errBox.innerText = data.error || 'Demo Login failed.';
-                errBox.classList.remove('hidden');
-            }
+             const res = await fetch('/api/v1/auth/login', {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ email, password })
+             });
+             const data = await res.json();
+             if (data.success) {
+                 document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
+                 window.location.href = data.user.role === 'admin' ? '/admin' : '/discovery';
+             } else {
+                 errBox.innerText = data.error || 'Demo Login failed.';
+                 errBox.classList.remove('hidden');
+             }
         } catch (err) {
-            errBox.innerText = 'Connection error.';
-            errBox.classList.remove('hidden');
+             errBox.innerText = 'Connection error.';
+             errBox.classList.remove('hidden');
         }
     }
 
@@ -96,23 +96,23 @@
         const password = document.getElementById('password').value;
 
         try {
-            const res = await fetch('/api/v1/auth/login', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ email, password })
-            });
-            const data = await res.json();
-            
-            if (data.success) {
-                document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
-                window.location.href = '/discovery';
-            } else {
-                errBox.innerText = data.error || 'Invalid credentials.';
-                errBox.classList.remove('hidden');
-            }
+             const res = await fetch('/api/v1/auth/login', {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ email, password })
+             });
+             const data = await res.json();
+             
+             if (data.success) {
+                 document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
+                 window.location.href = data.user.role === 'admin' ? '/admin' : '/discovery';
+             } else {
+                 errBox.innerText = data.error || 'Invalid credentials.';
+                 errBox.classList.remove('hidden');
+             }
         } catch (err) {
-            errBox.innerText = 'Network error. Please try again.';
-            errBox.classList.remove('hidden');
+             errBox.innerText = 'Network error. Please try again.';
+             errBox.classList.remove('hidden');
         }
     });
 
@@ -121,23 +121,23 @@
         const errBox = document.getElementById('error-box');
         
         try {
-            const res = await fetch('/api/v1/auth/google', {
-                method: 'POST',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ token: mockToken })
-            });
-            const data = await res.json();
+             const res = await fetch('/api/v1/auth/google', {
+                 method: 'POST',
+                 headers: { 'Content-Type': 'application/json' },
+                 body: JSON.stringify({ token: mockToken })
+             });
+             const data = await res.json();
 
-            if (data.success) {
-                document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
-                window.location.href = '/discovery';
-            } else {
-                errBox.innerText = data.error || 'Google login failed.';
-                errBox.classList.remove('hidden');
-            }
+             if (data.success) {
+                 document.cookie = `jwt_token=${data.tokens.access_token}; path=/; max-age=${data.tokens.expires_in}; SameSite=Lax`;
+                 window.location.href = data.user.role === 'admin' ? '/admin' : '/discovery';
+             } else {
+                 errBox.innerText = data.error || 'Google login failed.';
+                 errBox.classList.remove('hidden');
+             }
         } catch (err) {
-            errBox.innerText = 'Network error.';
-            errBox.classList.remove('hidden');
+             errBox.innerText = 'Network error.';
+             errBox.classList.remove('hidden');
         }
     });
 </script>
