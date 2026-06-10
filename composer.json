@@ -1,0 +1,39 @@
+{
+    "name": "lgbtq/matrimony-platform",
+    "description": "LGBTQ+ Matrimony Web Platform in PHP (Slim 4) microservices architecture.",
+    "type": "project",
+    "require": {
+        "php": ">=8.2",
+        "slim/slim": "^4.12",
+        "slim/psr7": "^1.6",
+        "php-di/php-di": "^7.0",
+        "firebase/php-jwt": "^6.8",
+        "illuminate/database": "^10.0",
+        "illuminate/events": "^10.0",
+        "predis/predis": "^2.2",
+        "cboden/ratchet": "^0.4.4",
+        "vlucas/phpdotenv": "^5.5",
+        "stripe/stripe-php": "^10.0"
+    },
+    "autoload": {
+        "psr-4": {
+            "Shared\\": "shared/",
+            "AuthService\\": "services/auth-service/src/",
+            "ProfileService\\": "services/profile-service/src/",
+            "DiscoveryService\\": "services/discovery-service/src/",
+            "SubscriptionService\\": "services/subscription-service/src/",
+            "ChatService\\": "services/chat-service/src/",
+            "NotificationService\\": "services/notification-service/src/",
+            "MediaService\\": "services/media-service/src/",
+            "ActivityService\\": "services/activity-service/src/",
+            "ModerationService\\": "services/moderation-service/src/",
+            "Frontend\\": "frontend/src/"
+        }
+    },
+    "config": {
+        "process-timeout": 0,
+        "allow-plugins": {
+            "kylekatarnls/update-helper": true
+        }
+    }
+}

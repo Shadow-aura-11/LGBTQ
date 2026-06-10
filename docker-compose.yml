@@ -1,0 +1,189 @@
+version: '3.8'
+
+services:
+  nginx:
+    image: nginx:alpine
+    ports:
+      - "4111:80"
+      - "443:443"
+    volumes:
+      - ./nginx.conf:/etc/nginx/nginx.conf:ro
+      - .:/var/www/html
+    depends_on:
+      - auth-service
+      - profile-service
+      - discovery-service
+      - subscription-service
+      - chat-service
+      - notification-service
+      - media-service
+      - activity-service
+      - moderation-service
+      - websocket
+    networks:
+      - matrimony-network
+
+  # Microservices
+  auth-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=auth-service
+      - DB_DATABASE=matrimony_auth
+    networks:
+      - matrimony-network
+
+  profile-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=profile-service
+      - DB_DATABASE=matrimony_profile
+    networks:
+      - matrimony-network
+
+  discovery-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=discovery-service
+      - DB_DATABASE=matrimony_discovery
+    networks:
+      - matrimony-network
+
+  subscription-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=subscription-service
+      - DB_DATABASE=matrimony_subscription
+    networks:
+      - matrimony-network
+
+  chat-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=chat-service
+      - DB_DATABASE=matrimony_chat
+    networks:
+      - matrimony-network
+
+  notification-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=notification-service
+      - DB_DATABASE=matrimony_notification
+    networks:
+      - matrimony-network
+
+  media-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=media-service
+      - DB_DATABASE=matrimony_media
+    networks:
+      - matrimony-network
+
+  activity-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=activity-service
+      - DB_DATABASE=matrimony_activity
+    networks:
+      - matrimony-network
+
+  moderation-service:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile
+    volumes:
+      - .:/var/www/html
+    environment:
+      - SERVICE_NAME=moderation-service
+      - DB_DATABASE=matrimony_moderation
+    networks:
+      - matrimony-network
+
+  # WebSockets
+  websocket:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.websocket
+    ports:
+      - "8080:8080"
+    volumes:
+      - .:/var/www/html
+    networks:
+      - matrimony-network
+
+  # Background Event Worker
+  worker:
+    build:
+      context: .
+      dockerfile: docker/Dockerfile.websocket # Re-use CLI container
+    volumes:
+      - .:/var/www/html
+    command: ["php", "services/worker.php"]
+    depends_on:
+      - redis
+      - mysql
+    networks:
+      - matrimony-network
+
+  # Databases & Cache
+  mysql:
+    image: mysql:8.0
+    ports:
+      - "3306:3306"
+    environment:
+      - MYSQL_ALLOW_EMPTY_PASSWORD=yes
+    volumes:
+      - mysql-data:/var/lib/mysql
+      - ./docker/init-db.sql:/docker-entrypoint-initdb.d/init-db.sql:ro
+    networks:
+      - matrimony-network
+
+  redis:
+    image: redis:alpine
+    ports:
+      - "6379:6379"
+    volumes:
+      - redis-data:/data
+    networks:
+      - matrimony-network
+
+networks:
+  matrimony-network:
+    driver: bridge
+
+volumes:
+  mysql-data:
+  redis-data:
