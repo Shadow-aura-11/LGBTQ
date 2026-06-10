@@ -883,15 +883,15 @@ const server = http.createServer((req, res) => {
             // Basic filtering
             const gender = parsedUrl.searchParams.get('gender_identity');
             const orientation = parsedUrl.searchParams.get('sexual_orientation');
-            if (gender && gender.trim() !== '') matches = matches.filter(p => p.gender_identity === gender);
-            if (orientation && orientation.trim() !== '') matches = matches.filter(p => p.sexual_orientation === orientation);
+            if (gender && gender.trim() !== '' && gender.trim() !== 'Any') matches = matches.filter(p => p.gender_identity === gender.trim());
+            if (orientation && orientation.trim() !== '' && orientation.trim() !== 'Any') matches = matches.filter(p => p.sexual_orientation === orientation.trim());
 
             // Gated Premium filters
             if (user.tier === 'premium') {
                 const city = parsedUrl.searchParams.get('city');
                 const intent = parsedUrl.searchParams.get('relationship_intent');
                 if (city && city.trim() !== '') matches = matches.filter(p => p.city && p.city.toLowerCase().includes(city.toLowerCase().trim()));
-                if (intent && intent.trim() !== '') matches = matches.filter(p => p.relationship_intent === intent);
+                if (intent && intent.trim() !== '' && intent.trim() !== 'Any') matches = matches.filter(p => p.relationship_intent === intent.trim());
             }
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
@@ -1282,8 +1282,8 @@ const server = http.createServer((req, res) => {
             // Basic filtering if applied
             const gender = parsedUrl.searchParams.get('gender_identity');
             const orientation = parsedUrl.searchParams.get('sexual_orientation');
-            if (gender && gender.trim() !== '') matches = matches.filter(p => p.gender_identity === gender);
-            if (orientation && orientation.trim() !== '') matches = matches.filter(p => p.sexual_orientation === orientation);
+            if (gender && gender.trim() !== '' && gender.trim() !== 'Any') matches = matches.filter(p => p.gender_identity === gender.trim());
+            if (orientation && orientation.trim() !== '' && orientation.trim() !== 'Any') matches = matches.filter(p => p.sexual_orientation === orientation.trim());
 
             res.writeHead(200, { 'Content-Type': 'text/html' });
             return res.end(renderPHP('browse.php', req, { feed: matches }));
