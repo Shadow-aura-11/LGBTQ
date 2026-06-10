@@ -319,7 +319,7 @@ function renderPHP(viewName, req, context = {}) {
 
     // If matches is requested, feed them from local javascript DB directly to bypass Nginx makeApiRequest inside Docker
     let feed = context.feed;
-    if (!feed && currentUser) {
+    if ((!feed || feed.length === 0) && currentUser) {
         const parsedUrl = new URL(req.url, `http://${req.headers.host}`);
         let matches = db.profiles.filter(p => p.user_id !== currentUser.id);
         const gender = parsedUrl.searchParams.get('gender_identity');
@@ -333,6 +333,9 @@ function renderPHP(viewName, req, context = {}) {
         currentUser,
         token,
         feed: feed || [],
+        context: {
+            feed: feed || []
+        },
         ...context
     };
 
@@ -1336,6 +1339,50 @@ const server = http.createServer((req, res) => {
             if (!loggedUser) { res.writeHead(302, { 'Location': '/login' }); return res.end(); }
             res.writeHead(200, { 'Content-Type': 'text/html' });
             return res.end(renderPHP('settings.php', req));
+        }
+
+        // Generic Info Footer Pages handler
+        const footerPages = [
+            '/mission', '/safe-dating-tips', '/faq', '/trust-safety',
+            '/press', '/how-we-connect', '/colorado-safety', '/security',
+            '/terms', '/privacy', '/cookie-policy', '/consumer-health-privacy',
+            '/privacy-choices'
+        ];
+        if (footerPages.includes(pathname)) {
+            res.writeHead(200, { 'Content-Type': 'text/html' });
+            // Generate clean placeholder layout content in the PHP style evaluation context
+            const titles = {
+                '/mission': 'Our Mission',
+                '/safe-dating-tips': 'Safe Dating Tips',
+                '/faq': 'Frequently Asked Questions',
+                '/trust-safety': 'Trust & Safety',
+                '/press': 'Press Resources',
+                '/how-we-connect': 'How We Connect Daters',
+                '/colorado-safety': 'Colorado Safety Policy Information',
+                '/security': 'Security Standards',
+                '/terms': 'Terms of Service',
+                '/privacy': 'Privacy Policy',
+                '/cookie-policy': 'Cookie Policy',
+                '/consumer-health-privacy': 'Consumer Health Data Privacy Policy',
+                '/privacy-choices': 'Your Privacy Choices'
+            };
+            const pageTitle = titles[pathname] || 'Info Page';
+            const sampleHtml = `<?php include __DIR__ . '/header.php'; ?>
+            <div class="max-w-4xl mx-auto my-12 glass-panel p-8 md:p-12 rounded-3xl border border-white/60 shadow-xl space-y-6">
+                <span class="text-4xl">🛡️</span>
+                <h1 class="text-3xl md:text-5xl font-black text-gray-900 serif-font mt-2">${pageTitle}</h1>
+                <p class="text-pink-600 font-bold uppercase tracking-wider text-xs">Proud Hearts Protection &amp; Legal Info</p>
+                <div class="border-t border-gray-200/50 pt-6 space-y-4 text-gray-600 text-sm leading-relaxed">
+                    <p>Welcome to the official <strong>${pageTitle}</strong> resources portal for Proud Hearts Matrimony platform.</p>
+                    <p>We combine modern identity-first compatibility matching metrics with strict user privacy controls to deliver a verified, safe space for the LGBTQ+ community. Our priority is ensuring that your preferences, orientation selection, pronouns, and contact details are fully encrypted and gated according to user-approved trust configurations.</p>
+                    <p>If you have questions regarding this page or want to request moderation checks, please contact our support desk inside your profile panel options or review our general safe dating guidelines.</p>
+                </div>
+                <a href="/discovery" class="inline-block btn-primary px-6 py-2.5 rounded-xl font-bold text-xs shadow-sm mt-4">&larr; Back to Discovery Feed</a>
+            </div>
+            <?php include __DIR__ . '/footer.php'; ?>`;
+            
+            // Render it in PHP compiler context
+            return res.end(compilePhpTemplate(sampleHtml, { currentUser: loggedUser, token: cookies['jwt_token'] || '' }));
         }
         if (pathname === '/admin') {
             if (!loggedUser || loggedUser.role !== 'admin') {
