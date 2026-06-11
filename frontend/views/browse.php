@@ -187,10 +187,13 @@ if (empty($feed) && isset($context['feed'])) {
                                 </p>
                             </div>
 
-                            <div class="pt-3 border-t border-gray-100">
-                                <a href="/profile/<?= $item['user_id'] ?>" class="w-full block text-center bg-pink-50 hover:bg-pink-100 text-pink-700 py-3 rounded-xl text-xs font-bold transition shadow-sm border border-pink-200/40">
-                                    View Compatibility Profile &rarr;
+                            <div class="pt-3 border-t border-gray-100 flex gap-2">
+                                <a href="/profile/<?= $item['user_id'] ?>" class="flex-grow block text-center bg-pink-50 hover:bg-pink-100 text-pink-700 py-3 rounded-xl text-xs font-bold transition shadow-sm border border-pink-200/40">
+                                    View Profile &rarr;
                                 </a>
+                                <button onclick="quickLike(<?= $item['user_id'] ?>, this)" class="px-4 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold transition shadow-sm border border-pink-600/20" title="Like Profile">
+                                    ❤️
+                                </button>
                             </div>
                         </div>
                     </div>
@@ -199,5 +202,32 @@ if (empty($feed) && isset($context['feed'])) {
         <?php endif; ?>
     </div>
 </div>
+
+<script>
+    async function quickLike(targetId, button) {
+        try {
+            const res = await fetch('/api/v1/activity/interest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + '<?= $token ?>'
+                },
+                body: JSON.stringify({ target_id: targetId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                button.innerHTML = '💖';
+                button.disabled = true;
+                button.classList.remove('bg-pink-500', 'hover:bg-pink-600');
+                button.classList.add('bg-pink-100', 'text-pink-600', 'cursor-not-allowed');
+                alert(data.mutual ? "🎉 Mutual Match! You can now chat directly in real-time!" : "Interest sent!");
+            } else {
+                alert(data.error || "Failed to send interest.");
+            }
+        } catch (err) {
+            alert("Connection error.");
+        }
+    }
+</script>
 
 <?php include __DIR__ . '/footer.php'; ?>

@@ -6,22 +6,6 @@ if (!$currentUser) {
     header('Location: /login');
     exit;
 }
-
-// Fetch existing profile details
-$profile = null;
-$apiResponse = makeApiRequest('GET', '/api/v1/profiles/me', [], $token);
-if ($apiResponse['status'] === 200 && isset($apiResponse['data']['profile'])) {
-    $profile = $apiResponse['data']['profile'];
-}
-
-// Calculate Profile Completeness Percentage (mock index helper)
-$score = 20; // 20% base for registration
-if (!empty($profile['headline'])) $score += 15;
-if (!empty($profile['about_me'])) $score += 20;
-if (!empty($profile['pronouns'])) $score += 15;
-if (!empty($profile['profession']) || !empty($profile['education'])) $score += 15;
-$photos = json_decode($profile['photos'] ?? '[]', true) ?: [];
-if (count($photos) > 0) $score += 15;
 ?>
 
 <div class="max-w-4xl mx-auto my-8">
@@ -118,10 +102,10 @@ if (count($photos) > 0) $score += 15;
                         <select id="relationship_intent"
                                 class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm">
                             <option value="">Select intent...</option>
-                            <option value="friendship" <?= ($profile['relationship_intent'] ?? '') === 'friendship' ? 'selected' : '' ?>>Friendship</option>
-                            <option value="dating" <?= ($profile['relationship_intent'] ?? '') === 'dating' ? 'selected' : '' ?>>Dating</option>
-                            <option value="long-term" <?= ($profile['relationship_intent'] ?? '') === 'long-term' ? 'selected' : '' ?>>Long-Term partnership</option>
-                            <option value="marriage" <?= ($profile['relationship_intent'] ?? '') === 'marriage' ? 'selected' : '' ?>>Marriage</option>
+                            <option value="friendship">Friendship</option>
+                            <option value="dating">Dating</option>
+                            <option value="long-term">Long-Term partnership</option>
+                            <option value="marriage">Marriage</option>
                         </select>
                     </div>
                 </div>
@@ -137,20 +121,6 @@ if (count($photos) > 0) $score += 15;
                 <div class="bg-white/40 p-5 rounded-2xl border border-gray-200/40">
                     <div class="flex flex-wrap gap-4" id="photo-preview-container">
                         <!-- Loaded dynamically via js previews -->
-                        <?php foreach ($photos as $url): ?>
-                            <div class="relative w-24 h-24 rounded-2xl overflow-hidden shadow border border-gray-200 group photo-item" data-url="<?= htmlspecialchars($url) ?>">
-                                <img src="<?= htmlspecialchars($url) ?>" class="w-full h-full object-cover">
-                                <button type="button" onclick="removePhoto(this)" class="absolute top-1.5 right-1.5 bg-red-500 text-white rounded-full w-5 h-5 flex items-center justify-center text-xs hover:bg-red-600 shadow">&times;</button>
-                            </div>
-                        <?php endforeach; ?>
-
-                        <?php if (count($photos) < 5): ?>
-                            <label id="upload-label" class="w-24 h-24 flex flex-col items-center justify-center border-2 border-dashed border-gray-300 rounded-2xl cursor-pointer hover:border-pink-400 transition bg-white/50 hover:bg-white">
-                                <span class="text-2xl text-gray-400 font-bold">+</span>
-                                <span class="text-[10px] text-gray-400 font-semibold mt-1">Upload</span>
-                                <input type="file" id="photo-uploader" accept="image/*" class="hidden" onchange="uploadPhoto(this)">
-                            </label>
-                        <?php endif; ?>
                     </div>
                 </div>
             </div>
@@ -165,7 +135,7 @@ if (count($photos) > 0) $score += 15;
 </div>
 
 <script>
-    let activePhotos = <?= json_encode($photos) ?>;
+    let activePhotos = <?= $profile_photos_json ?>;
 
     async function uploadPhoto(input) {
         if (!input.files || !input.files[0]) return;
@@ -239,6 +209,12 @@ if (count($photos) > 0) $score += 15;
         }
     }
 
+    // Set dropdown selects on load
+    document.getElementById('relationship_intent').value = "<?= $profile['relationship_intent'] ?? '' ?>";
+
+    // Initial load call
+    renderPreviews();
+
     document.getElementById('profile-setup-form').addEventListener('submit', async function(e) {
         e.preventDefault();
         const statusBox = document.getElementById('status-box');
@@ -272,7 +248,7 @@ if (count($photos) > 0) $score += 15;
                 statusBox.className = "bg-green-100 border border-green-200 text-green-700 px-4 py-2.5 rounded-xl text-sm mb-6";
                 statusBox.innerText = "Profile saved successfully!";
                 statusBox.classList.remove('hidden');
-                setTimeout(() => window.location.href = '/discovery', 1000);
+                setTimeout(() => window.location.href = '/dashboard', 1000);
             } else {
                 statusBox.className = "bg-red-100 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl text-sm mb-6";
                 statusBox.innerText = data.error || "Save error.";

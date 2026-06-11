@@ -333,7 +333,8 @@ if ($profile && !empty($profile['photos'])) {
                                     <div class="flex justify-between items-start gap-2">
                                         <div class="min-w-0">
                                             <h4 class="font-extrabold text-gray-800 text-base truncate"><?= htmlspecialchars($item['name']) ?></h4>
-                                            <p class="text-xs text-gray-400 mt-1 font-medium"><?= htmlspecialchars($item['city']) ?>, <?= htmlspecialchars($item['country']) ?></p>
+                                            <p class="text-[10px] text-pink-600 font-bold uppercase mt-0.5"><?= htmlspecialchars($item['sexual_orientation']) ?> • <?= htmlspecialchars($item['pronouns']) ?></p>
+                                            <p class="text-xs text-gray-400 mt-1 font-medium">📍 <?= htmlspecialchars($item['city']) ?>, <?= htmlspecialchars($item['country']) ?></p>
                                         </div>
                                         <span class="bg-pink-50 text-pink-600 text-xs font-extrabold px-2.5 py-1 rounded-full border border-pink-100 shrink-0">
                                             <?= $scoreVal ?>% Match

@@ -358,7 +358,13 @@ function renderPHP(viewName, req, context = {}) {
 function resolveExpression(expr, ctx) {
     expr = expr.trim();
     
-    // Strip htmlspecialchars and strip_tags wrappers
+    // Strip nl2br and htmlspecialchars and strip_tags wrappers
+    const nl2brMatch = expr.match(/^nl2br\((.*)\)$/);
+    let isNl2br = false;
+    if (nl2brMatch) {
+        expr = nl2brMatch[1].trim();
+        isNl2br = true;
+    }
     const htmlSpecMatch = expr.match(/^htmlspecialchars\((.*)\)$/);
     if (htmlSpecMatch) {
         expr = htmlSpecMatch[1].trim();
@@ -372,9 +378,39 @@ function resolveExpression(expr, ctx) {
     if (expr === "$token" || expr === "$_COOKIE['jwt_token'] ?? ''") return ctx.token || '';
     if (expr === "$recipientId") return ctx.recipientId || '0';
     if (expr === "$viewTargetId") return ctx.viewTargetId || '0';
-    if (expr === "$score") return ctx.score !== undefined ? ctx.score : '30';
+    if (expr === "$score") return ctx.score !== undefined ? ctx.score : '80';
     if (expr === "$viewsCount") return ctx.viewsCount !== undefined ? ctx.viewsCount : '0';
     if (expr === "$likesCount") return ctx.likesCount !== undefined ? ctx.likesCount : '0';
+    if (expr === "$matchesTodayCount") return '1';
+    
+    if (expr === "$displayPhoto") {
+        let photos = [];
+        if (ctx.profile && ctx.profile.photos) {
+            try { photos = JSON.parse(ctx.profile.photos); } catch(e) {
+                if (Array.isArray(ctx.profile.photos)) photos = ctx.profile.photos;
+            }
+        }
+        return (photos && photos.length > 0) ? photos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=600&q=80';
+    }
+
+    if (expr === "$rPhoto") {
+        let photos = [];
+        if (ctx.recipientProfile && ctx.recipientProfile.photos) {
+            try { photos = JSON.parse(ctx.recipientProfile.photos); } catch(e) {
+                if (Array.isArray(ctx.recipientProfile.photos)) photos = ctx.recipientProfile.photos;
+            }
+        }
+        return (photos && photos.length > 0) ? photos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
+    }
+    
+    if (expr.includes('date_diff') && expr.includes('date_of_birth')) {
+        const targetProf = ctx.profile || ctx.recipientProfile;
+        if (targetProf && targetProf.date_of_birth) {
+            const dob = new Date(targetProf.date_of_birth);
+            return (new Date().getFullYear() - dob.getFullYear()).toString();
+        }
+        return '25';
+    }
     
     // Check for dashoffset stroke offset expression
     if (expr.includes('301.6 - (301.6 * $score) / 100')) {
@@ -395,14 +431,41 @@ function resolveExpression(expr, ctx) {
         const match = expr.match(/\['([^']+)'\]/);
         if (match) {
             const key = match[1];
-            return ctx.profile ? (ctx.profile[key] !== null && ctx.profile[key] !== undefined ? ctx.profile[key] : '') : '';
+            let val = ctx.profile ? ctx.profile[key] : null;
+            if (val === null || val === undefined || val === '') {
+                if (expr.includes('??')) {
+                    const fallback = expr.split('??')[1].trim().replace(/['"]/g, '');
+                    return fallback;
+                }
+                if (expr.includes('?:')) {
+                    const fallback = expr.split('?:')[1].trim().replace(/['"]/g, '');
+                    return fallback;
+                }
+                return '';
+            }
+            if (isNl2br && typeof val === 'string') {
+                val = val.replace(/\n/g, '<br>');
+            }
+            return val;
         }
     }
     if (expr.startsWith('$recipientProfile[')) {
         const match = expr.match(/\['([^']+)'\]/);
         if (match) {
             const key = match[1];
-            return ctx.recipientProfile ? (ctx.recipientProfile[key] !== null && ctx.recipientProfile[key] !== undefined ? ctx.recipientProfile[key] : '') : '';
+            let val = ctx.recipientProfile ? ctx.recipientProfile[key] : null;
+            if (val === null || val === undefined || val === '') {
+                if (expr.includes('??')) {
+                    const fallback = expr.split('??')[1].trim().replace(/['"]/g, '');
+                    return fallback;
+                }
+                if (expr.includes('?:')) {
+                    const fallback = expr.split('?:')[1].trim().replace(/['"]/g, '');
+                    return fallback;
+                }
+                return '';
+            }
+            return val;
         }
     }
     return '';
@@ -561,6 +624,8 @@ function parseViewLoops(content, ctx) {
                 // Handle direct $item['city'] and $item['country'] without ternary
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['city'\]\)\s*\?>/g, item.city || 'Unknown');
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['country'\]\)\s*\?>/g, item.country || '');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['sexual_orientation'\]\)\s*\?>/g, item.sexual_orientation || 'queer');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['pronouns'\]\)\s*\?>/g, item.pronouns || 'they/them');
                 // Handle inline if/endif for $isOnline
                 block = block.replace(/<\?php\s+if\s*\(\$isOnline\):\s*\?>([\s\S]*?)<\?php\s+endif;\s*\?>/g, isOnline ? '$1' : '');
                 
