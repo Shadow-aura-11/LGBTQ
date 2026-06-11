@@ -1287,8 +1287,25 @@ const server = http.createServer((req, res) => {
         }
         if (pathname === '/discovery') {
             if (!loggedUser) { res.writeHead(302, { 'Location': '/login' }); return res.end(); }
-            let matches = db.profiles.filter(p => p.user_id !== loggedUser.id);
-            console.log("Discovery route matches count:", matches.length, "loggedUser.id:", loggedUser.id);
+            
+            const tab = parsedUrl.searchParams.get('tab') || '';
+            let matches = [];
+            
+            if (tab === 'matches') {
+                const likerIds = db.activity_logs
+                    .filter(a => a.target_id === loggedUser.id && a.action_type === 'interest')
+                    .map(a => a.user_id);
+                matches = db.profiles.filter(p => likerIds.includes(p.user_id) && p.user_id !== loggedUser.id);
+            } else if (tab === 'favorites') {
+                const likedIds = db.activity_logs
+                    .filter(a => a.user_id === loggedUser.id && a.action_type === 'interest')
+                    .map(a => a.target_id);
+                matches = db.profiles.filter(p => likedIds.includes(p.user_id) && p.user_id !== loggedUser.id);
+            } else {
+                matches = db.profiles.filter(p => p.user_id !== loggedUser.id);
+            }
+            
+            console.log("Discovery route matches count:", matches.length, "loggedUser.id:", loggedUser.id, "tab:", tab);
             
             // Basic filtering if applied
             const gender = parsedUrl.searchParams.get('gender_identity');
