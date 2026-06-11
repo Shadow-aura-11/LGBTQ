@@ -11,7 +11,7 @@ if (($currentUser['tier'] ?? 'free') !== 'premium') {
     echo "<div class='glass-panel p-12 rounded-3xl text-center border border-white/60 my-12 max-w-xl mx-auto shadow-xl'>";
     echo "<span class='text-5xl'>👑</span>";
     echo "<h3 class='text-3xl font-extrabold text-gray-900 mt-5 serif-font'>Unlock Live Messaging</h3>";
-    echo "<p class='text-gray-600 text-sm mt-2 mb-6 leading-relaxed'>Direct real-time conversations, online statuses, and typing receipts are exclusive to Proud Hearts Premium members.</p>";
+    echo "<p class='text-gray-600 text-sm mt-2 mb-6 leading-relaxed'>Direct real-time conversations, online statuses, and typing receipts are exclusive to PrideUnion Premium members.</p>";
     echo "<a href='/subscription' class='btn-primary px-8 py-3.5 rounded-full font-bold shadow-md hover:shadow-lg transition'>Upgrade to Premium</a>";
     echo "</div>";
     include __DIR__ . '/footer.php';

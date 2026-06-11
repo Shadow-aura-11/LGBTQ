@@ -1140,7 +1140,7 @@ const server = http.createServer((req, res) => {
                 id: db.notifications.length + 1,
                 user_id,
                 title: "Subscription Active! 👑",
-                message: `Welcome to Proud Hearts Premium. Plans activated via ${gateway}.`,
+                message: `Welcome to PrideUnion Premium. Plans activated via ${gateway}.`,
                 type: "alert",
                 is_read: false,
                 created_at: new Date().toISOString()
@@ -1725,9 +1725,9 @@ const server = http.createServer((req, res) => {
             <div class="max-w-4xl mx-auto my-12 glass-panel p-8 md:p-12 rounded-3xl border border-white/60 shadow-xl space-y-6">
                 <span class="text-4xl">🛡️</span>
                 <h1 class="text-3xl md:text-5xl font-black text-gray-900 serif-font mt-2">${pageTitle}</h1>
-                <p class="text-pink-600 font-bold uppercase tracking-wider text-xs">Proud Hearts Protection &amp; Legal Info</p>
+                <p class="text-pink-600 font-bold uppercase tracking-wider text-xs">PrideUnion Protection &amp; Legal Info</p>
                 <div class="border-t border-gray-200/50 pt-6 space-y-4 text-gray-600 text-sm leading-relaxed">
-                    <p>Welcome to the official <strong>${pageTitle}</strong> resources portal for Proud Hearts Matrimony platform.</p>
+                    <p>Welcome to the official <strong>${pageTitle}</strong> resources portal for PrideUnion Matrimony platform.</p>
                     <p>We combine modern identity-first compatibility matching metrics with strict user privacy controls to deliver a verified, safe space for the LGBTQ+ community. Our priority is ensuring that your preferences, orientation selection, pronouns, and contact details are fully encrypted and gated according to user-approved trust configurations.</p>
                     <p>If you have questions regarding this page or want to request moderation checks, please contact our support desk inside your profile panel options or review our general safe dating guidelines.</p>
                 </div>
@@ -1815,5 +1815,5 @@ function broadcastToUser(userId, payload) {
 
 // Start Server
 server.listen(PORT, () => {
-    console.log(`Proud Hearts Matrimony platform running on http://localhost:${PORT}`);
+    console.log(`PrideUnion Matrimony platform running on http://localhost:${PORT}`);
 });

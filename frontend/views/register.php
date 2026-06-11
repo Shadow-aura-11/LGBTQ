@@ -5,7 +5,7 @@
         <!-- Steps Indicator Header -->
         <div class="flex justify-between items-center mb-10 border-b border-gray-100 pb-6">
             <div>
-                <h2 class="text-3xl font-extrabold text-gray-900 serif-font">Join Proud Hearts</h2>
+                <h2 class="text-3xl font-extrabold text-gray-900 serif-font">Join PrideUnion</h2>
                 <p class="text-gray-500 text-xs mt-1">Complete the onboarding to calculate your compatibility rating.</p>
             </div>
             <span class="text-pink-500 font-bold text-sm" id="step-indicator">Step 1 of 4</span>

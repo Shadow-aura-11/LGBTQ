@@ -237,7 +237,7 @@ EventBus::subscribe($channels, function($channel, $payload) {
                 $notifId = Capsule::table('notifications')->insertGetId([
                     'user_id' => $payload['user_id'],
                     'title' => "Subscription Active! 👑",
-                    'message' => "Welcome to Proud Hearts Premium. All locked details are now unblurred.",
+                    'message' => "Welcome to PrideUnion Premium. All locked details are now unblurred.",
                     'type' => 'alert',
                     'is_read' => false,
                     'created_at' => date('Y-m-d H:i:s'),
@@ -248,7 +248,7 @@ EventBus::subscribe($channels, function($channel, $payload) {
                     'user_id' => $payload['user_id'],
                     'id' => $notifId,
                     'title' => "Subscription Active! 👑",
-                    'message' => "Welcome to Proud Hearts Premium. All locked details are now unblurred.",
+                    'message' => "Welcome to PrideUnion Premium. All locked details are now unblurred.",
                     'type' => 'alert',
                     'created_at' => date('Y-m-d H:i:s')
                 ]);
