@@ -5,8 +5,10 @@
         <div class="max-w-7xl mx-auto px-6 py-12">
             <div class="grid grid-cols-2 md:grid-cols-4 gap-8 mb-10 text-left">
                 <!-- Brand Statement -->
-                <div class="col-span-2 space-y-4">
-                    <span class="text-xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-600 tracking-tight">Proud Hearts 💖</span>
+                    <div class="flex items-center gap-1.5">
+                        <span class="text-xl font-black serif-font text-[#be185d] tracking-tight">PrideUnion</span>
+                        <span class="bg-[#fce7f3] text-[#db2777] text-[10px] font-black px-2 py-0.5 rounded-full shadow-sm">Matrimony</span>
+                    </div>
                     <p class="text-xs text-gray-500 max-w-sm leading-relaxed">Calculating real compatibility while fully respecting pronouns, orientation, and diverse gender identities. Celebrating all love equally. 🌈</p>
                 </div>
 
@@ -42,7 +44,7 @@
                     <a href="/consumer-health-privacy" class="hover:text-pink-600 transition">Consumer Health Data Privacy</a>
                     <a href="/privacy-choices" class="hover:text-pink-600 transition flex items-center gap-1"><span>🛡️</span> Your Privacy Choices</a>
                 </div>
-                <p class="text-center md:text-right">&copy; <?= date('Y') ?> Proud Hearts. All rights reserved.</p>
+                <p class="text-center md:text-right">&copy; <?= date('Y') ?> PrideUnion Matrimony. All rights reserved.</p>
             </div>
         </div>
     </footer>

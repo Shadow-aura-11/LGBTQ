@@ -320,11 +320,7 @@ function verifyAuth(req, res, requiredTier = 'free') {
 
     const dbUser = db.users.find(u => u.id === user.id);
     if (dbUser) {
-        if (dbUser.email === 'sam@lgbtqmatrimony.local') {
-            dbUser.tier = 'free';
-        } else if (dbUser.email === 'jordan@lgbtqmatrimony.local') {
-            dbUser.tier = 'premium';
-        }
+
         user.tier = dbUser.tier;
         user.role = dbUser.role;
         user.name = dbUser.name;
@@ -363,11 +359,7 @@ function renderPHP(viewName, req, context = {}) {
     if (currentUser) {
         const dbUser = db.users.find(u => u.id === currentUser.id);
         if (dbUser) {
-            if (dbUser.email === 'sam@lgbtqmatrimony.local') {
-                dbUser.tier = 'free';
-            } else if (dbUser.email === 'jordan@lgbtqmatrimony.local') {
-                dbUser.tier = 'premium';
-            }
+
             currentUser.tier = dbUser.tier;
             currentUser.role = dbUser.role;
             currentUser.name = dbUser.name;

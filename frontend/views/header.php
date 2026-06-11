@@ -3,10 +3,10 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="Proud Hearts is a premium, safe, and inclusive matrimony platform designed exclusively for the LGBTQ+ community. Express interests, chat in real-time, and find your soulmate.">
+    <meta name="description" content="PrideUnion is a premium, safe, and inclusive matrimony platform designed exclusively for the LGBTQ+ community. Express interests, chat in real-time, and find your soulmate.">
     <meta name="keywords" content="LGBTQ matrimony, queer matchmaking, gay marriage, lesbian matchmaking, non-binary partnership, inclusive matrimony">
     <meta name="robots" content="index, follow">
-    <title>Proud Hearts — Inclusive LGBTQ+ Matrimony</title>
+    <title>PrideUnion — Inclusive LGBTQ+ Matrimony</title>
     <!-- Tailwind CSS -->
     <script src="https://cdn.tailwindcss.com"></script>
     <!-- Fonts -->
@@ -50,9 +50,12 @@
     <nav class="glass-panel sticky top-0 z-50 px-6 py-4 shadow-sm border-b border-white/20">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <!-- Brand Logo -->
-            <a href="<?= $currentUser ? '/discovery' : '/' ?>" class="flex items-center gap-2 group">
-                <span class="text-2xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-600 tracking-tight transition group-hover:scale-105 duration-300">
-                    Proud Hearts 💖
+            <a href="<?= $currentUser ? '/discovery' : '/' ?>" class="flex items-center gap-1.5 group">
+                <span class="text-2xl font-black serif-font text-[#be185d] tracking-tight transition group-hover:scale-105 duration-300">
+                    PrideUnion
+                </span>
+                <span class="bg-[#fce7f3] text-[#db2777] text-xs font-black px-2.5 py-0.5 rounded-full shadow-sm">
+                    Matrimony
                 </span>
             </a>
 

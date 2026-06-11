@@ -214,7 +214,7 @@ if ($profile && !empty($profile['photos'])) {
             <!-- Profile Card -->
             <div class="sidebar-card p-6">
                 <div class="flex items-center gap-4">
-                    <img src="<?= htmlspecialchars($avatarUrl) ?>" alt="Avatar" 
+                    <img src="<?= htmlspecialchars($displayPhoto) ?>" alt="Avatar" 
                          class="w-14 h-14 rounded-full object-cover border-2 border-pink-100 shadow-sm">
                     <div class="min-w-0">
                         <h4 class="font-extrabold text-gray-900 text-base truncate"><?= htmlspecialchars($currentUser['name']) ?></h4>

@@ -17,7 +17,7 @@
         </h1>
         
         <p class="text-gray-600 text-base md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-            Proud Hearts is a premium matrimonial platform built to calculate real compatibility while fully respecting pronouns, orientation, and diverse gender identities.
+            PrideUnion is a premium matrimonial platform built to calculate real compatibility while fully respecting pronouns, orientation, and diverse gender identities.
         </p>
 
         <!-- Generated Hero Image Illustration -->
@@ -103,7 +103,7 @@
     <div class="text-center max-w-2xl mx-auto mb-10 space-y-2">
         <span class="bg-pink-100 text-pink-700 text-[10px] px-3.5 py-1.5 rounded-full font-bold uppercase tracking-wider">Success Stories</span>
         <h2 class="text-3xl font-extrabold text-gray-900 serif-font">Real Matches, True Love</h2>
-        <p class="text-gray-600 text-sm">Read the stories of LGBTQ+ couples who found compatibility and companionship on Proud Hearts.</p>
+        <p class="text-gray-600 text-sm">Read the stories of LGBTQ+ couples who found compatibility and companionship on PrideUnion.</p>
     </div>
 
     <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
@@ -113,7 +113,7 @@
             <div class="space-y-2">
                 <span class="text-xs font-bold text-pink-600">💍 Married in Paris</span>
                 <h4 class="font-extrabold text-gray-800 text-base">Elena &amp; Maya</h4>
-                <p class="text-xs text-gray-500 leading-relaxed">"We met through the compatibility matcher and instantly clicked over our shared passion for travel and art. Proud Hearts made us feel safe, represented, and supported."</p>
+                <p class="text-xs text-gray-500 leading-relaxed">"We met through the compatibility matcher and instantly clicked over our shared passion for travel and art. PrideUnion made us feel safe, represented, and supported."</p>
             </div>
         </div>
 
@@ -287,7 +287,7 @@
                 <span class="bg-green-100 text-green-700 text-[10px] px-3.5 py-1.5 rounded-full font-bold uppercase tracking-wider">Security First</span>
                 <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 serif-font">Our Safe Matrimony Protocols</h2>
                 <p class="text-gray-600 text-sm leading-relaxed">
-                    We designed Proud Hearts to protect your privacy first. Traditional matrimony sites expose your sensitive contact info immediately. Our custom gating protocols put you in complete control.
+                    We designed PrideUnion to protect your privacy first. Traditional matrimony sites expose your sensitive contact info immediately. Our custom gating protocols put you in complete control.
                 </p>
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div class="flex items-start gap-3">
