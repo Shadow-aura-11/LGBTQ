@@ -65,10 +65,59 @@ if (!$currentUser) {
                         </div>
                         <span class="bg-green-100 text-green-700 font-extrabold text-[9px] uppercase tracking-wider px-2.5 py-1.5 rounded-full shadow-inner">Active</span>
                     </div>
+            <!-- Blocked Profiles Control -->
+            <div class="space-y-3 pt-6 border-t border-gray-100">
+                <h3 class="font-extrabold text-gray-800 text-sm flex items-center gap-1.5">
+                    <span>🚫</span> Blocked Profiles
+                </h3>
+                
+                <div class="space-y-2">
+                    <?php if (empty($blockedProfiles)): ?>
+                        <p class="text-xs text-gray-400">You haven't blocked any profiles yet.</p>
+                    <?php else: ?>
+                        <?php foreach ($blockedProfiles as $bp): ?>
+                            <div class="flex items-center justify-between p-4 bg-white/40 border border-gray-200/40 rounded-2xl text-xs">
+                                <div class="flex items-center gap-3">
+                                    <img src="<?= htmlspecialchars($displayPhoto) ?>" class="w-10 h-10 rounded-full object-cover border border-white" alt="Profile pic">
+                                    <div>
+                                        <p class="font-bold text-gray-800"><?= htmlspecialchars($bp['name']) ?></p>
+                                        <p class="text-gray-400 font-medium"><?= htmlspecialchars($bp['city']) ?><?= $bp['country'] ? ', ' . htmlspecialchars($bp['country']) : '' ?></p>
+                                    </div>
+                                </div>
+                                <button onclick="unblockUser(<?= $bp['blocked_id'] ?>)" class="text-xs bg-red-50 hover:bg-red-100 text-red-600 px-3 py-1.5 rounded-xl border border-red-200 transition font-bold shadow-sm">Unblock</button>
+                            </div>
+                        <?php endforeach; ?>
+                    <?php endif; ?>
                 </div>
             </div>
         </div>
     </div>
 </div>
+
+<script>
+async function unblockUser(blockedId) {
+    if (!confirm('Are you sure you want to unblock this profile?')) return;
+    try {
+        const res = await fetch('/api/v1/moderation/unblock', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': 'Bearer ' + '<?= $token ?>'
+            },
+            body: JSON.stringify({ blocked_id: blockedId })
+        });
+        const data = await res.json();
+        if (data.success) {
+            alert(data.message || 'User unblocked successfully.');
+            location.reload();
+        } else {
+            alert(data.error || 'Failed to unblock user.');
+        }
+    } catch(e) {
+        console.error(e);
+        alert('Error communicating with server.');
+    }
+}
+</script>
 
 <?php include __DIR__ . '/footer.php'; ?>

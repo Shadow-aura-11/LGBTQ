@@ -1,5 +1,15 @@
 <?php
 include __DIR__ . '/header.php';
+?>
+<style>
+    /* Sexual Orientation color badges */
+    .orientation-tag-lesbian { background-color: #db2777 !important; color: white !important; }
+    .orientation-tag-gay { background-color: #1d4ed8 !important; color: white !important; }
+    .orientation-tag-pansexual { background-color: #d97706 !important; color: white !important; }
+    .orientation-tag-bisexual { background-color: #7c3aed !important; color: white !important; }
+    .orientation-tag-queer { background-color: #4f46e5 !important; color: white !important; }
+</style>
+<?php
 
 if (!$currentUser) {
     header('Location: /login');
@@ -143,57 +153,64 @@ if (empty($feed) && isset($context['feed'])) {
                     $displayPhoto = !empty($photos) ? $photos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80';
                     $comp = rand(82, 99); // Mock compatibility score
                 ?>
-                    <div class="glass-panel rounded-3xl overflow-hidden border border-white/60 flex flex-col h-full card-premium relative group">
-                        <!-- Compatibility Score Overlay (eharmony style) -->
-                        <div class="absolute top-3 right-3 z-10 bg-white/95 backdrop-blur px-3 py-1.5 rounded-full flex items-center gap-1 shadow-sm border border-pink-100">
-                            <span class="text-pink-600 font-extrabold text-xs"><?= $comp ?>%</span>
-                            <span class="text-[9px] text-gray-500 uppercase font-bold tracking-wider">match</span>
-                        </div>
-
-                        <!-- Image Container with visual scaling -->
-                        <div class="relative aspect-[3/4] bg-gray-100 overflow-hidden">
-                            <img src="<?= htmlspecialchars($displayPhoto) ?>" class="w-full h-full object-cover transition duration-500 group-hover:scale-105">
-                            
-                            <!-- Badges Overlay -->
-                            <div class="absolute bottom-3 left-3 flex flex-wrap gap-1">
-                                <span class="bg-black/60 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded-full font-bold">
-                                    <?= htmlspecialchars($item['pronouns'] ?? 'they/them') ?>
-                                </span>
-                                <span class="bg-pink-600/80 backdrop-blur-sm text-white text-[9px] px-2 py-0.5 rounded-full font-bold">
-                                    <?= htmlspecialchars($item['sexual_orientation'] ?? 'queer') ?>
-                                </span>
+                    <div class="discover-card bg-white rounded-3xl overflow-hidden border border-gray-150 shadow-md flex flex-col h-full relative group">
+                        <!-- Image Container -->
+                        <div class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
+                            <!-- Online badge overlay -->
+                            <div class="absolute top-4 left-4 z-10">
+                                <div class="bg-[#10b981] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">Online Now</div>
                             </div>
+
+                            <img src="<?= htmlspecialchars($displayPhoto) ?>" alt="<?= htmlspecialchars($item['name']) ?>" 
+                                 class="w-full h-full object-cover transition duration-500 hover:scale-105">
                         </div>
 
                         <!-- Card Body -->
-                        <div class="p-5 flex-grow flex flex-col justify-between space-y-4">
+                        <div class="p-6 flex flex-col flex-grow justify-between space-y-4">
                             <div>
-                                <div class="flex justify-between items-center">
-                                    <h4 class="font-bold text-gray-800 text-lg line-clamp-1 group-hover:text-pink-600 transition">
-                                        <?= htmlspecialchars($item['name']) ?>
-                                    </h4>
-                                    <span class="text-xs font-extrabold text-gray-500 bg-gray-100/80 px-2 py-0.5 rounded-lg border border-gray-200/50">
-                                        <?= date_diff(date_create($item['date_of_birth']), date_create('today'))->y ?> yrs
+                                <!-- Name & Age -->
+                                <h4 class="font-extrabold text-gray-900 text-lg">
+                                    <?= htmlspecialchars($item['name']) ?>, <?= date_diff(date_create($item['date_of_birth']), date_create('today'))->y ?>
+                                </h4>
+                                <!-- Location -->
+                                <p class="text-xs text-gray-500 mt-1">
+                                    <?= htmlspecialchars($item['city']) ?>, <?= htmlspecialchars($item['country']) ?>
+                                </p>
+
+                                <!-- Tags -->
+                                <div class="flex flex-wrap gap-2 mt-3">
+                                    <span class="orientation-tag-<?= htmlspecialchars($item['sexual_orientation']) ?> text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">
+                                        <?= htmlspecialchars($item['sexual_orientation']) ?>
+                                    </span>
+                                    <span class="bg-[#fdf2f8] text-[#86198f] text-[10px] font-extrabold px-2.5 py-1 rounded-md">
+                                        <?= htmlspecialchars($item['gender_identity'] === 'other' ? ($item['gender_custom'] ?: 'Other') : $item['gender_identity']) ?>
                                     </span>
                                 </div>
-                                <p class="text-[10px] text-pink-600 font-bold uppercase mt-1 tracking-wider">
-                                    <?= htmlspecialchars($item['gender_identity'] === 'other' ? ($item['gender_custom'] ?: 'Other') : $item['gender_identity']) ?>
-                                </p>
-                                <p class="text-xs text-gray-500 mt-1.5 flex items-center gap-1 font-medium">
-                                    <span>📍</span> <?= htmlspecialchars($item['city'] ?: 'San Francisco') ?>, <?= htmlspecialchars($item['country'] ?: 'USA') ?>
-                                </p>
-                                <p class="text-sm text-gray-600 mt-3 line-clamp-2 italic leading-relaxed">
-                                    "<?= htmlspecialchars($item['headline'] ?: 'Seeking a genuine, compatible partner.') ?>"
+
+                                <!-- Bio snippet -->
+                                <p class="text-xs text-gray-500 mt-4 italic leading-relaxed line-clamp-2">
+                                    "<?= htmlspecialchars($item['headline'] ?? 'Seeking a genuine connection.') ?>"
                                 </p>
                             </div>
 
-                            <div class="pt-3 border-t border-gray-100 flex gap-2">
-                                <a href="/profile/<?= $item['user_id'] ?>" class="flex-grow block text-center bg-pink-50 hover:bg-pink-100 text-pink-700 py-3 rounded-xl text-xs font-bold transition shadow-sm border border-pink-200/40">
-                                    View Profile &rarr;
+                            <!-- Action Buttons -->
+                            <div class="flex gap-3 pt-2">
+                                <a href="/profile/<?= $item['user_id'] ?>" 
+                                   class="flex-1 text-center bg-white border border-[#ec4899] text-[#ec4899] py-2.5 rounded-xl text-xs font-bold transition hover:bg-[#fdf2f8] shadow-sm">
+                                    View Details
                                 </a>
-                                <button onclick="quickLike(<?= $item['user_id'] ?>, this)" class="px-4 bg-pink-500 hover:bg-pink-600 text-white rounded-xl text-xs font-bold transition shadow-sm border border-pink-600/20" title="Like Profile">
-                                    ❤️
-                                </button>
+                                
+                                <?php if (($currentUser['tier'] ?? 'free') === 'premium'): ?>
+                                    <button onclick="quickLike(<?= $item['user_id'] ?>, this)" 
+                                            class="flex-1 bg-[#ec4899] hover:bg-[#db2777] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+                                        Connect
+                                    </button>
+                                <?php else: ?>
+                                    <a href="/subscription" 
+                                       class="flex-1 text-center bg-[#ec4899] hover:bg-[#db2777] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+                                        Connect
+                                    </a>
+                                <?php endif; ?>
                             </div>
                         </div>
                     </div>

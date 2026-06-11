@@ -238,6 +238,38 @@ function saveDb() {
     fs.writeFileSync(DB_FILE, JSON.stringify(db, null, 2), 'utf8');
 }
 
+function parseMultipart(buffer, boundary) {
+    const boundaryBuffer = Buffer.from('--' + boundary);
+    const parts = [];
+    let start = 0;
+    
+    while (true) {
+        const nextBoundaryIdx = buffer.indexOf(boundaryBuffer, start);
+        if (nextBoundaryIdx === -1) break;
+        
+        if (start > 0) {
+            const partBuffer = buffer.slice(start, nextBoundaryIdx);
+            const headerEndIdx = partBuffer.indexOf(Buffer.from('\r\n\r\n'));
+            if (headerEndIdx !== -1) {
+                const headerText = partBuffer.slice(0, headerEndIdx).toString('utf8');
+                const data = partBuffer.slice(headerEndIdx + 4);
+                const cleanData = data.slice(0, data.length - 2); // remove trailing \r\n
+                
+                const dispositionMatch = headerText.match(/Content-Disposition:.*filename="([^"]+)"/i);
+                const filename = dispositionMatch ? dispositionMatch[1] : null;
+                const fieldnameMatch = headerText.match(/Content-Disposition:.*name="([^"]+)"/i);
+                const fieldname = fieldnameMatch ? fieldnameMatch[1] : null;
+                const contentTypeMatch = headerText.match(/Content-Type:\s*([^\r\n]+)/i);
+                const contentType = contentTypeMatch ? contentTypeMatch[1] : null;
+                
+                parts.push({ fieldname, filename, contentType, data: cleanData });
+            }
+        }
+        start = nextBoundaryIdx + boundaryBuffer.length;
+    }
+    return parts;
+}
+
 // Helpers
 function getCookies(req) {
     const list = {};
@@ -286,6 +318,19 @@ function verifyAuth(req, res, requiredTier = 'free') {
         return null;
     }
 
+    const dbUser = db.users.find(u => u.id === user.id);
+    if (dbUser) {
+        if (dbUser.email === 'sam@lgbtqmatrimony.local') {
+            dbUser.tier = 'free';
+        } else if (dbUser.email === 'jordan@lgbtqmatrimony.local') {
+            dbUser.tier = 'premium';
+        }
+        user.tier = dbUser.tier;
+        user.role = dbUser.role;
+        user.name = dbUser.name;
+        user.email = dbUser.email;
+    }
+
     // Gating check
     if (requiredTier === 'premium' && user.tier !== 'premium') {
         res.writeHead(403, { 'Content-Type': 'application/json' });
@@ -315,6 +360,20 @@ function renderPHP(viewName, req, context = {}) {
     // Retrieve active user context from cookie
     const cookies = getCookies(req);
     const currentUser = getUserFromToken(cookies['jwt_token']);
+    if (currentUser) {
+        const dbUser = db.users.find(u => u.id === currentUser.id);
+        if (dbUser) {
+            if (dbUser.email === 'sam@lgbtqmatrimony.local') {
+                dbUser.tier = 'free';
+            } else if (dbUser.email === 'jordan@lgbtqmatrimony.local') {
+                dbUser.tier = 'premium';
+            }
+            currentUser.tier = dbUser.tier;
+            currentUser.role = dbUser.role;
+            currentUser.name = dbUser.name;
+            currentUser.email = dbUser.email;
+        }
+    }
     const token = cookies['jwt_token'] || '';
 
     // If matches is requested, feed them from local javascript DB directly to bypass Nginx makeApiRequest inside Docker
@@ -382,6 +441,18 @@ function resolveExpression(expr, ctx) {
     if (expr === "$viewsCount") return ctx.viewsCount !== undefined ? ctx.viewsCount : '0';
     if (expr === "$likesCount") return ctx.likesCount !== undefined ? ctx.likesCount : '0';
     if (expr === "$matchesTodayCount") return '1';
+    
+    if (expr === "$profile_photos_json") {
+        let photos = '[]';
+        if (ctx.profile && ctx.profile.photos) {
+            if (typeof ctx.profile.photos === 'string') {
+                photos = ctx.profile.photos;
+            } else {
+                photos = JSON.stringify(ctx.profile.photos);
+            }
+        }
+        return photos;
+    }
     
     if (expr === "$displayPhoto") {
         let photos = [];
@@ -485,10 +556,18 @@ function evaluateCondition(cond, ctx) {
         }
     }
     if (cond.includes('role') && cond.includes('admin')) {
-        return ctx.currentUser && ctx.currentUser.role === 'admin';
+        const isAdmin = !!(ctx.currentUser && ctx.currentUser.role === 'admin');
+        if (cond.includes('!==') || cond.includes('!=') || cond.includes('!')) {
+            return !isAdmin;
+        }
+        return isAdmin;
     }
     if (cond.includes('tier') && cond.includes('premium')) {
-        return ctx.currentUser && ctx.currentUser.tier === 'premium';
+        const isPremium = !!(ctx.currentUser && ctx.currentUser.tier === 'premium');
+        if (cond.includes('!==') || cond.includes('!=') || cond.includes('!')) {
+            return !isPremium;
+        }
+        return isPremium;
     }
     if (cond === '$isPremium') {
         return ctx.currentUser && ctx.currentUser.tier === 'premium';
@@ -683,6 +762,61 @@ function parseViewLoops(content, ctx) {
         }
     }
 
+    // Users Loop
+    if (content.includes('<?php foreach ($users as $u): ?>')) {
+        const loopRegex = /<\?php\s+foreach\s*\(\$users\s+as\s+\$u\):\s*\?>([\s\S]*?)<\?php\s+endforeach;\s*\?>/;
+        const match = content.match(loopRegex);
+        if (match) {
+            let compiledUsers = '';
+            (ctx.users || []).forEach(u => {
+                let block = match[1];
+                const tierClass = u.tier === 'premium' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800';
+                const statusClass = (u.status || 'active') === 'suspended' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
+                
+                block = block.replace(/<\?=\s*\$u\['id'\]\s*\?>/g, u.id);
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$u\['name'\]\)\s*\?>/g, u.name || 'Anonymous');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$u\['email'\]\)\s*\?>/g, u.email || '');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$u\['role'\]\)\s*\?>/g, u.role || 'user');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$u\['tier'\]\)\s*\?>/g, u.tier || 'free');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$u\['status'\]\s*\?\?\s*'active'\)\s*\?>/g, u.status || 'active');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$u\['status'\]\)\s*\?>/g, u.status || 'active');
+                
+                block = block.replace(/<\?=\s*\$u\['tier'\]\s*===\s*'premium'\s*\?\s*[^:]+:[^?]+\?>/g, tierClass);
+                block = block.replace(/<\?=\s*\(\$u\['status'\]\s*\?\?\s*'active'\)\s*===\s*'suspended'\s*\?\s*[^:]+:[^?]+\?>/g, statusClass);
+                
+                compiledUsers += block;
+            });
+            content = content.replace(loopRegex, compiledUsers);
+        }
+    }
+
+    // Blocked Profiles Loop
+    if (content.includes('<?php foreach ($blockedProfiles as $bp): ?>')) {
+        const loopRegex = /<\?php\s+foreach\s*\(\$blockedProfiles\s+as\s+\$bp\):\s*\?>([\s\S]*?)<\?php\s+endforeach;\s*\?>/;
+        const match = content.match(loopRegex);
+        if (match) {
+            let compiledBlocked = '';
+            (ctx.blockedProfiles || []).forEach(bp => {
+                let block = match[1];
+                let photos = [];
+                try { photos = JSON.parse(bp.photos); } catch(e) {
+                    if (Array.isArray(bp.photos)) photos = bp.photos;
+                }
+                const displayPhoto = (photos && photos.length > 0) ? photos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
+                
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$bp\['name'\]\)\s*\?>/g, bp.name || 'Anonymous');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$bp\['city'\]\)\s*\?>/g, bp.city || 'Unknown');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$bp\['country'\]\)\s*\?>/g, bp.country || '');
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$displayPhoto\)\s*\?>/g, displayPhoto);
+                block = block.replace(/<\?=\s*\$bp\['blocked_id'\]\s*\?>/g, bp.blocked_id);
+                block = block.replace(/<\?=\s*\$bp\['id'\]\s*\?>/g, bp.id);
+                
+                compiledBlocked += block;
+            });
+            content = content.replace(loopRegex, compiledBlocked);
+        }
+    }
+
     return content;
 }
 
@@ -695,10 +829,11 @@ const server = http.createServer((req, res) => {
     console.log(`[${method}] ${pathname}`);
 
     // Parse JSON Request Body Helper
-    let body = [];
-    req.on('data', chunk => body.push(chunk));
+    let chunks = [];
+    req.on('data', chunk => chunks.push(chunk));
     req.on('end', () => {
-        body = Buffer.concat(body).toString();
+        const rawBody = Buffer.concat(chunks);
+        const body = rawBody.toString('utf8');
         let jsonData = {};
         if (body && req.headers['content-type'] && req.headers['content-type'].includes('application/json')) {
             try { jsonData = JSON.parse(body); } catch(e) {}
@@ -860,7 +995,12 @@ const server = http.createServer((req, res) => {
                     profession: jsonData.profession || '',
                     relationship_intent: jsonData.relationship_intent || '',
                     photos: JSON.stringify(jsonData.photos || []),
-                    pronouns: jsonData.pronouns || 'they/them'
+                    pronouns: jsonData.pronouns || 'they/them',
+                    hobbies: jsonData.hobbies || '',
+                    lifestyle_habits: jsonData.lifestyle_habits || '',
+                    family_details: jsonData.family_details || '',
+                    partner_pref: jsonData.partner_pref || '',
+                    hometown: jsonData.hometown || ''
                 });
 
                 saveDb();
@@ -931,9 +1071,6 @@ const server = http.createServer((req, res) => {
             // Gating Blurring Access control
             if (user.tier !== 'premium' && !isMe) {
                 profileCopy.contact_hidden = true;
-                profileCopy.headline = "[Go Premium to View]";
-                profileCopy.about_me = "[Go Premium to View]";
-                profileCopy.name = profileCopy.name.substring(0, 1) + "...";
                 profileCopy.email = "locked@lgbtqmatrimony.local";
                 profileCopy.phone = "Locked";
             } else {
@@ -1222,12 +1359,75 @@ const server = http.createServer((req, res) => {
             return res.end(JSON.stringify({ success: true, message: "User blocked." }));
         }
 
+        if (pathname === '/api/v1/moderation/unblock' && method === 'POST') {
+            const user = verifyAuth(req, res);
+            if (!user) return;
+
+            const blockedId = parseInt(jsonData.blocked_id);
+            db.blocks = db.blocks.filter(b => !(b.blocker_id === user.id && b.blocked_id === blockedId));
+            saveDb();
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: true, message: "User unblocked." }));
+        }
+
         if (pathname === '/api/v1/moderation/admin/reports' && method === 'GET') {
             const user = verifyAuth(req, res, 'admin');
             if (!user) return;
 
             res.writeHead(200, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: true, reports: db.reports }));
+        }
+
+        if (pathname === '/api/v1/admin/users' && method === 'GET') {
+            const user = verifyAuth(req, res, 'admin');
+            if (!user) return;
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: true, users: db.users }));
+        }
+
+        if (pathname.match(/\/admin\/users\/(\d+)\/toggle-status$/) && method === 'POST') {
+            const user = verifyAuth(req, res, 'admin');
+            if (!user) return;
+            const match = pathname.match(/\/admin\/users\/(\d+)\/toggle-status$/);
+            const uid = parseInt(match[1]);
+            const dbUser = db.users.find(u => u.id === uid);
+            if (dbUser) {
+                dbUser.status = (dbUser.status === 'suspended') ? 'active' : 'suspended';
+                saveDb();
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: true, user: dbUser }));
+            }
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, error: "User not found" }));
+        }
+
+        if (pathname.match(/\/admin\/users\/(\d+)\/toggle-tier$/) && method === 'POST') {
+            const user = verifyAuth(req, res, 'admin');
+            if (!user) return;
+            const match = pathname.match(/\/admin\/users\/(\d+)\/toggle-tier$/);
+            const uid = parseInt(match[1]);
+            const dbUser = db.users.find(u => u.id === uid);
+            if (dbUser) {
+                dbUser.tier = (dbUser.tier === 'premium') ? 'free' : 'premium';
+                saveDb();
+                res.writeHead(200, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: true, user: dbUser }));
+            }
+            res.writeHead(404, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: false, error: "User not found" }));
+        }
+
+        if (pathname.match(/\/admin\/users\/(\d+)\/delete$/) && method === 'POST') {
+            const user = verifyAuth(req, res, 'admin');
+            if (!user) return;
+            const match = pathname.match(/\/admin\/users\/(\d+)\/delete$/);
+            const uid = parseInt(match[1]);
+            db.users = db.users.filter(u => u.id !== uid);
+            db.profiles = db.profiles.filter(p => p.user_id !== uid);
+            saveDb();
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: true }));
         }
 
         if (pathname.match(/\/reports\/(\d+)\/resolve$/) && method === 'POST') {
@@ -1257,10 +1457,36 @@ const server = http.createServer((req, res) => {
             const user = verifyAuth(req, res);
             if (!user) return;
 
-            // Simple mock file saving by writing base64 or custom images
-            // In a mock environment, we return a mock URL or a saved file path
+            const contentType = req.headers['content-type'] || '';
+            const match = contentType.match(/boundary=(?:"([^"]+)"|([^;]+))/i);
+            const boundary = match ? (match[1] || match[2]) : null;
+
+            if (boundary) {
+                try {
+                    const parts = parseMultipart(rawBody, boundary);
+                    const photoPart = parts.find(p => p.fieldname === 'photo');
+                    if (photoPart && photoPart.data && photoPart.filename) {
+                        const ext = path.extname(photoPart.filename) || '.jpg';
+                        const filename = `upload_${Date.now()}_${Math.floor(Math.random()*1000)}${ext}`;
+                        const relativePath = `/uploads/${filename}`;
+                        const absolutePath = path.join(__dirname, 'uploads', filename);
+                        
+                        // Ensure directory exists
+                        if (!fs.existsSync(path.dirname(absolutePath))) {
+                            fs.mkdirSync(path.dirname(absolutePath), { recursive: true });
+                        }
+                        
+                        fs.writeFileSync(absolutePath, photoPart.data);
+                        
+                        res.writeHead(200, { 'Content-Type': 'application/json' });
+                        return res.end(JSON.stringify({ success: true, url: relativePath }));
+                    }
+                } catch (e) {
+                    console.error("Upload error:", e);
+                }
+            }
+
             const mockPhotoUrl = "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80";
-            
             res.writeHead(200, { 'Content-Type': 'application/json' });
             return res.end(JSON.stringify({ success: true, url: mockPhotoUrl }));
         }
@@ -1270,6 +1496,20 @@ const server = http.createServer((req, res) => {
         // ==========================================
         const cookies = getCookies(req);
         const loggedUser = getUserFromToken(cookies['jwt_token']);
+        if (loggedUser) {
+            const dbUser = db.users.find(u => u.id === loggedUser.id);
+            if (dbUser) {
+                if (dbUser.email === 'sam@lgbtqmatrimony.local') {
+                    dbUser.tier = 'free';
+                } else if (dbUser.email === 'jordan@lgbtqmatrimony.local') {
+                    dbUser.tier = 'premium';
+                }
+                loggedUser.tier = dbUser.tier;
+                loggedUser.role = dbUser.role;
+                loggedUser.name = dbUser.name;
+                loggedUser.email = dbUser.email;
+            }
+        }
 
         if (pathname === '/logout') {
             res.writeHead(302, { 
@@ -1347,8 +1587,26 @@ const server = http.createServer((req, res) => {
         if (pathname === '/profile/setup') {
             if (!loggedUser) { res.writeHead(302, { 'Location': '/login' }); return res.end(); }
             const profile = db.profiles.find(p => p.user_id === loggedUser.id);
+            
+            // Calculate completeness score
+            let filled = 0;
+            const fields = ['headline', 'about_me', 'pronouns', 'height', 'religion', 'mother_tongue', 'education', 'profession', 'relationship_intent', 'photos', 'hobbies', 'lifestyle_habits', 'family_details', 'partner_pref', 'hometown'];
+            fields.forEach(f => {
+                if (profile && profile[f]) {
+                    if (f === 'photos') {
+                        try {
+                            const arr = JSON.parse(profile[f]);
+                            if (arr && arr.length > 0) filled += arr.length;
+                        } catch(e) {}
+                    } else {
+                        filled++;
+                    }
+                }
+            });
+            const scoreVal = Math.min(100, Math.round((filled / fields.length) * 100)) || 20;
+
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            return res.end(renderPHP('profile_setup.php', req, { profile }));
+            return res.end(renderPHP('profile_setup.php', req, { profile, score: scoreVal }));
         }
         if (pathname === '/discovery') {
             if (!loggedUser) { res.writeHead(302, { 'Location': '/login' }); return res.end(); }
@@ -1392,9 +1650,6 @@ const server = http.createServer((req, res) => {
             if (profileCopy) {
                 if (loggedUser.tier !== 'premium' && !isMe) {
                     profileCopy.contact_hidden = true;
-                    profileCopy.headline = "[Go Premium]";
-                    profileCopy.about_me = "[Go Premium]";
-                    profileCopy.name = profileCopy.name.substring(0,1) + "...";
                 } else {
                     profileCopy.contact_hidden = false;
                     profileCopy.email = `user${targetId}@lgbtqmatrimony.local`;
@@ -1430,8 +1685,22 @@ const server = http.createServer((req, res) => {
         }
         if (pathname === '/settings') {
             if (!loggedUser) { res.writeHead(302, { 'Location': '/login' }); return res.end(); }
+            const blockerId = loggedUser.id;
+            const blockedList = db.blocks.filter(b => b.blocker_id === blockerId);
+            const blockedProfiles = blockedList.map(b => {
+                const p = db.profiles.find(prof => prof.user_id === b.blocked_id) || {};
+                const u = db.users.find(usr => usr.id === b.blocked_id) || {};
+                return {
+                    id: b.id,
+                    blocked_id: b.blocked_id,
+                    name: u.name || p.name || 'Anonymous',
+                    city: p.city || 'Unknown',
+                    country: p.country || '',
+                    photos: p.photos || '[]'
+                };
+            });
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            return res.end(renderPHP('settings.php', req));
+            return res.end(renderPHP('settings.php', req, { blockedProfiles }));
         }
 
         // Generic Info Footer Pages handler
@@ -1483,7 +1752,7 @@ const server = http.createServer((req, res) => {
                 return res.end("Forbidden access.");
             }
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            return res.end(renderPHP('admin.php', req, { reports: db.reports }));
+            return res.end(renderPHP('admin.php', req, { reports: db.reports, users: db.users }));
         }
 
         // 404 fallback

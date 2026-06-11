@@ -97,6 +97,36 @@ if (!$currentUser) {
                                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm">
                     </div>
 
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Hometown</label>
+                        <input type="text" id="hometown" value="<?= htmlspecialchars($profile['hometown'] ?? '') ?>" placeholder="e.g. San Jose, CA"
+                               class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Hobbies &amp; Interests</label>
+                        <input type="text" id="hobbies" value="<?= htmlspecialchars($profile['hobbies'] ?? '') ?>" placeholder="e.g. Hiking, painting, photography"
+                               class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm">
+                    </div>
+
+                    <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Lifestyle Habits (Diet, Drinking, Smoking)</label>
+                        <input type="text" id="lifestyle_habits" value="<?= htmlspecialchars($profile['lifestyle_habits'] ?? '') ?>" placeholder="e.g. Vegetarian, occasional drinker, non-smoker"
+                               class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm">
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Family Details &amp; Values</label>
+                        <textarea id="family_details" rows="2" placeholder="Tell us about your family background or core values..."
+                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm"><?= htmlspecialchars($profile['family_details'] ?? '') ?></textarea>
+                    </div>
+
+                    <div class="col-span-2">
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Preferred Partner Qualities</label>
+                        <textarea id="partner_pref" rows="2" placeholder="What qualities do you look for in a compatible partner..."
+                                  class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm"><?= htmlspecialchars($profile['partner_pref'] ?? '') ?></textarea>
+                    </div>
+
                     <div class="col-span-2">
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Relationship Intent</label>
                         <select id="relationship_intent"
@@ -230,7 +260,12 @@ if (!$currentUser) {
             education: document.getElementById('education').value,
             profession: document.getElementById('profession').value,
             relationship_intent: document.getElementById('relationship_intent').value,
-            photos: activePhotos
+            photos: activePhotos,
+            hometown: document.getElementById('hometown').value,
+            hobbies: document.getElementById('hobbies').value,
+            lifestyle_habits: document.getElementById('lifestyle_habits').value,
+            family_details: document.getElementById('family_details').value,
+            partner_pref: document.getElementById('partner_pref').value
         };
 
         try {

@@ -59,6 +59,9 @@
             <!-- Navigation Links -->
             <div class="flex items-center gap-6">
                 <?php if ($currentUser): ?>
+                    <a href="/dashboard" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
+                        🏠 Dashboard
+                    </a>
                     <a href="/discovery" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
                         🧭 Discover
                     </a>

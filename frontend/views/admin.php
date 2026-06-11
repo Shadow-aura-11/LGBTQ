@@ -1,18 +1,6 @@
 <?php
 include __DIR__ . '/header.php';
 
-// Access Control - Admin role only
-if (!$currentUser || ($currentUser['role'] ?? '') !== 'admin') {
-    echo "<div class='glass-panel p-12 rounded-3xl text-center border border-white/60 my-12 max-w-xl mx-auto shadow-xl'>";
-    echo "<span class='text-4xl'>⚠️</span>";
-    echo "<h3 class='text-2xl font-black text-gray-900 mt-4'>Access Denied</h3>";
-    echo "<p class='text-gray-600 text-sm mt-1'>Administrative privileges are required to view this panel.</p>";
-    echo "<a href='/discovery' class='text-pink-600 hover:underline mt-4 inline-block'>&larr; Back to matches</a>";
-    echo "</div>";
-    include __DIR__ . '/footer.php';
-    exit;
-}
-
 // Fetch Reports from moderation-service API
 $reportResponse = makeApiRequest('GET', '/api/v1/moderation/admin/reports', [], $token);
 $reports = [];
@@ -117,6 +105,63 @@ foreach ($reports as $r) {
             </div>
         <?php endif; ?>
     </div>
+
+    <!-- User Management Section -->
+    <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 mt-8 bg-white">
+        <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+            <div>
+                <h2 class="text-2xl font-extrabold text-gray-900 serif-font">👥 User Accounts Management</h2>
+                <p class="text-gray-500 text-xs mt-0.5">Toggle user account status (active/suspended), toggle subscription tiers, or delete accounts.</p>
+            </div>
+        </div>
+
+        <div class="overflow-x-auto rounded-2xl border border-gray-200/50">
+            <table class="w-full text-left border-collapse bg-white/30">
+                <thead>
+                    <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                        <th class="py-3.5 px-4">User ID</th>
+                        <th class="py-3.5 px-4">Name</th>
+                        <th class="py-3.5 px-4">Email</th>
+                        <th class="py-3.5 px-4">Role</th>
+                        <th class="py-3.5 px-4">Subscription Tier</th>
+                        <th class="py-3.5 px-4">Account Status</th>
+                        <th class="py-3.5 px-4 text-right">Actions</th>
+                    </tr>
+                </thead>
+                <tbody class="divide-y divide-gray-100 text-sm">
+                    <?php foreach ($users as $u): ?>
+                        <tr id="user-row-<?= $u['id'] ?>" class="hover:bg-white/40 transition">
+                            <td class="py-4 px-4 font-mono font-bold text-gray-800">#<?= $u['id'] ?></td>
+                            <td class="py-4 px-4 font-semibold text-gray-800"><?= htmlspecialchars($u['name']) ?></td>
+                            <td class="py-4 px-4 text-gray-600"><?= htmlspecialchars($u['email']) ?></td>
+                            <td class="py-4 px-4 uppercase text-xs font-bold text-gray-500"><?= htmlspecialchars($u['role']) ?></td>
+                            <td class="py-4 px-4">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <?= $u['tier'] === 'premium' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' ?>">
+                                    <?= htmlspecialchars($u['tier']) ?>
+                                </span>
+                            </td>
+                            <td class="py-4 px-4">
+                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <?= ($u['status'] ?? 'active') === 'suspended' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' ?>">
+                                    <?= htmlspecialchars($u['status'] ?? 'active') ?>
+                                </span>
+                            </td>
+                            <td class="py-4 px-4 text-right space-x-1 whitespace-nowrap">
+                                <button onclick="toggleUserTier(<?= $u['id'] ?>)" class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
+                                    Toggle Tier
+                                </button>
+                                <button onclick="toggleUserStatus(<?= $u['id'] ?>)" class="bg-gray-800 hover:bg-black text-white text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
+                                    Toggle Status
+                                </button>
+                                <button onclick="deleteUser(<?= $u['id'] ?>)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
+                                    Delete
+                                </button>
+                            </td>
+                        </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+        </div>
+    </div>
 </div>
 
 <script>
@@ -154,6 +199,68 @@ foreach ($reports as $r) {
             statusBox.className = "bg-red-100 border border-red-200 text-red-700 px-4 py-2.5 rounded-xl text-sm mb-6";
             statusBox.innerText = "Connection error.";
             statusBox.classList.remove('hidden');
+        }
+    }
+
+    async function toggleUserTier(id) {
+        try {
+            const res = await fetch(`/admin/users/${id}/toggle-tier`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + '<?= $token ?>'
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error || "Failed to toggle tier");
+            }
+        } catch (err) {
+            alert("Connection error.");
+        }
+    }
+
+    async function toggleUserStatus(id) {
+        try {
+            const res = await fetch(`/admin/users/${id}/toggle-status`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + '<?= $token ?>'
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                location.reload();
+            } else {
+                alert(data.error || "Failed to toggle status");
+            }
+        } catch (err) {
+            alert("Connection error.");
+        }
+    }
+
+    async function deleteUser(id) {
+        if (!confirm("Are you sure you want to delete this user? This will also remove their profile.")) return;
+        try {
+            const res = await fetch(`/admin/users/${id}/delete`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + '<?= $token ?>'
+                }
+            });
+            const data = await res.json();
+            if (data.success) {
+                const row = document.getElementById(`user-row-${id}`);
+                if (row) row.remove();
+            } else {
+                alert(data.error || "Failed to delete user");
+            }
+        } catch (err) {
+            alert("Connection error.");
         }
     }
 </script>

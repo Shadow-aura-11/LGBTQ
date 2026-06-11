@@ -49,6 +49,13 @@ if ($profile && !empty($profile['photos'])) {
 ?>
 
 <style>
+    /* Sexual Orientation color badges */
+    .orientation-tag-lesbian { background-color: #db2777 !important; color: white !important; }
+    .orientation-tag-gay { background-color: #1d4ed8 !important; color: white !important; }
+    .orientation-tag-pansexual { background-color: #d97706 !important; color: white !important; }
+    .orientation-tag-bisexual { background-color: #7c3aed !important; color: white !important; }
+    .orientation-tag-queer { background-color: #4f46e5 !important; color: white !important; }
+
     /* Styling to match the premium, soft aesthetic in the mockup */
     body {
         background-color: #fdf6f8 !important;
@@ -261,6 +268,7 @@ if ($profile && !empty($profile['photos'])) {
         <!-- ========= MAIN CONTENT ========= -->
         <div class="flex-1 space-y-6">
             
+            <?php if (($currentUser['tier'] ?? 'free') !== 'premium'): ?>
             <!-- Premium Upgrade Banner -->
             <div class="premium-banner flex flex-col md:flex-row items-start md:items-center justify-between gap-6">
                 <div class="space-y-1.5 max-w-xl">
@@ -276,6 +284,7 @@ if ($profile && !empty($profile['photos'])) {
                     Get Premium — ₹499/mo
                 </a>
             </div>
+            <?php endif; ?>
 
             <!-- Stats Grid -->
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
@@ -316,12 +325,13 @@ if ($profile && !empty($profile['photos'])) {
                             $scoreVal = rand(84, 98);
                             $isOnline = rand(0, 1);
                         ?>
-                            <a href="/profile/<?= $item['user_id'] ?>" class="discover-card block">
-                                <div class="relative aspect-[4/5] bg-gray-55">
+                            <div class="discover-card bg-white rounded-3xl overflow-hidden border border-gray-150 shadow-md flex flex-col h-full relative group">
+                                <!-- Image Container -->
+                                <div class="relative aspect-[4/5] bg-gray-50 overflow-hidden">
                                     <!-- Online badge overlay -->
                                     <?php if ($isOnline): ?>
-                                    <div class="absolute top-3 left-3 z-10">
-                                        <div class="online-pill">Online Now</div>
+                                    <div class="absolute top-4 left-4 z-10">
+                                        <div class="bg-[#10b981] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">Online Now</div>
                                     </div>
                                     <?php endif; ?>
 
@@ -329,19 +339,55 @@ if ($profile && !empty($profile['photos'])) {
                                          class="w-full h-full object-cover transition duration-500 hover:scale-105">
                                 </div>
 
-                                <div class="p-5 border-t border-gray-50">
-                                    <div class="flex justify-between items-start gap-2">
-                                        <div class="min-w-0">
-                                            <h4 class="font-extrabold text-gray-800 text-base truncate"><?= htmlspecialchars($item['name']) ?></h4>
-                                            <p class="text-[10px] text-pink-600 font-bold uppercase mt-0.5"><?= htmlspecialchars($item['sexual_orientation']) ?> • <?= htmlspecialchars($item['pronouns']) ?></p>
-                                            <p class="text-xs text-gray-400 mt-1 font-medium">📍 <?= htmlspecialchars($item['city']) ?>, <?= htmlspecialchars($item['country']) ?></p>
+                                <!-- Card Body -->
+                                <div class="p-6 flex flex-col flex-grow justify-between space-y-4">
+                                    <div>
+                                        <!-- Name & Age -->
+                                        <h4 class="font-extrabold text-gray-900 text-lg">
+                                            <?= htmlspecialchars($item['name']) ?>, <?= date_diff(date_create($item['date_of_birth']), date_create('today'))->y ?>
+                                        </h4>
+                                        <!-- Location -->
+                                        <p class="text-xs text-gray-500 mt-1">
+                                            <?= htmlspecialchars($item['city']) ?>, <?= htmlspecialchars($item['country']) ?>
+                                        </p>
+
+                                        <!-- Tags -->
+                                        <div class="flex flex-wrap gap-2 mt-3">
+                                            <span class="orientation-tag-<?= htmlspecialchars($item['sexual_orientation']) ?> text-[10px] font-extrabold px-2.5 py-1 rounded-md uppercase tracking-wider">
+                                                <?= htmlspecialchars($item['sexual_orientation']) ?>
+                                            </span>
+                                            <span class="bg-[#fdf2f8] text-[#86198f] text-[10px] font-extrabold px-2.5 py-1 rounded-md">
+                                                <?= htmlspecialchars($item['gender_identity'] === 'other' ? ($item['gender_custom'] ?: 'Other') : $item['gender_identity']) ?>
+                                            </span>
                                         </div>
-                                        <span class="bg-pink-50 text-pink-600 text-xs font-extrabold px-2.5 py-1 rounded-full border border-pink-100 shrink-0">
-                                            <?= $scoreVal ?>% Match
-                                        </span>
+
+                                        <!-- Bio snippet -->
+                                        <p class="text-xs text-gray-500 mt-4 italic leading-relaxed line-clamp-2">
+                                            "<?= htmlspecialchars($item['headline'] ?? 'Seeking a genuine connection.') ?>"
+                                        </p>
+                                    </div>
+
+                                    <!-- Action Buttons -->
+                                    <div class="flex gap-3 pt-2">
+                                        <a href="/profile/<?= $item['user_id'] ?>" 
+                                           class="flex-1 text-center bg-white border border-[#ec4899] text-[#ec4899] py-2.5 rounded-xl text-xs font-bold transition hover:bg-[#fdf2f8] shadow-sm">
+                                            View Details
+                                        </a>
+                                        
+                                        <?php if (($currentUser['tier'] ?? 'free') === 'premium'): ?>
+                                            <button onclick="quickLike(<?= $item['user_id'] ?>, this)" 
+                                                    class="flex-1 bg-[#ec4899] hover:bg-[#db2777] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+                                                Connect
+                                            </button>
+                                        <?php else: ?>
+                                            <a href="/subscription" 
+                                               class="flex-1 text-center bg-[#ec4899] hover:bg-[#db2777] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+                                                Connect
+                                            </a>
+                                        <?php endif; ?>
                                     </div>
                                 </div>
-                            </a>
+                            </div>
                         <?php endforeach; ?>
                     </div>
                 <?php endif; ?>
@@ -350,5 +396,32 @@ if ($profile && !empty($profile['photos'])) {
         </div>
     </div>
 </div>
+
+<script>
+    async function quickLike(targetId, button) {
+        try {
+            const res = await fetch('/api/v1/activity/interest', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + '<?= $token ?>'
+                },
+                body: JSON.stringify({ target_id: targetId })
+            });
+            const data = await res.json();
+            if (data.success) {
+                button.innerHTML = '💖 Connected';
+                button.disabled = true;
+                button.classList.remove('bg-[#ec4899]', 'hover:bg-[#db2777]');
+                button.classList.add('bg-pink-100', 'text-pink-600', 'cursor-not-allowed');
+                alert(data.mutual ? "🎉 Mutual Match! You can now chat directly in real-time!" : "Interest sent!");
+            } else {
+                alert(data.error || "Failed to send interest.");
+            }
+        } catch (err) {
+            alert("Connection error.");
+        }
+    }
+</script>
 
 <?php include __DIR__ . '/footer.php'; ?>
