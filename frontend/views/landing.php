@@ -1,27 +1,26 @@
 <?php include __DIR__ . '/header.php'; ?>
 
-<!-- Hero Area -->
-<div class="py-16 md:py-24 flex flex-col lg:flex-row items-center gap-12 max-w-7xl mx-auto relative px-6">
-    <div class="absolute -top-10 -left-10 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse"></div>
-    <div class="absolute -bottom-10 -right-10 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse [animation-delay:2s]"></div>
+<!-- Hero Area Wrapper -->
+<div class="relative bg-cover bg-center" style="background-image: linear-gradient(to right, rgba(255, 242, 248, 0.95), rgba(255, 242, 248, 0.85)), url('/uploads/hero_bg.png');">
+    <!-- Hero Area -->
+    <div class="py-16 md:py-24 flex flex-col lg:flex-row items-center gap-12 max-w-7xl mx-auto relative px-6">
+        <div class="absolute -top-10 -left-10 w-96 h-96 bg-pink-200 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse"></div>
+        <div class="absolute -bottom-10 -right-10 w-96 h-96 bg-indigo-200 rounded-full mix-blend-multiply filter blur-3xl opacity-25 animate-pulse [animation-delay:2s]"></div>
 
-    <!-- Pitch Text -->
-    <div class="flex-grow flex-1 space-y-6 text-center lg:text-left z-10">
-        <div class="inline-flex items-center gap-2 bg-pink-50 border border-pink-100 text-pink-700 px-4 py-2 rounded-full text-xs font-extrabold uppercase tracking-widest shadow-sm">
-            <span>✨ The Safest Space for Queer Love</span>
-        </div>
-        
-        <h1 class="text-4xl md:text-6xl font-black text-gray-900 leading-tight serif-font">
-            Dating Designed For<br>
-            <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-600">Your True Self</span>
-        </h1>
-        
-        <p class="text-gray-600 text-base md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed">
-            PrideUnion is a premium matrimonial platform built to calculate real compatibility while fully respecting pronouns, orientation, and diverse gender identities.
-        </p>
-
-        <!-- Generated Hero Image Illustration -->
-        <img src="/uploads/hero.png" class="w-full max-w-md h-56 object-cover rounded-3xl shadow-md border border-white/40 mb-4 mx-auto lg:mx-0">
+        <!-- Pitch Text -->
+        <div class="flex-grow flex-1 space-y-6 text-center lg:text-left z-10">
+            <div class="inline-flex items-center gap-2 bg-pink-50 border border-pink-100 text-pink-700 px-4 py-2 rounded-full text-xs font-extrabold uppercase tracking-widest shadow-sm">
+                <span>✨ The Safest Space for Queer Love</span>
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl font-black text-gray-900 leading-tight serif-font">
+                Dating Designed For<br>
+                <span class="text-transparent bg-clip-text bg-gradient-to-r from-pink-500 to-indigo-600">Your True Self</span>
+            </h1>
+            
+            <p class="text-gray-600 text-base md:text-lg max-w-xl mx-auto lg:mx-0 leading-relaxed font-semibold text-gray-800">
+                PrideUnion is a premium matrimonial platform built to calculate real compatibility while fully respecting pronouns, orientation, and diverse gender identities.
+            </p>
 
         <!-- Social Proof Stats (eHarmony style) -->
         <div class="grid grid-cols-3 gap-4 py-4 max-w-md mx-auto lg:mx-0 border-t border-b border-gray-200/50">
@@ -62,8 +61,8 @@
             <div id="quiz-container" class="space-y-6">
                 <!-- Question 1 -->
                 <div id="quiz-q1" class="space-y-4">
-                    <p class="text-sm font-bold text-gray-700">What are you looking for in a compatible relationship?</p>
-                    <div class="grid grid-cols-1 gap-2.5">
+                    <p id="quiz-question-text" class="text-sm font-bold text-gray-700">What are you looking for in a compatible relationship?</p>
+                    <div id="quiz-options-container" class="grid grid-cols-1 gap-2.5">
                         <button onclick="nextQuizStep('marriage')" class="w-full text-left p-3.5 rounded-xl border border-gray-200 bg-white/60 hover:bg-pink-50 hover:border-pink-300 font-semibold text-xs transition shadow-sm">
                             💍 Marriage &amp; Matrimonial commitment
                         </button>
@@ -85,6 +84,7 @@
                 </div>
             </div>
         </div>
+    </div>
     </div>
 </div>
 
@@ -390,6 +390,73 @@
 </div>
 
 <script>
+    const quizQuestions = [
+        {
+            question: "What are you looking for in a compatible relationship?",
+            options: [
+                { text: "💍 Marriage &amp; Matrimonial commitment", value: "marriage" },
+                { text: "💑 Long-term dating &amp; romance", value: "dating" },
+                { text: "🤝 Friendly networking &amp; community", value: "friendship" }
+            ]
+        },
+        {
+            question: "What is your preferred way to spend a weekend together?",
+            options: [
+                { text: "🎨 Exploring art galleries &amp; museums", value: "arts" },
+                { text: "☕ Finding cozy coffee shops &amp; reading", value: "relax" },
+                { text: "⛰️ Outdoor adventures &amp; hiking", value: "adventure" }
+            ]
+        },
+        {
+            question: "What quality is most important to you in a partner?",
+            options: [
+                { text: "🗣️ Deep conversations &amp; open communication", value: "communication" },
+                { text: "🧠 Shared intellectual interests &amp; growth", value: "intellect" },
+                { text: "💃 Fun adventures &amp; shared hobbies", value: "fun" }
+            ]
+        },
+        {
+            question: "How do you prefer to handle and resolve conflicts?",
+            options: [
+                { text: "🗣️ Talk it out immediately &amp; openly", value: "talk" },
+                { text: "🧘 Take some space, then discuss calmly", value: "space" },
+                { text: "✍️ Write down thoughts to share later", value: "write" }
+            ]
+        },
+        {
+            question: "What role does the local LGBTQ+ community play in your life?",
+            options: [
+                { text: "🏳️‍🌈 Highly active in advocacy &amp; events", value: "advocacy" },
+                { text: "👥 Enjoy small queer social circles", value: "social" },
+                { text: "🏡 Focus mostly on close family/private life", value: "private" }
+            ]
+        }
+    ];
+
+    function loadRandomQuestion() {
+        try {
+            const randomIndex = Math.floor(Math.random() * quizQuestions.length);
+            const selected = quizQuestions[randomIndex];
+            document.getElementById('quiz-question-text').innerHTML = selected.question;
+            
+            const container = document.getElementById('quiz-options-container');
+            if (container) {
+                container.innerHTML = '';
+                selected.options.forEach(opt => {
+                    const btn = document.createElement('button');
+                    btn.onclick = () => nextQuizStep(opt.value);
+                    btn.className = "w-full text-left p-3.5 rounded-xl border border-gray-200 bg-white/60 hover:bg-pink-50 hover:border-pink-300 font-semibold text-xs transition shadow-sm";
+                    btn.innerHTML = opt.text;
+                    container.appendChild(btn);
+                });
+            }
+        } catch (e) {
+            console.error("Error loading random quiz question:", e);
+        }
+    }
+
+    document.addEventListener('DOMContentLoaded', loadRandomQuestion);
+
     function nextQuizStep(answer) {
         document.getElementById('quiz-q1').classList.add('hidden');
         document.getElementById('quiz-result').classList.remove('hidden');

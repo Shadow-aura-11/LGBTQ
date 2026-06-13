@@ -2,8 +2,7 @@
 node_modules/
 
 # Local database file
-scratch/db.json
-scratch/*.json
+scratch/
 
 # Local configurations
 .env
@@ -19,3 +18,7 @@ yarn-debug.log*
 yarn-error.log*
 .DS_Store
 Thumbs.db
+
+# Exclude hero background assets from git as requested
+uploads/hero_bg.png
+uploads/hero_background.png
