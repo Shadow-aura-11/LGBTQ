@@ -7,16 +7,16 @@ if (!$currentUser) {
     exit;
 }
 
-if (($currentUser['tier'] ?? 'free') !== 'premium') {
-    echo "<div class='glass-panel p-12 rounded-3xl text-center border border-white/60 my-12 max-w-xl mx-auto shadow-xl'>";
-    echo "<span class='text-5xl'>👑</span>";
-    echo "<h3 class='text-3xl font-extrabold text-gray-900 mt-5 serif-font'>Unlock Live Messaging</h3>";
-    echo "<p class='text-gray-600 text-sm mt-2 mb-6 leading-relaxed'>Direct real-time conversations, online statuses, and typing receipts are exclusive to PrideUnion Premium members.</p>";
-    echo "<a href='/subscription' class='btn-primary px-8 py-3.5 rounded-full font-bold shadow-md hover:shadow-lg transition'>Upgrade to Premium</a>";
-    echo "</div>";
-    include __DIR__ . '/footer.php';
-    exit;
-}
+<?php if (($currentUser['tier'] ?? 'free') !== 'premium'): ?>
+    <div class='glass-panel p-12 rounded-3xl text-center border border-white/60 my-12 max-w-xl mx-auto shadow-xl'>
+        <span class='text-5xl'>👑</span>
+        <h3 class='text-3xl font-extrabold text-gray-900 mt-5 serif-font'>Unlock Live Messaging</h3>
+        <p class='text-gray-600 text-sm mt-2 mb-6 leading-relaxed'>Direct real-time conversations, online statuses, and typing receipts are exclusive to PrideUnion Premium members.</p>
+        <a href='/subscription' class='btn-primary px-8 py-3.5 rounded-full font-bold shadow-md hover:shadow-lg transition'>Upgrade to Premium</a>
+    </div>
+    <?php include __DIR__ . '/footer.php'; ?>
+    <?php exit; ?>
+<?php else: ?>
 
 $recipientId = isset($_GET['recipient_id']) ? (int)$_GET['recipient_id'] : 0;
 $recipientProfile = null;
@@ -25,6 +25,47 @@ if ($recipientId) {
     $res = makeApiRequest('GET', "/api/v1/profiles/internal/{$recipientId}", [], $token);
     if ($res['status'] === 200 && isset($res['data']['profile'])) {
         $recipientProfile = $res['data']['profile'];
+    }
+}
+
+// Build contact list
+$chatContacts = [];
+if ($currentUser && ($currentUser['tier'] ?? 'free') === 'premium') {
+    $convRes = makeApiRequest('GET', '/api/v1/chats/conversations', [], $token);
+    if ($convRes['status'] === 200 && isset($convRes['data']['userIds'])) {
+        foreach ($convRes['data']['userIds'] as $uid) {
+            $profRes = makeApiRequest('GET', "/api/v1/profiles/internal/{$uid}", [], $token);
+            if ($profRes['status'] === 200 && isset($profRes['data']['profile'])) {
+                $p = $profRes['data']['profile'];
+                $rPhotos = json_decode($p['photos'] ?? '[]', true) ?: [];
+                $photo = !empty($rPhotos) ? $rPhotos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
+                $chatContacts[] = [
+                    'id' => $uid,
+                    'name' => $p['name'] ?? 'User #' . $uid,
+                    'photo' => $photo
+                ];
+            }
+        }
+    }
+    
+    // Add active recipient to top of sidebar list if not already present
+    if ($recipientId && $recipientProfile) {
+        $found = false;
+        foreach ($chatContacts as $c) {
+            if ($c['id'] === $recipientId) {
+                $found = true;
+                break;
+            }
+        }
+        if (!$found) {
+            $rPhotos = json_decode($recipientProfile['photos'] ?? '[]', true) ?: [];
+            $photo = !empty($rPhotos) ? $rPhotos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
+            array_unshift($chatContacts, [
+                'id' => $recipientId,
+                'name' => $recipientProfile['name'] ?? 'User #' . $recipientId,
+                'photo' => $photo
+            ]);
+        }
     }
 }
 ?>
@@ -37,29 +78,32 @@ if ($recipientId) {
         </h3>
         
         <div class="flex-grow overflow-y-auto space-y-2">
-            <?php if ($recipientProfile): 
-                $rPhotos = json_decode($recipientProfile['photos'] ?? '[]', true) ?: [];
-                $rPhoto = !empty($rPhotos) ? $rPhotos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
-            ?>
-                <!-- Active Conversation List Item -->
-                <div class="flex items-center gap-3 p-3.5 rounded-2xl bg-gradient-to-r from-pink-500/10 to-indigo-500/5 border border-pink-200/50 shadow-sm cursor-pointer hover:bg-pink-50 transition">
-                    <div class="relative w-12 h-12 rounded-full overflow-hidden border border-pink-300">
-                        <img src="<?= htmlspecialchars($rPhoto) ?>" class="w-full h-full object-cover">
-                        <span id="contact-status-dot" class="absolute bottom-0 right-0 bg-green-500 border-2 border-white w-3.5 h-3.5 rounded-full shadow-sm animate-pulse"></span>
-                    </div>
-                    <div class="flex-grow">
-                        <div class="flex justify-between items-start">
-                            <h4 class="font-bold text-sm text-gray-800 line-clamp-1"><?= htmlspecialchars($recipientProfile['name']) ?></h4>
-                        </div>
-                        <span id="contact-status-txt" class="text-[10px] text-green-600 font-bold">online</span>
-                    </div>
-                </div>
-            <?php else: ?>
+            <?php if (empty($chatContacts)): ?>
                 <div class="text-center py-12 px-4 space-y-2">
                     <span class="text-3xl">👥</span>
-                    <p class="text-xs text-gray-500 font-medium">Select a profile matching your orientation criteria to trigger direct chats.</p>
+                    <p class="text-xs text-gray-500 font-medium">Find compatible matches to trigger direct chats.</p>
                     <a href="/discovery" class="inline-block text-xs font-bold text-pink-600 hover:underline">Find Matches &rarr;</a>
                 </div>
+            <?php else: ?>
+                <?php foreach ($chatContacts as $contact): 
+                    $cActiveBg = ($contact['id'] === $recipientId) ? 'bg-gradient-to-r from-pink-500/10 to-indigo-500/5 border-pink-200/50 shadow-sm' : 'border-transparent hover:bg-pink-50/40 bg-white/20';
+                    $cActiveBorder = ($contact['id'] === $recipientId) ? 'border-pink-300' : 'border-gray-200/50';
+                    $cActiveDot = ($contact['id'] === $recipientId) ? '<span id="contact-status-dot" class="absolute bottom-0 right-0 bg-green-500 border-2 border-white w-3.5 h-3.5 rounded-full shadow-sm animate-pulse"></span>' : '';
+                    $cActiveTxt = ($contact['id'] === $recipientId) ? '<span id="contact-status-txt" class="text-[10px] text-green-600 font-bold">online</span>' : '<span class="text-[10px] text-gray-400">click to chat</span>';
+                ?>
+                    <a href="/chat?recipient_id=<?= $contact['id'] ?>" class="flex items-center gap-3 p-3.5 rounded-2xl border transition <?= $cActiveBg ?>">
+                        <div class="relative w-12 h-12 rounded-full overflow-hidden border <?= $cActiveBorder ?> shrink-0">
+                            <img src="<?= htmlspecialchars($contact['photo']) ?>" class="w-full h-full object-cover">
+                            <?= $cActiveDot ?>
+                        </div>
+                        <div class="flex-grow">
+                            <div class="flex justify-between items-start">
+                                <h4 class="font-bold text-sm text-gray-800 line-clamp-1"><?= htmlspecialchars($contact['name']) ?></h4>
+                            </div>
+                            <?= $cActiveTxt ?>
+                        </div>
+                    </a>
+                <?php endforeach; ?>
             <?php endif; ?>
         </div>
     </div>
@@ -214,11 +258,15 @@ if ($recipientId) {
         let typingTimeout;
         const msgInput = document.getElementById('chat-msg-input');
         msgInput.addEventListener('input', () => {
-            ws.send(JSON.stringify({ type: 'typing', recipient_id: recipientId, typing: true }));
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'typing', recipient_id: recipientId, typing: true }));
+            }
             
             clearTimeout(typingTimeout);
             typingTimeout = setTimeout(() => {
-                ws.send(JSON.stringify({ type: 'typing', recipient_id: recipientId, typing: false }));
+                if (ws && ws.readyState === WebSocket.OPEN) {
+                    ws.send(JSON.stringify({ type: 'typing', recipient_id: recipientId, typing: false }));
+                }
             }, 2000);
         });
 
@@ -228,7 +276,9 @@ if ($recipientId) {
             if (!text) return;
 
             msgInput.value = '';
-            ws.send(JSON.stringify({ type: 'typing', recipient_id: recipientId, typing: false }));
+            if (ws && ws.readyState === WebSocket.OPEN) {
+                ws.send(JSON.stringify({ type: 'typing', recipient_id: recipientId, typing: false }));
+            }
 
             try {
                 const res = await fetch('/api/v1/chats/send', {
@@ -258,5 +308,7 @@ if ($recipientId) {
         });
     <?php endif; ?>
 </script>
+
+<?php endif; ?>
 
 <?php include __DIR__ . '/footer.php'; ?>

@@ -50,7 +50,7 @@
     <nav class="glass-panel sticky top-0 z-50 px-6 py-4 shadow-sm border-b border-white/20">
         <div class="max-w-7xl mx-auto flex justify-between items-center">
             <!-- Brand Logo -->
-            <a href="<?= $currentUser ? '/discovery' : '/' ?>" class="flex items-center gap-1.5 group">
+            <a href="/" class="flex items-center gap-1.5 group">
                 <span class="text-2xl font-black serif-font text-[#be185d] tracking-tight transition group-hover:scale-105 duration-300">
                     PrideUnion
                 </span>
@@ -73,7 +73,7 @@
                     </a>
                     <a href="/notifications" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1 relative">
                         🔔 Alerts
-                        <span id="nav-notif-dot" class="hidden absolute -top-1 -right-2 bg-red-500 w-2.5 h-2.5 rounded-full ring-2 ring-white"></span>
+                        <span id="nav-notif-dot" class="<?= $notifDotClass ?> absolute -top-1 -right-2 bg-red-500 w-2.5 h-2.5 rounded-full ring-2 ring-white"></span>
                     </a>
                     <a href="/profile/setup" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
                         👤 Profile

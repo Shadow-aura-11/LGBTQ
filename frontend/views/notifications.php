@@ -31,23 +31,13 @@ if ($notifResponse['status'] === 200 && isset($notifResponse['data']['notificati
             </div>
         <?php else: ?>
             <div class="space-y-4">
-                <?php foreach ($notifications as $n): 
-                    $typeColor = 'bg-pink-100 text-pink-700';
-                    $typeIcon = '❤️';
-                    if ($n['type'] === 'message') {
-                        $typeColor = 'bg-blue-100 text-blue-700';
-                        $typeIcon = '💬';
-                    } elseif ($n['type'] === 'profile_view') {
-                        $typeColor = 'bg-indigo-100 text-indigo-700';
-                        $typeIcon = '👁️';
-                    }
-                ?>
+                <?php foreach ($notifications as $n): ?>
                     <div id="notif-card-<?= $n['id'] ?>" class="flex justify-between items-center p-4.5 rounded-2xl border transition duration-300 <?= $n['is_read'] ? 'bg-white/30 border-gray-200/50 opacity-60' : 'bg-white border-pink-100 shadow-sm hover:shadow-md' ?>">
                         <div class="flex items-start gap-4">
-                            <span class="text-2xl mt-1"><?= $typeIcon ?></span>
+                            <span class="text-2xl mt-1"><?= ($n['type'] === 'message') ? '💬' : (($n['type'] === 'profile_view') ? '👁️' : '❤️') ?></span>
                             <div>
                                 <div class="flex items-center gap-2">
-                                    <span class="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full <?= $typeColor ?>">
+                                    <span class="text-[9px] uppercase font-bold tracking-wider px-2 py-0.5 rounded-full <?= ($n['type'] === 'message') ? 'bg-blue-100 text-blue-700' : (($n['type'] === 'profile_view') ? 'bg-indigo-100 text-indigo-700' : 'bg-pink-100 text-pink-700') ?>">
                                         <?= htmlspecialchars($n['type']) ?>
                                     </span>
                                     <span class="text-[10px] text-gray-400 font-medium"><?= date('M d, H:i', strtotime($n['created_at'])) ?></span>

@@ -130,6 +130,31 @@ $app->post('/api/v1/chats/read/{message_id}', function (Request $request, Respon
 
     $response->getBody()->write(json_encode(['success' => true]));
     return $response->withHeader('Content-Type', 'application/json');
-})->add($authMiddleware);
+// Get unique chatted user IDs list
+$app->get('/api/v1/chats/conversations', function (Request $request, Response $response) {
+    $user = $request->getAttribute('user');
+    
+    $messages = Capsule::table('messages')
+        ->where('sender_id', $user['id'])
+        ->orWhere('recipient_id', $user['id'])
+        ->get();
+        
+    $userIds = [];
+    foreach ($messages as $m) {
+        if ($m->sender_id !== $user['id']) {
+            $userIds[] = (int)$m->sender_id;
+        }
+        if ($m->recipient_id !== $user['id']) {
+            $userIds[] = (int)$m->recipient_id;
+        }
+    }
+    $userIds = array_values(array_unique($userIds));
+    
+    $response->getBody()->write(json_encode([
+        'success' => true,
+        'userIds' => $userIds
+    ]));
+    return $response->withHeader('Content-Type', 'application/json');
+})->add($premiumMiddleware);
 
 $app->run();

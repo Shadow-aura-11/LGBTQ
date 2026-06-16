@@ -127,17 +127,7 @@ if (!$currentUser) {
                                   class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm"><?= htmlspecialchars($profile['partner_pref'] ?? '') ?></textarea>
                     </div>
 
-                    <div class="col-span-2">
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Relationship Intent</label>
-                        <select id="relationship_intent"
-                                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm">
-                            <option value="">Select intent...</option>
-                            <option value="friendship">Friendship</option>
-                            <option value="dating">Dating</option>
-                            <option value="long-term">Long-Term partnership</option>
-                            <option value="marriage">Marriage</option>
-                        </select>
-                    </div>
+
                 </div>
             </div>
 
@@ -239,8 +229,7 @@ if (!$currentUser) {
         }
     }
 
-    // Set dropdown selects on load
-    document.getElementById('relationship_intent').value = "<?= $profile['relationship_intent'] ?? '' ?>";
+
 
     // Initial load call
     renderPreviews();
@@ -259,7 +248,7 @@ if (!$currentUser) {
             mother_tongue: document.getElementById('mother_tongue').value,
             education: document.getElementById('education').value,
             profession: document.getElementById('profession').value,
-            relationship_intent: document.getElementById('relationship_intent').value,
+
             photos: activePhotos,
             hometown: document.getElementById('hometown').value,
             hobbies: document.getElementById('hobbies').value,

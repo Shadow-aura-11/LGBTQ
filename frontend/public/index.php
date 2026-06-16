@@ -51,6 +51,21 @@ if ($token) {
     }
 }
 
+// Fetch unread notifications check for navbar indicator
+$hasUnreadNotifs = false;
+if ($currentUser && $token) {
+    $notifCheck = makeApiRequest('GET', '/api/v1/notifications', [], $token);
+    if ($notifCheck['status'] === 200 && isset($notifCheck['data']['notifications'])) {
+        foreach ($notifCheck['data']['notifications'] as $notif) {
+            if (empty($notif['is_read'])) {
+                $hasUnreadNotifs = true;
+                break;
+            }
+        }
+    }
+}
+$notifDotClass = $hasUnreadNotifs ? '' : 'hidden';
+
 // Views loader route resolver
 switch ($uri) {
     case '/':
@@ -102,6 +117,28 @@ switch ($uri) {
         if (preg_match('#^/profile/([0-9]+)$#', $uri, $matches)) {
             $viewTargetId = (int)$matches[1];
             require __DIR__ . '/../views/profile_view.php';
+        } elseif (preg_match('#^/(page|blog)/([a-zA-Z0-9-]+)$#', $uri, $matches)) {
+            $contentType = $matches[1]; // page or blog
+            $slug = $matches[2];
+            $cmsFile = __DIR__ . '/../../scratch/cms.json';
+            $cmsItem = null;
+            if (file_exists($cmsFile)) {
+                $cmsData = json_decode(file_get_contents($cmsFile), true) ?: [];
+                foreach ($cmsData as $item) {
+                    // Normalize type (blog posts are stored as 'post', but routing is /blog/...)
+                    $itemType = ($item['type'] === 'post') ? 'blog' : 'page';
+                    if ($itemType === $contentType && $item['slug'] === $slug) {
+                        $cmsItem = $item;
+                        break;
+                    }
+                }
+            }
+            if ($cmsItem) {
+                require __DIR__ . '/../views/cms_view.php';
+            } else {
+                http_response_code(404);
+                echo "Page not found";
+            }
         } else {
             http_response_code(404);
             echo "Page not found";

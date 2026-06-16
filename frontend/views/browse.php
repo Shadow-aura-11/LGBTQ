@@ -19,12 +19,12 @@ if (!$currentUser) {
 $gender = $_GET['gender_identity'] ?? '';
 $orientation = $_GET['sexual_orientation'] ?? '';
 $city = $_GET['city'] ?? '';
-$intent = $_GET['relationship_intent'] ?? '';
+
 $minAge = $_GET['min_age'] ?? '18';
 $maxAge = $_GET['max_age'] ?? '60';
 
 // Fetch Matches via discovery endpoint
-$apiPath = "/api/v1/discovery/feed?min_age=$minAge&max_age=$maxAge&gender_identity=$gender&sexual_orientation=$orientation&city=$city&relationship_intent=$intent";
+$apiPath = "/api/v1/discovery/feed?min_age=$minAge&max_age=$maxAge&gender_identity=$gender&sexual_orientation=$orientation&city=$city";
 $feedResponse = makeApiRequest('GET', $apiPath, [], $token);
 $feed = [];
 if ($feedResponse['status'] === 200 && isset($feedResponse['data']['feed'])) {
@@ -107,17 +107,7 @@ if (empty($feed) && isset($context['feed'])) {
                                <?= ($currentUser['tier'] ?? 'free') !== 'premium' ? 'disabled title="Requires Premium Tier" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-100/50 text-sm outline-none cursor-not-allowed"' : 'class="w-full px-3 py-2.5 rounded-xl border border-gray-300 bg-white/50 text-sm outline-none transition focus:ring-2 focus:ring-pink-300"' ?>>
                     </div>
 
-                    <div>
-                        <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">Relationship Intent</label>
-                        <select name="relationship_intent" 
-                                <?= ($currentUser['tier'] ?? 'free') !== 'premium' ? 'disabled class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-100/50 text-sm outline-none cursor-not-allowed"' : 'class="w-full px-3 py-2.5 rounded-xl border border-gray-300 bg-white/50 text-sm outline-none transition focus:ring-2 focus:ring-pink-300"' ?>>
-                            <option value="">Any</option>
-                            <option value="friendship" <?= $intent === 'friendship' ? 'selected' : '' ?>>Friendship</option>
-                            <option value="dating" <?= $intent === 'dating' ? 'selected' : '' ?>>Dating</option>
-                            <option value="long-term" <?= $intent === 'long-term' ? 'selected' : '' ?>>Long-Term</option>
-                            <option value="marriage" <?= $intent === 'marriage' ? 'selected' : '' ?>>Marriage</option>
-                        </select>
-                    </div>
+
                 </div>
 
                 <button type="submit" class="w-full btn-primary py-3 rounded-xl text-sm font-bold shadow-md hover:shadow-lg transition">

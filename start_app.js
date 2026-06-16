@@ -428,6 +428,10 @@ function resolveExpression(expr, ctx) {
     if (expr === "$currentUser['tier'] ?? 'free'" || expr === "$currentUser['tier']") return ctx.currentUser ? (ctx.currentUser.tier || 'free') : 'free';
     if (expr === "$token" || expr === "$_COOKIE['jwt_token'] ?? ''") return ctx.token || '';
     if (expr === "$recipientId") return ctx.recipientId || '0';
+    if (expr === "$notifDotClass") {
+        const hasUnread = ctx.currentUser && db.notifications.some(n => n.user_id === ctx.currentUser.id && !n.is_read);
+        return hasUnread ? '' : 'hidden';
+    }
     if (expr === "$viewTargetId") return ctx.viewTargetId || '0';
     if (expr === "$score") return ctx.score !== undefined ? ctx.score : '80';
     if (expr === "$viewsCount") return ctx.viewsCount !== undefined ? ctx.viewsCount : '0';
@@ -531,6 +535,34 @@ function resolveExpression(expr, ctx) {
             return val;
         }
     }
+    if (expr === "$totalActiveUsers") {
+        return db.users.filter(u => (u.status || 'active') !== 'suspended').length.toString();
+    }
+    if (expr === "$totalSubscribers") {
+        return db.users.filter(u => u.tier === 'premium').length.toString();
+    }
+    if (expr.startsWith('$cmsItem[')) {
+        const match = expr.match(/\['([^']+)'\]/);
+        if (match) {
+            const key = match[1];
+            let val = ctx.cmsItem ? ctx.cmsItem[key] : null;
+            if (val === null || val === undefined || val === '') {
+                if (expr.includes('??')) {
+                    const fallback = expr.split('??')[1].trim().replace(/['"]/g, '');
+                    return fallback;
+                }
+                if (expr.includes('?:')) {
+                    const fallback = expr.split('?:')[1].trim().replace(/['"]/g, '');
+                    return fallback;
+                }
+                return '';
+            }
+            if (isNl2br && typeof val === 'string') {
+                val = val.replace(/\n/g, '<br>');
+            }
+            return val;
+        }
+    }
     return '';
 }
 
@@ -569,6 +601,20 @@ function evaluateCondition(cond, ctx) {
     }
     if (cond === '$recipientProfile') {
         return ctx.recipientProfile !== undefined && ctx.recipientProfile !== null;
+    }
+    if (cond.includes("$cmsItem['type']") && cond.includes('page')) {
+        const isPage = !!(ctx.cmsItem && ctx.cmsItem.type === 'page');
+        if (cond.includes('!==') || cond.includes('!=')) {
+            return !isPage;
+        }
+        return isPage;
+    }
+    if (cond.includes("$cmsItem['type']") && cond.includes('post')) {
+        const isPost = !!(ctx.cmsItem && ctx.cmsItem.type === 'post');
+        if (cond.includes('!==') || cond.includes('!=')) {
+            return !isPost;
+        }
+        return isPost;
     }
     if (cond.startsWith('!')) {
         const inner = cond.substring(1).trim();
@@ -716,6 +762,8 @@ function parseViewLoops(content, ctx) {
                 let block = match[1];
                 const readClass = n.is_read ? 'bg-white/30 border-gray-200/50 opacity-70' : 'bg-pink-50/50 border-pink-100 shadow-sm';
                 block = block.replace(/<\?=\s*\$n\['is_read'\]\s*\?\s*[^:]+:[^?]+\?>/g, readClass);
+                block = block.replace(/<\?=\s*\(\$n\['type'\] === 'message'\) \? '💬' : \(\(\$n\['type'\] === 'profile_view'\) \? '👁️' : '❤️'\)\s*\?>/g, n.type === 'message' ? '💬' : (n.type === 'profile_view' ? '👁️' : '❤️'));
+                block = block.replace(/<\?=\s*\(\$n\['type'\] === 'message'\) \? 'bg-blue-100 text-blue-700' : \(\(\$n\['type'\] === 'profile_view'\) \? 'bg-indigo-100 text-indigo-700' : 'bg-pink-100 text-pink-700'\)\s*\?>/g, n.type === 'message' ? 'bg-blue-100 text-blue-700' : (n.type === 'profile_view' ? 'bg-indigo-100 text-indigo-700' : 'bg-pink-100 text-pink-700'));
                 block = block.replace(/<\?=\s*\$n\['id'\]\s*\?>/g, n.id);
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$n\['type'\]\)\s*\?>/g, n.type);
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$n\['title'\]\)\s*\?>/g, n.title);
@@ -727,6 +775,34 @@ function parseViewLoops(content, ctx) {
                 compiledNotifs += block;
             });
             content = content.replace(loopRegex, compiledNotifs);
+        }
+    }
+
+    // Chat Contacts Loop
+    if (content.includes('<?php foreach ($chatContacts as $contact): ?>')) {
+        const loopRegex = /<\?php\s+foreach\s*\(\$chatContacts\s+as\s+\$contact\):\s*[\s\S]*?\?>([\s\S]*?)<\?php\s+endforeach;\s*\?>/;
+        const match = content.match(loopRegex);
+        if (match) {
+            let compiledContacts = '';
+            (ctx.chatContacts || []).forEach(contact => {
+                let block = match[1];
+                const isActive = (contact.id === ctx.recipientId);
+                const activeClass = isActive ? 'bg-gradient-to-r from-pink-500/10 to-indigo-500/5 border-pink-200/50 shadow-sm' : 'border-transparent hover:bg-pink-50/40 bg-white/20';
+                const borderClass = isActive ? 'border-pink-300' : 'border-gray-200/50';
+                const dotHtml = isActive ? '<span id="contact-status-dot" class="absolute bottom-0 right-0 bg-green-500 border-2 border-white w-3.5 h-3.5 rounded-full shadow-sm animate-pulse"></span>' : '';
+                const txtHtml = isActive ? '<span id="contact-status-txt" class="text-[10px] text-green-600 font-bold">online</span>' : '<span class="text-[10px] text-gray-400">click to chat</span>';
+                
+                block = block.replace(/<\?=\s*\$cActiveBg\s*\?>/g, activeClass);
+                block = block.replace(/<\?=\s*\$cActiveBorder\s*\?>/g, borderClass);
+                block = block.replace(/<\?=\s*\$cActiveDot\s*\?>/g, dotHtml);
+                block = block.replace(/<\?=\s*\$cActiveTxt\s*\?>/g, txtHtml);
+                
+                block = block.replace(/<\?=\s*\$contact\['id'\]\s*\?>/g, contact.id);
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$contact\['photo'\]\)\s*\?>/g, contact.photo);
+                block = block.replace(/<\?=\s*htmlspecialchars\(\$contact\['name'\]\)\s*\?>/g, contact.name);
+                compiledContacts += block;
+            });
+            content = content.replace(loopRegex, compiledContacts);
         }
     }
 
@@ -950,12 +1026,14 @@ const server = http.createServer((req, res) => {
         if (pathname === '/api/v1/auth/internal/update-tier' && method === 'POST') {
             const { user_id, tier } = jsonData;
             const user = db.users.find(u => u.id === user_id);
+            let newToken = '';
             if (user) {
                 user.tier = tier;
                 saveDb();
+                newToken = `user_${user.id}_role_${user.role}_tier_${user.tier}_${user.name}`;
             }
             res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: true }));
+            return res.end(JSON.stringify({ success: true, token: newToken }));
         }
 
         // --- PROFILE-SERVICE ---
@@ -1444,6 +1522,90 @@ const server = http.createServer((req, res) => {
             return res.end(JSON.stringify({ success: true, message: `Report resolves as ${jsonData.action}.` }));
         }
 
+        // --- CMS ENDPOINTS ---
+        if (pathname === '/api/v1/cms/contents' && method === 'GET') {
+            const cmsFile = path.join(__dirname, 'scratch', 'cms.json');
+            let cmsData = [];
+            if (fs.existsSync(cmsFile)) {
+                try {
+                    cmsData = JSON.parse(fs.readFileSync(cmsFile, 'utf8'));
+                } catch (e) {
+                    console.error("Error reading cms.json:", e);
+                }
+            }
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: true, contents: cmsData }));
+        }
+
+        if (pathname === '/api/v1/cms/save' && method === 'POST') {
+            const user = verifyAuth(req, res, 'admin');
+            if (!user) return;
+
+            const cmsFile = path.join(__dirname, 'scratch', 'cms.json');
+            let cmsData = [];
+            if (fs.existsSync(cmsFile)) {
+                try {
+                    cmsData = JSON.parse(fs.readFileSync(cmsFile, 'utf8'));
+                } catch (e) {}
+            }
+
+            const item = jsonData; // id, type, title, slug, focus_keyword, meta_description, content
+            if (item.id) {
+                const idx = cmsData.findIndex(c => c.id === parseInt(item.id));
+                if (idx !== -1) {
+                    cmsData[idx] = {
+                        ...cmsData[idx],
+                        title: item.title,
+                        slug: item.slug,
+                        focus_keyword: item.focus_keyword,
+                        meta_description: item.meta_description,
+                        content: item.content,
+                        type: item.type
+                    };
+                } else {
+                    item.id = parseInt(item.id);
+                    item.created_at = new Date().toISOString();
+                    cmsData.push(item);
+                }
+            } else {
+                const newId = cmsData.length > 0 ? Math.max(...cmsData.map(c => c.id)) + 1 : 1;
+                cmsData.push({
+                    id: newId,
+                    type: item.type || 'post',
+                    title: item.title,
+                    slug: item.slug,
+                    focus_keyword: item.focus_keyword,
+                    meta_description: item.meta_description,
+                    content: item.content,
+                    created_at: new Date().toISOString()
+                });
+            }
+
+            fs.writeFileSync(cmsFile, JSON.stringify(cmsData, null, 2), 'utf8');
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: true, message: "CMS content saved successfully." }));
+        }
+
+        if (pathname === '/api/v1/cms/delete' && method === 'POST') {
+            const user = verifyAuth(req, res, 'admin');
+            if (!user) return;
+
+            const cmsFile = path.join(__dirname, 'scratch', 'cms.json');
+            let cmsData = [];
+            if (fs.existsSync(cmsFile)) {
+                try {
+                    cmsData = JSON.parse(fs.readFileSync(cmsFile, 'utf8'));
+                } catch (e) {}
+            }
+
+            const cid = parseInt(jsonData.id);
+            cmsData = cmsData.filter(c => c.id !== cid);
+
+            fs.writeFileSync(cmsFile, JSON.stringify(cmsData, null, 2), 'utf8');
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: true, message: "CMS content deleted." }));
+        }
+
         // --- MEDIA UPLOAD ---
         if (pathname === '/api/v1/media/upload' && method === 'POST') {
             const user = verifyAuth(req, res);
@@ -1666,8 +1828,37 @@ const server = http.createServer((req, res) => {
             const recId = parseInt(parsedUrl.searchParams.get('recipient_id')) || 0;
             const recProfile = db.profiles.find(p => p.user_id === recId);
 
+            // Find all unique user IDs that the user has chatted with
+            const chattedUserIds = new Set();
+            db.messages.forEach(m => {
+                if (m.sender_id === loggedUser.id) chattedUserIds.add(m.recipient_id);
+                if (m.recipient_id === loggedUser.id) chattedUserIds.add(m.sender_id);
+            });
+            if (recId) chattedUserIds.add(recId);
+            
+            const chatContacts = Array.from(chattedUserIds).map(uid => {
+                const u = db.users.find(usr => usr.id === uid);
+                const p = db.profiles.find(prof => prof.user_id === uid);
+                let photo = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
+                if (p && p.photos) {
+                    try {
+                        const parsed = JSON.parse(p.photos);
+                        if (parsed && parsed.length > 0) photo = parsed[0];
+                    } catch(e) {}
+                }
+                return {
+                    id: uid,
+                    name: u ? u.name : (p ? p.name : 'Unknown'),
+                    photo: photo
+                };
+            }).filter(c => c.id !== loggedUser.id);
+
             res.writeHead(200, { 'Content-Type': 'text/html' });
-            return res.end(renderPHP('chat.php', req, { recipientProfile: recProfile, recipientId: recId }));
+            return res.end(renderPHP('chat.php', req, { 
+                recipientProfile: recProfile, 
+                recipientId: recId,
+                chatContacts: chatContacts
+            }));
         }
         if (pathname === '/notifications') {
             if (!loggedUser) { res.writeHead(302, { 'Location': '/login' }); return res.end(); }
@@ -1738,6 +1929,26 @@ const server = http.createServer((req, res) => {
             // Render it in PHP compiler context
             return res.end(compilePhpTemplate(sampleHtml, { currentUser: loggedUser, token: cookies['jwt_token'] || '' }));
         }
+        if (pathname.startsWith('/page/') || pathname.startsWith('/blog/')) {
+            const parts = pathname.split('/');
+            const slug = parts[parts.length - 1];
+            const contentType = pathname.startsWith('/page/') ? 'page' : 'post';
+            
+            const cmsFile = path.join(__dirname, 'scratch', 'cms.json');
+            let cmsData = [];
+            if (fs.existsSync(cmsFile)) {
+                try {
+                    cmsData = JSON.parse(fs.readFileSync(cmsFile, 'utf8'));
+                } catch (e) {}
+            }
+            
+            const item = cmsData.find(c => c.slug === slug && c.type === contentType);
+            if (item) {
+                res.writeHead(200, { 'Content-Type': 'text/html' });
+                return res.end(renderPHP('cms_view.php', req, { cmsItem: item }));
+            }
+        }
+
         if (pathname === '/admin') {
             if (!loggedUser || loggedUser.role !== 'admin') {
                 res.writeHead(403);

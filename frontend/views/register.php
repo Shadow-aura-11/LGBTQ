@@ -101,38 +101,10 @@
                 </div>
             </div>
 
-            <!-- STEP 3: Partner Preferences (Looking For) -->
-            <div id="step-3" class="hidden space-y-4">
+            <!-- STEP 3: Identity Verification -->
+            <div id="step-3" class="hidden space-y-6">
                 <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
                     <span class="w-6 h-6 rounded-full bg-pink-100 text-pink-700 text-xs flex items-center justify-center font-bold">3</span>
-                    Dating Preferences
-                </h3>
-                <div class="grid grid-cols-1 gap-4 bg-white/40 p-6 rounded-2xl border border-gray-200/40">
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Relationship Goal</label>
-                        <select id="relationship_intent" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 outline-none transition bg-white/60 text-sm">
-                            <option value="dating">Dating &amp; Romance</option>
-                            <option value="long-term">Long-Term Connection</option>
-                            <option value="marriage">Matrimonial Bond</option>
-                            <option value="friendship">Friendship First</option>
-                        </select>
-                    </div>
-                    <div>
-                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Preferred Matching Partner Genders</label>
-                        <select id="pref_gender" class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 outline-none transition bg-white/60 text-sm">
-                            <option value="">Any Gender</option>
-                            <option value="man">Men</option>
-                            <option value="woman">Women</option>
-                            <option value="non-binary">Non-Binary Singles</option>
-                        </select>
-                    </div>
-                </div>
-            </div>
-
-            <!-- STEP 4: Identity Verification -->
-            <div id="step-4" class="hidden space-y-6">
-                <h3 class="text-lg font-bold text-gray-800 flex items-center gap-2 mb-4">
-                    <span class="w-6 h-6 rounded-full bg-pink-100 text-pink-700 text-xs flex items-center justify-center font-bold">4</span>
                     Identity Verification
                 </h3>
                 
@@ -175,7 +147,7 @@
 
 <script>
     let currentStep = 1;
-    const totalSteps = 4;
+    const totalSteps = 3;
 
     function updateProgressBar() {
         const fill = document.getElementById('progress-bar-fill');
@@ -252,7 +224,7 @@
                 errBox.classList.remove('hidden');
                 return false;
             }
-        } else if (currentStep === 4) {
+        } else if (currentStep === 3) {
             const verified = document.getElementById('otp_code').value;
             const terms = document.getElementById('terms').checked;
             if (verified !== '123456') {

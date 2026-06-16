@@ -1,0 +1,18 @@
+- [x] Update header.php & footer.php logo links to "/"
+- [x] Implement unread notification dot load checks
+- [x] Fix notifications.php foreach loop syntax and remove inline PHP variables
+- [x] Fix double footer duplication on chat.php and mock_payment.php (convert curly braces to colon if syntax)
+- [x] Fix mock checkout to update cookie and redirect without forced sign out
+- [x] Update chat.php sidebar to show all previous conversations and add websocket safety checks
+- [x] Remove dating preferences (relationship intent) from register.php, profile_setup.php, and profile_view.php
+- [x] Upgrade admin.php:
+    - [x] Add user search, tier filter, and status filter
+    - [x] Add "Total Active Users" and "Total Subscribers" stats cards
+    - [x] Add visual Analytics Dashboard (SVG charts & funnels)
+    - [x] Add WordPress-style Page/Blog CMS Creator with Yoast/RankMath real-time SEO scoring
+- [x] Update start_app.js:
+    - [x] Update update-tier endpoint to return new JWT token
+    - [x] Add hasUnreadNotifs compiler rule
+    - [x] Support CMS API endpoints (contents list, save, delete)
+- [x] Update index.php (routes) & create new cms_view.php for custom pages/blog posts rendering
+- [x] Run application and verify all features manually

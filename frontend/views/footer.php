@@ -6,7 +6,7 @@
             <!-- Top Row -->
             <div class="flex flex-col md:flex-row justify-between items-center gap-4">
                 <!-- Brand Logo -->
-                <a href="<?= $currentUser ? '/discovery' : '/' ?>" class="flex items-center gap-1.5 group">
+                <a href="/" class="flex items-center gap-1.5 group">
                     <span class="text-2xl font-black serif-font text-[#be185d] tracking-tight transition group-hover:scale-105 duration-300">
                         PrideUnion
                     </span>

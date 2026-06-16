@@ -8,11 +8,11 @@ $gateway = $_GET['gateway'] ?? 'stripe';
 $plan = $_GET['plan'] ?? 'monthly';
 $userId = (int)($_GET['user_id'] ?? 0);
 
-if (!$paymentId || !$userId) {
-    echo "<p class='text-red-500'>Invalid checkout validation request.</p>";
-    include __DIR__ . '/footer.php';
-    exit;
-}
+<?php if (!$paymentId || !$userId): ?>
+    <p class='text-red-500'>Invalid checkout validation request.</p>
+    <?php include __DIR__ . '/footer.php'; ?>
+    <?php exit; ?>
+<?php else: ?>
 
 $displayAmount = ($currency === 'INR') ? '₹' . ($amount / 100) : '$' . ($amount / 100);
 ?>
@@ -78,17 +78,21 @@ $displayAmount = ($currency === 'INR') ? '₹' . ($amount / 100) : '$' . ($amoun
             const data = await res.json();
 
             if (data.success) {
-                // Sync authentication tier locally in session
-                await fetch('/api/v1/auth/internal/update-tier', {
+                // Sync authentication tier locally in session and get updated token
+                const syncRes = await fetch('/api/v1/auth/internal/update-tier', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
                     body: JSON.stringify({ user_id: <?= $userId ?>, tier: 'premium' })
                 });
+                const syncData = await syncRes.json();
+                
+                if (syncData.token) {
+                    // Update cookie with the new premium token
+                    document.cookie = `jwt_token=${syncData.token}; path=/; max-age=3600; SameSite=Lax`;
+                }
 
-                // Clear jwt_token cookie to force re-evaluation of premium claims on next sign in
-                document.cookie = "jwt_token=; path=/; expires=Thu, 01 Jan 1970 00:00:00 UTC;";
-                alert("Payment Confirmed! Please sign in again to activate your premium status.");
-                window.location.href = '/login';
+                alert("Payment Confirmed! Your Premium Status is now active!");
+                window.location.href = '/dashboard';
             } else {
                 errBox.innerText = data.error || 'Checkout verification failed.';
                 errBox.classList.remove('hidden');
@@ -103,5 +107,7 @@ $displayAmount = ($currency === 'INR') ? '₹' . ($amount / 100) : '$' . ($amoun
         }
     });
 </script>
+
+<?php endif; ?>
 
 <?php include __DIR__ . '/footer.php'; ?>

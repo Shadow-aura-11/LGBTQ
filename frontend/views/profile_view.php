@@ -91,13 +91,7 @@ $targetId = (int)($viewTargetId ?? 0);
             <h4 class="text-sm font-extrabold text-gray-900 uppercase tracking-wider mb-6">Personal Details</h4>
             
             <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4">
-                <!-- Looking For -->
-                <div class="bg-[#fff8fa] border border-[#fce7f3]/30 p-5 rounded-2xl">
-                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Looking For</span>
-                    <span class="text-gray-800 font-bold text-sm mt-1 block">
-                        <?= htmlspecialchars($profile['relationship_intent'] ?: 'Serious Relationship, Companionship') ?>
-                    </span>
-                </div>
+
                 <!-- Height -->
                 <div class="bg-[#fff8fa] border border-[#fce7f3]/30 p-5 rounded-2xl">
                     <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Height</span>
