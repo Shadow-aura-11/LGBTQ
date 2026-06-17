@@ -1302,6 +1302,20 @@ const server = http.createServer((req, res) => {
             return res.end(JSON.stringify({ success: true }));
         }
 
+        if (pathname === '/api/v1/chats/conversations' && method === 'GET') {
+            const user = verifyAuth(req, res, 'premium');
+            if (!user) return;
+
+            const chattedUserIds = new Set();
+            db.messages.forEach(m => {
+                if (m.sender_id === user.id) chattedUserIds.add(m.recipient_id);
+                if (m.recipient_id === user.id) chattedUserIds.add(m.sender_id);
+            });
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: true, userIds: Array.from(chattedUserIds) }));
+        }
+
         // --- ACTIVITY-SERVICE ---
         if (pathname === '/api/v1/activity/interest' && method === 'POST') {
             const user = verifyAuth(req, res, 'premium');

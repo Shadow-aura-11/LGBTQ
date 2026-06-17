@@ -130,6 +130,8 @@ $app->post('/api/v1/chats/read/{message_id}', function (Request $request, Respon
 
     $response->getBody()->write(json_encode(['success' => true]));
     return $response->withHeader('Content-Type', 'application/json');
+});
+
 // Get unique chatted user IDs list
 $app->get('/api/v1/chats/conversations', function (Request $request, Response $response) {
     $user = $request->getAttribute('user');

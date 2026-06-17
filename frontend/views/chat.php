@@ -6,6 +6,7 @@ if (!$currentUser) {
     header('Location: /login');
     exit;
 }
+?>
 
 <?php if (($currentUser['tier'] ?? 'free') !== 'premium'): ?>
     <div class='glass-panel p-12 rounded-3xl text-center border border-white/60 my-12 max-w-xl mx-auto shadow-xl'>
@@ -17,58 +18,65 @@ if (!$currentUser) {
     <?php include __DIR__ . '/footer.php'; ?>
     <?php exit; ?>
 <?php else: ?>
+    <?php
+    $recipientId = isset($_GET['recipient_id']) ? (int)$_GET['recipient_id'] : 0;
+    $recipientProfile = null;
+    $rPhoto = 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
 
-$recipientId = isset($_GET['recipient_id']) ? (int)$_GET['recipient_id'] : 0;
-$recipientProfile = null;
-
-if ($recipientId) {
-    $res = makeApiRequest('GET', "/api/v1/profiles/internal/{$recipientId}", [], $token);
-    if ($res['status'] === 200 && isset($res['data']['profile'])) {
-        $recipientProfile = $res['data']['profile'];
+    if ($recipientId) {
+        $res = makeApiRequest('GET', "/api/v1/profiles/internal/{$recipientId}", [], $token);
+        if ($res['status'] === 200 && isset($res['data']['profile'])) {
+            $recipientProfile = $res['data']['profile'];
+            if (!empty($recipientProfile['photos'])) {
+                $rPhotos = json_decode($recipientProfile['photos'], true) ?: [];
+                if (!empty($rPhotos)) {
+                    $rPhoto = $rPhotos[0];
+                }
+            }
+        }
     }
-}
 
-// Build contact list
-$chatContacts = [];
-if ($currentUser && ($currentUser['tier'] ?? 'free') === 'premium') {
-    $convRes = makeApiRequest('GET', '/api/v1/chats/conversations', [], $token);
-    if ($convRes['status'] === 200 && isset($convRes['data']['userIds'])) {
-        foreach ($convRes['data']['userIds'] as $uid) {
-            $profRes = makeApiRequest('GET', "/api/v1/profiles/internal/{$uid}", [], $token);
-            if ($profRes['status'] === 200 && isset($profRes['data']['profile'])) {
-                $p = $profRes['data']['profile'];
-                $rPhotos = json_decode($p['photos'] ?? '[]', true) ?: [];
+    // Build contact list
+    $chatContacts = [];
+    if ($currentUser && ($currentUser['tier'] ?? 'free') === 'premium') {
+        $convRes = makeApiRequest('GET', '/api/v1/chats/conversations', [], $token);
+        if ($convRes['status'] === 200 && isset($convRes['data']['userIds'])) {
+            foreach ($convRes['data']['userIds'] as $uid) {
+                $profRes = makeApiRequest('GET', "/api/v1/profiles/internal/{$uid}", [], $token);
+                if ($profRes['status'] === 200 && isset($profRes['data']['profile'])) {
+                    $p = $profRes['data']['profile'];
+                    $rPhotos = json_decode($p['photos'] ?? '[]', true) ?: [];
+                    $photo = !empty($rPhotos) ? $rPhotos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
+                    $chatContacts[] = [
+                        'id' => $uid,
+                        'name' => $p['name'] ?? 'User #' . $uid,
+                        'photo' => $photo
+                    ];
+                }
+            }
+        }
+        
+        // Add active recipient to top of sidebar list if not already present
+        if ($recipientId && $recipientProfile) {
+            $found = false;
+            foreach ($chatContacts as $c) {
+                if ($c['id'] === $recipientId) {
+                    $found = true;
+                    break;
+                }
+            }
+            if (!$found) {
+                $rPhotos = json_decode($recipientProfile['photos'] ?? '[]', true) ?: [];
                 $photo = !empty($rPhotos) ? $rPhotos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
-                $chatContacts[] = [
-                    'id' => $uid,
-                    'name' => $p['name'] ?? 'User #' . $uid,
+                array_unshift($chatContacts, [
+                    'id' => $recipientId,
+                    'name' => $recipientProfile['name'] ?? 'User #' . $recipientId,
                     'photo' => $photo
-                ];
+                ]);
             }
         }
     }
-    
-    // Add active recipient to top of sidebar list if not already present
-    if ($recipientId && $recipientProfile) {
-        $found = false;
-        foreach ($chatContacts as $c) {
-            if ($c['id'] === $recipientId) {
-                $found = true;
-                break;
-            }
-        }
-        if (!$found) {
-            $rPhotos = json_decode($recipientProfile['photos'] ?? '[]', true) ?: [];
-            $photo = !empty($rPhotos) ? $rPhotos[0] : 'https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=100&q=80';
-            array_unshift($chatContacts, [
-                'id' => $recipientId,
-                'name' => $recipientProfile['name'] ?? 'User #' . $recipientId,
-                'photo' => $photo
-            ]);
-        }
-    }
-}
-?>
+    ?>
 
 <div class="glass-panel rounded-3xl border border-white/60 shadow-xl overflow-hidden h-[80vh] flex flex-col md:flex-row">
     <!-- Chat Contacts Sidebar -->
@@ -309,6 +317,5 @@ if ($currentUser && ($currentUser['tier'] ?? 'free') === 'premium') {
     <?php endif; ?>
 </script>
 
-<?php endif; ?>
-
 <?php include __DIR__ . '/footer.php'; ?>
+<?php endif; ?>

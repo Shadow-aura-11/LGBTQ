@@ -7,15 +7,15 @@ $currency = $_GET['currency'] ?? 'INR';
 $gateway = $_GET['gateway'] ?? 'stripe';
 $plan = $_GET['plan'] ?? 'monthly';
 $userId = (int)($_GET['user_id'] ?? 0);
-
+?>
 <?php if (!$paymentId || !$userId): ?>
     <p class='text-red-500'>Invalid checkout validation request.</p>
     <?php include __DIR__ . '/footer.php'; ?>
     <?php exit; ?>
 <?php else: ?>
-
-$displayAmount = ($currency === 'INR') ? '₹' . ($amount / 100) : '$' . ($amount / 100);
-?>
+    <?php
+    $displayAmount = ($currency === 'INR') ? '₹' . ($amount / 100) : '$' . ($amount / 100);
+    ?>
 
 <div class="max-w-md mx-auto my-12">
     <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 text-center space-y-6">
@@ -104,10 +104,8 @@ $displayAmount = ($currency === 'INR') ? '₹' . ($amount / 100) : '$' . ($amoun
             errBox.classList.remove('hidden');
             btn.disabled = false;
             btn.innerText = "Complete Payment";
-        }
     });
 </script>
 
-<?php endif; ?>
-
 <?php include __DIR__ . '/footer.php'; ?>
+<?php endif; ?>
