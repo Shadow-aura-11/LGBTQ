@@ -96,7 +96,7 @@ if (empty($feed) && isset($context['feed'])) {
                 <div class="border-t border-gray-200/50 pt-4 space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-bold text-gray-700 uppercase">Premium Filters</span>
-                        <?php if (($currentUser['tier'] ?? 'free') !== 'premium'): ?>
+                        <?php if (!$isPremium): ?>
                             <span class="bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-[9px] px-2 py-0.5 rounded font-extrabold uppercase shadow-sm">👑 VIP</span>
                         <?php endif; ?>
                     </div>
@@ -104,7 +104,7 @@ if (empty($feed) && isset($context['feed'])) {
                     <div>
                         <label class="block text-xs font-semibold text-gray-400 uppercase tracking-wider mb-1">City Location</label>
                         <input type="text" name="city" value="<?= htmlspecialchars($city) ?>" placeholder="e.g. London" 
-                               <?= ($currentUser['tier'] ?? 'free') !== 'premium' ? 'disabled title="Requires Premium Tier" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-100/50 text-sm outline-none cursor-not-allowed"' : 'class="w-full px-3 py-2.5 rounded-xl border border-gray-300 bg-white/50 text-sm outline-none transition focus:ring-2 focus:ring-pink-300"' ?>>
+                               <?= !$isPremium ? 'disabled title="Requires Premium Tier" class="w-full px-3 py-2.5 rounded-xl border border-gray-200 bg-gray-100/50 text-sm outline-none cursor-not-allowed"' : 'class="w-full px-3 py-2.5 rounded-xl border border-gray-300 bg-white/50 text-sm outline-none transition focus:ring-2 focus:ring-pink-300"' ?>>
                     </div>
 
 
@@ -117,7 +117,7 @@ if (empty($feed) && isset($context['feed'])) {
         </div>
 
         <!-- Premium CTA widget -->
-        <?php if (($currentUser['tier'] ?? 'free') !== 'premium'): ?>
+        <?php if (!$isPremium): ?>
             <div class="bg-gradient-to-tr from-pink-500 to-indigo-600 p-6 rounded-3xl text-white shadow-xl relative overflow-hidden border border-pink-400/20">
                 <div class="absolute -right-6 -bottom-6 w-24 h-24 bg-white/10 rounded-full"></div>
                 <h4 class="font-extrabold text-lg flex items-center gap-2">👑 VIP Lounge</h4>
@@ -190,17 +190,10 @@ if (empty($feed) && isset($context['feed'])) {
                                     View Details
                                 </a>
                                 
-                                <?php if (($currentUser['tier'] ?? 'free') === 'premium'): ?>
-                                    <button onclick="quickLike(<?= $item['user_id'] ?>, this)" 
-                                            class="flex-1 bg-[#ec4899] hover:bg-[#db2777] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
-                                        Connect
-                                    </button>
-                                <?php else: ?>
-                                    <a href="/subscription" 
-                                       class="flex-1 text-center bg-[#ec4899] hover:bg-[#db2777] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
-                                        Connect
-                                    </a>
-                                <?php endif; ?>
+                                <button onclick="quickLike(<?= $item['user_id'] ?>, this)" 
+                                        class="flex-1 bg-[#ec4899] hover:bg-[#db2777] text-white py-2.5 rounded-xl text-xs font-bold transition shadow-sm">
+                                    Connect
+                                </button>
                             </div>
                         </div>
                     </div>

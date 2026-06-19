@@ -34,450 +34,527 @@ foreach ($users as $u) {
 }
 ?>
 
-<div class="max-w-6xl mx-auto my-8 px-4">
-    <!-- Admin Statistics Grid -->
-    <div class="grid grid-cols-1 md:grid-cols-4 gap-6 mb-8">
-        <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
-            <span class="text-3xl bg-blue-100 p-3 rounded-2xl">👥</span>
-            <div>
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Active Users</span>
-                <h4 class="text-3xl font-extrabold text-gray-800"><?= $totalActiveUsers ?></h4>
-            </div>
-        </div>
-        
-        <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
-            <span class="text-3xl bg-yellow-100 p-3 rounded-2xl">👑</span>
-            <div>
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Subscribers</span>
-                <h4 class="text-3xl font-extrabold text-gray-800"><?= $totalSubscribers ?></h4>
-            </div>
-        </div>
-
-        <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
-            <span class="text-3xl bg-orange-100 p-3 rounded-2xl">⏳</span>
-            <div>
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Pending Reports</span>
-                <h4 class="text-3xl font-extrabold text-gray-800"><?= $pendingCount ?></h4>
-            </div>
-        </div>
-        
-        <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
-            <span class="text-3xl bg-green-100 p-3 rounded-2xl">✅</span>
-            <div>
-                <span class="text-xs font-bold text-gray-400 uppercase tracking-wider">Reviewed Actions</span>
-                <h4 class="text-3xl font-extrabold text-gray-800"><?= $reviewedCount ?></h4>
-            </div>
+<<div class="max-w-7xl mx-auto my-8 px-4 flex flex-col lg:flex-row gap-8">
+    <!-- Left Sidebar Tab Panel -->
+    <div class="w-full lg:w-64 shrink-0 space-y-4">
+        <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm bg-white/70 backdrop-blur-md">
+            <h3 class="font-extrabold text-xs text-gray-500 uppercase tracking-wider mb-4 border-b border-gray-150 pb-2">🛡️ Admin Console</h3>
+            <nav class="flex flex-col gap-2 text-xs uppercase tracking-wider font-extrabold">
+                <button onclick="switchTab('overview')" id="tab-overview" class="w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm">
+                    <span>📊</span> Overview
+                </button>
+                <button onclick="switchTab('crm')" id="tab-crm" class="w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600">
+                    <span>👥</span> CRM (Users)
+                </button>
+                <button onclick="switchTab('analytics')" id="tab-analytics" class="w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600">
+                    <span>💰</span> Analytics &amp; Revenue
+                </button>
+                <button onclick="switchTab('cms')" id="tab-cms" class="w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600">
+                    <span>📝</span> Blogs &amp; Pages
+                </button>
+            </nav>
         </div>
     </div>
 
-    <!-- Visual Analytics Dashboard -->
-    <div class="grid grid-cols-1 lg:grid-cols-2 gap-8 mb-8">
-        <!-- Signups Growth Chart -->
-        <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/80 backdrop-blur-md">
-            <div class="mb-4">
-                <h3 class="text-lg font-bold text-gray-900 serif-font">📈 Signups Growth (Last 7 Days)</h3>
-                <p class="text-xs text-gray-400">Daily registration velocity for LGBTQ+ Matrimony platform.</p>
-            </div>
-            <div class="relative h-64 w-full pt-4">
-                <svg class="w-full h-full" viewBox="0 0 500 200" preserveAspectRatio="none">
-                    <!-- Grid Lines -->
-                    <line x1="0" y1="50" x2="500" y2="50" stroke="#f3f4f6" stroke-width="1" />
-                    <line x1="0" y1="100" x2="500" y2="100" stroke="#f3f4f6" stroke-width="1" />
-                    <line x1="0" y1="150" x2="500" y2="150" stroke="#f3f4f6" stroke-width="1" />
-                    
-                    <!-- Gradients -->
-                    <defs>
-                        <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
-                            <stop offset="0%" stop-color="#ec4899" stop-opacity="0.3"/>
-                            <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.0"/>
-                        </linearGradient>
-                        <linearGradient id="chart-line-grad" x1="0" y1="0" x2="1" y2="0">
-                            <stop offset="0%" stop-color="#8b5cf6"/>
-                            <stop offset="100%" stop-color="#ec4899"/>
-                        </linearGradient>
-                    </defs>
-                    
-                    <!-- Area under line -->
-                    <path d="M 0 200 L 0 150 L 83 120 L 166 160 L 249 90 L 332 70 L 415 110 L 500 40 L 500 200 Z" fill="url(#chart-grad)" />
-                    
-                    <!-- Line Chart -->
-                    <path d="M 0 150 L 83 120 L 166 160 L 249 90 L 332 70 L 415 110 L 500 40" fill="none" stroke="url(#chart-line-grad)" stroke-width="3.5" stroke-linecap="round" />
-                    
-                    <!-- Data Points -->
-                    <circle cx="0" cy="150" r="5" fill="#8b5cf6" stroke="#fff" stroke-width="2" />
-                    <circle cx="83" cy="120" r="5" fill="#8b5cf6" stroke="#fff" stroke-width="2" />
-                    <circle cx="166" cy="160" r="5" fill="#8b5cf6" stroke="#fff" stroke-width="2" />
-                    <circle cx="249" cy="90" r="5" fill="#a78bfa" stroke="#fff" stroke-width="2" />
-                    <circle cx="332" cy="70" r="5" fill="#f472b6" stroke="#fff" stroke-width="2" />
-                    <circle cx="415" cy="110" r="5" fill="#ec4899" stroke="#fff" stroke-width="2" />
-                    <circle cx="500" cy="40" r="6" fill="#db2777" stroke="#fff" stroke-width="2" />
-                </svg>
-                <!-- Labels -->
-                <div class="flex justify-between text-[10px] font-semibold text-gray-400 mt-2 px-1">
-                    <span>Mon</span>
-                    <span>Tue</span>
-                    <span>Wed</span>
-                    <span>Thu</span>
-                    <span>Fri</span>
-                    <span>Sat</span>
-                    <span>Sun</span>
+    <!-- Right Panels Container -->
+    <div class="flex-1 space-y-8 min-w-0">
+        
+        <!-- Tab 1: Overview -->
+        <div id="section-overview" class="space-y-8">
+            <!-- Stats overview row -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Active Users -->
+                <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
+                    <span class="text-3xl bg-blue-100 p-3 rounded-2xl">👥</span>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Active Users</span>
+                        <h4 class="text-2xl font-extrabold text-gray-800"><?= $totalActiveUsers ?></h4>
+                    </div>
                 </div>
+                <!-- Subscribers -->
+                <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
+                    <span class="text-3xl bg-yellow-100 p-3 rounded-2xl">👑</span>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Subscribers</span>
+                        <h4 class="text-2xl font-extrabold text-gray-800"><?= $totalSubscribers ?></h4>
+                    </div>
+                </div>
+                <!-- Pending Reports -->
+                <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
+                    <span class="text-3xl bg-orange-100 p-3 rounded-2xl">⏳</span>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Pending Queue</span>
+                        <h4 class="text-2xl font-extrabold text-gray-800"><?= $pendingCount ?></h4>
+                    </div>
+                </div>
+                <!-- Reviewed Actions -->
+                <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
+                    <span class="text-3xl bg-green-100 p-3 rounded-2xl">✅</span>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Reviewed Actions</span>
+                        <h4 class="text-2xl font-extrabold text-gray-800"><?= $reviewedCount ?></h4>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Moderation reports queue -->
+            <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/80 backdrop-blur-md">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-gray-900 serif-font">🛡️ Moderation Queue</h2>
+                        <p class="text-gray-500 text-xs mt-0.5">Approve suspend actions for reported accounts or dismiss false flags.</p>
+                    </div>
+                </div>
+
+                <div id="status-box" class="hidden px-4 py-2.5 rounded-xl text-sm mb-6"></div>
+
+                <?php if (empty($reports)): ?>
+                    <div class="text-center py-16 space-y-2">
+                        <span class="text-5xl block">🎉</span>
+                        <h4 class="font-bold text-gray-700 text-sm">No flags registered.</h4>
+                        <p class="text-xs text-gray-400">Profiles are fully aligned with safety rules.</p>
+                    </div>
+                <?php else: ?>
+                    <div class="overflow-x-auto rounded-2xl border border-gray-200/50">
+                        <table class="w-full text-left border-collapse bg-white/30">
+                            <thead>
+                                <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                    <th class="py-3.5 px-4">Report ID</th>
+                                    <th class="py-3.5 px-4">Reporter</th>
+                                    <th class="py-3.5 px-4">Reported</th>
+                                    <th class="py-3.5 px-4">Reason</th>
+                                    <th class="py-3.5 px-4">Status</th>
+                                    <th class="py-3.5 px-4 text-right">Actions</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-gray-100 text-sm">
+                                <?php foreach ($reports as $r): ?>
+                                    <tr id="report-row-<?= $r['id'] ?>" class="hover:bg-white/40 transition">
+                                        <td class="py-4 px-4 font-mono font-bold text-gray-800">#<?= $r['id'] ?></td>
+                                        <td class="py-4 px-4 text-gray-600">User #<?= $r['reporter_id'] ?></td>
+                                        <td class="py-4 px-4 text-red-600 font-semibold">User #<?= $r['reported_id'] ?></td>
+                                        <td class="py-4 px-4 text-gray-700 max-w-xs truncate font-medium"><?= htmlspecialchars($r['reason']) ?></td>
+                                        <td class="py-4 px-4">
+                                            <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <?= $r['status'] === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700' ?>">
+                                                <?= htmlspecialchars($r['status']) ?>
+                                            </span>
+                                        </td>
+                                        <td class="py-4 px-4 text-right space-x-1 text-xs">
+                                            <?php if ($r['status'] === 'pending'): ?>
+                                                <button onclick="resolveReport(<?= $r['id'] ?>, 'dismissed')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3.5 py-1.5 rounded-xl font-bold transition shadow-sm border border-gray-200">
+                                                    Dismiss
+                                                </button>
+                                                <button onclick="resolveReport(<?= $r['id'] ?>, 'suspended')" class="bg-red-500 hover:bg-red-600 text-white text-xs px-3.5 py-1.5 rounded-xl font-bold transition shadow-md">
+                                                    Suspend User
+                                                </button>
+                                            <?php else: ?>
+                                                <span class="text-xs text-gray-400 font-bold capitalize">Resolved: <?= htmlspecialchars($r['action_taken'] ?: 'none') ?></span>
+                                            <?php endif; ?>
+                                        </td>
+                                    </tr>
+                                <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    </div>
+                <?php endif; ?>
             </div>
         </div>
 
-        <!-- Premium Conversion Funnel -->
-        <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/80 backdrop-blur-md">
-            <div class="mb-4">
-                <h3 class="text-lg font-bold text-gray-900 serif-font">🎯 Premium Conversion Funnel</h3>
-                <p class="text-xs text-gray-400">Visitor progression from landing to premium checkout.</p>
-            </div>
-            <div class="space-y-4 pt-2">
-                <div>
-                    <div class="flex justify-between text-xs font-semibold mb-1">
-                        <span class="text-gray-500">1. Total Visitors</span>
-                        <span class="text-gray-800 font-bold">12,450 (100%)</span>
-                    </div>
-                    <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-gray-400 h-full rounded-full" style="width: 100%"></div>
+        <!-- Tab 2: CRM -->
+        <div id="section-crm" class="hidden space-y-8">
+            <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/80 backdrop-blur-md">
+                <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-gray-100 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-gray-900 serif-font">👥 User Accounts Management</h2>
+                        <p class="text-gray-500 text-xs mt-0.5">Toggle status (active/suspended), subscription tiers, or delete accounts.</p>
                     </div>
                 </div>
-                <div>
-                    <div class="flex justify-between text-xs font-semibold mb-1">
-                        <span class="text-gray-500">2. Registered Profiles</span>
-                        <span class="text-gray-800 font-bold">4,120 (33.1%)</span>
-                    </div>
-                    <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-indigo-500 h-full rounded-full" style="width: 33.1%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="flex justify-between text-xs font-semibold mb-1">
-                        <span class="text-gray-500">3. Active Matches Searchers</span>
-                        <span class="text-gray-800 font-bold">2,850 (22.8%)</span>
-                    </div>
-                    <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-purple-500 h-full rounded-full" style="width: 22.8%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="flex justify-between text-xs font-semibold mb-1">
-                        <span class="text-gray-500">4. Initiated Chat Conversation</span>
-                        <span class="text-gray-800 font-bold">1,420 (11.4%)</span>
-                    </div>
-                    <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-pink-500 h-full rounded-full" style="width: 11.4%"></div>
-                    </div>
-                </div>
-                <div>
-                    <div class="flex justify-between text-xs font-semibold mb-1">
-                        <span class="text-pink-600 font-bold">5. Upgraded to Premium (Subscribers)</span>
-                        <span class="text-pink-600 font-bold">385 (3.1%)</span>
-                    </div>
-                    <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
-                        <div class="bg-gradient-to-r from-pink-500 to-yellow-500 h-full rounded-full animate-pulse" style="width: 3.1%"></div>
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
-    <!-- Moderation reports list -->
-    <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/80 backdrop-blur-md mb-8">
-        <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-            <div>
-                <h2 class="text-2xl font-extrabold text-gray-900 serif-font">🛡️ Moderation Queue</h2>
-                <p class="text-gray-500 text-xs mt-0.5">Approve suspend actions for reported accounts or dismiss false flags.</p>
-            </div>
-        </div>
+                <!-- Filters & Search Toolbar -->
+                <div class="flex flex-col md:flex-row gap-4 mb-6">
+                    <div class="flex-1">
+                        <input type="text" id="user-search" placeholder="Search by name or email..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200/80 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold" />
+                    </div>
+                    <div class="flex gap-4">
+                        <select id="filter-tier" class="px-4 py-2.5 rounded-xl border border-gray-200/80 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold">
+                            <option value="all">All Tiers</option>
+                            <option value="free">Free</option>
+                            <option value="silver">Silver</option>
+                            <option value="gold">Gold</option>
+                            <option value="premium">Premium (Old)</option>
+                        </select>
+                        <select id="filter-status" class="px-4 py-2.5 rounded-xl border border-gray-200/80 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold">
+                            <option value="all">All Statuses</option>
+                            <option value="active">Active</option>
+                            <option value="suspended">Suspended</option>
+                        </select>
+                    </div>
+                </div>
 
-        <div id="status-box" class="hidden px-4 py-2.5 rounded-xl text-sm mb-6"></div>
-
-        <?php if (empty($reports)): ?>
-            <div class="text-center py-16 space-y-2">
-                <span class="text-5xl block">🎉</span>
-                <h4 class="font-bold text-gray-700 text-sm">No flags registered.</h4>
-                <p class="text-xs text-gray-400">Profiles are fully aligned with safety rules.</p>
-            </div>
-        <?php else: ?>
-            <div class="overflow-x-auto rounded-2xl border border-gray-200/50">
-                <table class="w-full text-left border-collapse bg-white/30">
-                    <thead>
-                        <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                            <th class="py-3.5 px-4">Report ID</th>
-                            <th class="py-3.5 px-4">Reporter</th>
-                            <th class="py-3.5 px-4">Reported</th>
-                            <th class="py-3.5 px-4">Reason</th>
-                            <th class="py-3.5 px-4">Status</th>
-                            <th class="py-3.5 px-4 text-right">Actions</th>
-                        </tr>
-                    </thead>
-                    <tbody class="divide-y divide-gray-100 text-sm">
-                        <?php foreach ($reports as $r): ?>
-                            <tr id="report-row-<?= $r['id'] ?>" class="hover:bg-white/40 transition">
-                                <td class="py-4 px-4 font-mono font-bold text-gray-800">#<?= $r['id'] ?></td>
-                                <td class="py-4 px-4 text-gray-600">User #<?= $r['reporter_id'] ?></td>
-                                <td class="py-4 px-4 text-red-600 font-semibold">User #<?= $r['reported_id'] ?></td>
-                                <td class="py-4 px-4 text-gray-700 max-w-xs truncate font-medium"><?= htmlspecialchars($r['reason']) ?></td>
-                                <td class="py-4 px-4">
-                                    <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <?= $r['status'] === 'pending' ? 'bg-orange-100 text-orange-700' : 'bg-green-100 text-green-700' ?>">
-                                        <?= htmlspecialchars($r['status']) ?>
-                                    </span>
-                                </td>
-                                <td class="py-4 px-4 text-right space-x-1">
-                                    <?php if ($r['status'] === 'pending'): ?>
-                                        <button onclick="resolveReport(<?= $r['id'] ?>, 'dismissed')" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-3.5 py-1.5 rounded-xl font-bold transition shadow-sm border border-gray-200">
-                                            Dismiss
-                                        </button>
-                                        <button onclick="resolveReport(<?= $r['id'] ?>, 'suspended')" class="bg-red-500 hover:bg-red-600 text-white text-xs px-3.5 py-1.5 rounded-xl font-bold transition shadow-md">
-                                            Suspend User
-                                        </button>
-                                    <?php else: ?>
-                                        <span class="text-xs text-gray-400 font-bold capitalize">Resolved: <?= htmlspecialchars($r['action_taken'] ?: 'none') ?></span>
-                                    <?php endif; ?>
-                                </td>
+                <div class="overflow-x-auto rounded-2xl border border-gray-200/50">
+                    <table class="w-full text-left border-collapse bg-white/30">
+                        <thead>
+                            <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="py-3.5 px-4">User ID</th>
+                                <th class="py-3.5 px-4">Name</th>
+                                <th class="py-3.5 px-4">Email</th>
+                                <th class="py-3.5 px-4">Role</th>
+                                <th class="py-3.5 px-4">Subscription Tier</th>
+                                <th class="py-3.5 px-4">Account Status</th>
+                                <th class="py-3.5 px-4 text-right">Actions</th>
                             </tr>
-                        <?php endforeach; ?>
-                    </tbody>
-                </table>
-            </div>
-        <?php endif; ?>
-    </div>
-
-    <!-- User Management Section -->
-    <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/80 backdrop-blur-md mb-8">
-        <div class="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mb-6 border-b border-gray-100 pb-4">
-            <div>
-                <h2 class="text-2xl font-extrabold text-gray-900 serif-font">👥 User Accounts Management</h2>
-                <p class="text-gray-500 text-xs mt-0.5">Toggle user account status (active/suspended), toggle subscription tiers, or delete accounts.</p>
+                        </thead>
+                        <tbody class="divide-y divide-gray-100 text-sm">
+                            <?php foreach ($users as $u): ?>
+                                <tr id="user-row-<?= $u['id'] ?>" class="hover:bg-white/40 transition">
+                                    <td class="py-4 px-4 font-mono font-bold text-gray-800">#<?= $u['id'] ?></td>
+                                    <td class="py-4 px-4 font-semibold text-gray-800"><?= htmlspecialchars($u['name']) ?></td>
+                                    <td class="py-4 px-4 text-gray-600"><?= htmlspecialchars($u['email']) ?></td>
+                                    <td class="py-4 px-4 uppercase text-xs font-bold text-gray-500"><?= htmlspecialchars($u['role']) ?></td>
+                                    <td class="py-4 px-4 font-bold">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <?= $u['tier'] === 'premium' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' ?>">
+                                            <?= htmlspecialchars($u['tier']) ?>
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4 font-bold">
+                                        <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <?= ($u['status'] ?? 'active') === 'suspended' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' ?>">
+                                            <?= htmlspecialchars($u['status'] ?? 'active') ?>
+                                        </span>
+                                    </td>
+                                    <td class="py-4 px-4 text-right space-x-1 whitespace-nowrap text-xs">
+                                        <button onclick="toggleUserTier(<?= $u['id'] ?>)" class="bg-yellow-550 hover:bg-yellow-600 text-gray-800 text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm border border-yellow-300">
+                                            Toggle Tier
+                                        </button>
+                                        <button onclick="toggleUserStatus(<?= $u['id'] ?>)" class="bg-gray-800 hover:bg-black text-white text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
+                                            Toggle Status
+                                        </button>
+                                        <button onclick="deleteUser(<?= $u['id'] ?>)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
+                                            Delete
+                                        </button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
-        <!-- Filters & Search Toolbar -->
-        <div class="flex flex-col md:flex-row gap-4 mb-6">
-            <div class="flex-1">
-                <input type="text" id="user-search" placeholder="Search by name or email..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200/80 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white/60 text-sm font-semibold" />
+        <!-- Tab 3: Analytics & Revenue -->
+        <div id="section-analytics" class="hidden space-y-8">
+            <!-- Revenue Analytics widgets -->
+            <div class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-6">
+                <!-- Total Revenue -->
+                <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
+                    <span class="text-3xl bg-green-100 p-3 rounded-2xl">💰</span>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block text-left">Total Revenue</span>
+                        <h4 class="text-xl font-extrabold text-gray-800 text-left">₹<?= htmlspecialchars($totalRevenue) ?></h4>
+                    </div>
+                </div>
+                <!-- MRR -->
+                <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
+                    <span class="text-3xl bg-pink-100 p-3 rounded-2xl">📈</span>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block text-left">Active MRR</span>
+                        <h4 class="text-xl font-extrabold text-gray-800 text-left">₹<?= htmlspecialchars($mrr) ?></h4>
+                    </div>
+                </div>
+                <!-- ARPU -->
+                <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
+                    <span class="text-3xl bg-indigo-100 p-3 rounded-2xl">📊</span>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block text-left">ARPU</span>
+                        <h4 class="text-xl font-extrabold text-gray-800 text-left">₹<?= htmlspecialchars($arpu) ?></h4>
+                    </div>
+                </div>
+                <!-- Credit Sales -->
+                <div class="glass-panel p-6 rounded-3xl border border-white/60 shadow-sm flex items-center gap-4 bg-white/40 backdrop-blur-md">
+                    <span class="text-3xl bg-amber-100 p-3 rounded-2xl">🪙</span>
+                    <div>
+                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block text-left">Credit Sales</span>
+                        <h4 class="text-xl font-extrabold text-gray-800 text-left">₹<?= htmlspecialchars($creditSales) ?></h4>
+                    </div>
+                </div>
             </div>
-            <div class="flex gap-4">
-                <select id="filter-tier" class="px-4 py-2.5 rounded-xl border border-gray-200/80 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white/60 text-sm font-semibold">
-                    <option value="all">All Tiers</option>
-                    <option value="free">Free</option>
-                    <option value="premium">Premium</option>
-                </select>
-                <select id="filter-status" class="px-4 py-2.5 rounded-xl border border-gray-200/80 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white/60 text-sm font-semibold">
-                    <option value="all">All Statuses</option>
-                    <option value="active">Active</option>
-                    <option value="suspended">Suspended</option>
-                </select>
+
+            <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+                <!-- SVG line chart -->
+                <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/80 backdrop-blur-md">
+                    <div class="mb-4">
+                        <h3 class="text-lg font-bold text-gray-900 serif-font text-left">📈 Revenue Growth (Last 6 Months)</h3>
+                        <p class="text-xs text-gray-400 text-left">Monthly gross earnings velocity trajectory.</p>
+                    </div>
+                    <div class="relative h-64 w-full pt-4">
+                        <svg class="w-full h-full" viewBox="0 0 500 200" preserveAspectRatio="none">
+                            <line x1="0" y1="50" x2="500" y2="50" stroke="#f3f4f6" stroke-width="1" />
+                            <line x1="0" y1="100" x2="500" y2="100" stroke="#f3f4f6" stroke-width="1" />
+                            <line x1="0" y1="150" x2="500" y2="150" stroke="#f3f4f6" stroke-width="1" />
+                            
+                            <defs>
+                                <linearGradient id="chart-grad" x1="0" y1="0" x2="0" y2="1">
+                                    <stop offset="0%" stop-color="#ec4899" stop-opacity="0.3"/>
+                                    <stop offset="100%" stop-color="#8b5cf6" stop-opacity="0.0"/>
+                                </linearGradient>
+                                <linearGradient id="chart-line-grad" x1="0" y1="0" x2="1" y2="0">
+                                    <stop offset="0%" stop-color="#8b5cf6"/>
+                                    <stop offset="100%" stop-color="#ec4899"/>
+                                </linearGradient>
+                            </defs>
+                            
+                            <path d="M 0 200 L 0 160 L 100 130 L 200 170 L 300 100 L 400 70 L 500 35 L 500 200 Z" fill="url(#chart-grad)" />
+                            <path d="M 0 160 L 100 130 L 200 170 L 300 100 L 400 70 L 500 35" fill="none" stroke="url(#chart-line-grad)" stroke-width="3.5" stroke-linecap="round" />
+                            
+                            <circle cx="0" cy="160" r="5" fill="#8b5cf6" stroke="#fff" stroke-width="2" />
+                            <circle cx="100" cy="130" r="5" fill="#8b5cf6" stroke="#fff" stroke-width="2" />
+                            <circle cx="200" cy="170" r="5" fill="#8b5cf6" stroke="#fff" stroke-width="2" />
+                            <circle cx="300" cy="100" r="5" fill="#a78bfa" stroke="#fff" stroke-width="2" />
+                            <circle cx="400" cy="70" r="5" fill="#f472b6" stroke="#fff" stroke-width="2" />
+                            <circle cx="500" cy="35" r="6" fill="#db2777" stroke="#fff" stroke-width="2" />
+                        </svg>
+                        <div class="flex justify-between text-[10px] font-semibold text-gray-400 mt-2 px-1">
+                            <span>Jan</span>
+                            <span>Feb</span>
+                            <span>Mar</span>
+                            <span>Apr</span>
+                            <span>May</span>
+                            <span>Jun</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Plan distribution ratios -->
+                <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/80 backdrop-blur-md flex flex-col justify-between">
+                    <div>
+                        <h3 class="text-lg font-bold text-gray-900 serif-font text-left">📊 Plan &amp; Wallet Distribution</h3>
+                        <p class="text-xs text-gray-400 mb-6 text-left">Ratio of users subscribed to Silver, Gold, or owning Credit Wallets.</p>
+                        
+                        <div class="space-y-4 text-left">
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-gray-500">🥈 Silver Tier Members</span>
+                                    <span class="text-gray-800 font-bold"><?= htmlspecialchars($silverRatio) ?>%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                                    <div class="bg-slate-400 h-full rounded-full" style="width: <?= htmlspecialchars($silverRatio) ?>%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-yellow-600 font-bold">👑 Gold Tier Members</span>
+                                    <span class="text-gray-800 font-bold"><?= htmlspecialchars($goldRatio) ?>%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                                    <div class="bg-yellow-400 h-full rounded-full" style="width: <?= htmlspecialchars($goldRatio) ?>%"></div>
+                                </div>
+                            </div>
+
+                            <div>
+                                <div class="flex justify-between text-xs font-semibold mb-1">
+                                    <span class="text-indigo-600 font-bold">💰 Credit Wallet Owners</span>
+                                    <span class="text-gray-800 font-bold"><?= htmlspecialchars($creditsRatio) ?>%</span>
+                                </div>
+                                <div class="w-full bg-gray-100 h-2.5 rounded-full overflow-hidden">
+                                    <div class="bg-indigo-500 h-full rounded-full" style="width: <?= htmlspecialchars($creditsRatio) ?>%"></div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-[10px] text-gray-400 uppercase tracking-wider mt-6 border-t border-gray-100 pt-4 font-semibold text-center">
+                        Ratios automatically calculated based on active user records.
+                    </div>
+                </div>
             </div>
         </div>
 
-        <div class="overflow-x-auto rounded-2xl border border-gray-200/50">
-            <table class="w-full text-left border-collapse bg-white/30">
-                <thead>
-                    <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                        <th class="py-3.5 px-4">User ID</th>
-                        <th class="py-3.5 px-4">Name</th>
-                        <th class="py-3.5 px-4">Email</th>
-                        <th class="py-3.5 px-4">Role</th>
-                        <th class="py-3.5 px-4">Subscription Tier</th>
-                        <th class="py-3.5 px-4">Account Status</th>
-                        <th class="py-3.5 px-4 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody class="divide-y divide-gray-100 text-sm">
-                    <?php foreach ($users as $u): ?>
-                        <tr id="user-row-<?= $u['id'] ?>" class="hover:bg-white/40 transition">
-                            <td class="py-4 px-4 font-mono font-bold text-gray-800">#<?= $u['id'] ?></td>
-                            <td class="py-4 px-4 font-semibold text-gray-800"><?= htmlspecialchars($u['name']) ?></td>
-                            <td class="py-4 px-4 text-gray-600"><?= htmlspecialchars($u['email']) ?></td>
-                            <td class="py-4 px-4 uppercase text-xs font-bold text-gray-500"><?= htmlspecialchars($u['role']) ?></td>
-                            <td class="py-4 px-4 font-bold">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <?= $u['tier'] === 'premium' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800' ?>">
-                                    <?= htmlspecialchars($u['tier']) ?>
-                                </span>
-                            </td>
-                            <td class="py-4 px-4 font-bold">
-                                <span class="px-2.5 py-1 rounded-full text-[10px] font-bold uppercase tracking-wider <?= ($u['status'] ?? 'active') === 'suspended' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700' ?>">
-                                    <?= htmlspecialchars($u['status'] ?? 'active') ?>
-                                </span>
-                            </td>
-                            <td class="py-4 px-4 text-right space-x-1 whitespace-nowrap">
-                                <button onclick="toggleUserTier(<?= $u['id'] ?>)" class="bg-yellow-500 hover:bg-yellow-600 text-white text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
-                                    Toggle Tier
-                                </button>
-                                <button onclick="toggleUserStatus(<?= $u['id'] ?>)" class="bg-gray-800 hover:bg-black text-white text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
-                                    Toggle Status
-                                </button>
-                                <button onclick="deleteUser(<?= $u['id'] ?>)" class="bg-red-600 hover:bg-red-700 text-white text-xs px-3 py-1.5 rounded-xl font-bold transition shadow-sm">
-                                    Delete
-                                </button>
-                            </td>
-                        </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
+        <!-- Tab 4: Blogs & Pages (CMS) -->
+        <div id="section-cms" class="hidden space-y-8">
+            <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/85 backdrop-blur-md">
+                <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
+                    <div>
+                        <h2 class="text-2xl font-extrabold text-gray-900 serif-font">📝 WordPress-style Page &amp; Blog Editor</h2>
+                        <p class="text-gray-500 text-xs mt-0.5">Manage public pages, write blog posts, and grade SEO in real-time with RankMath &amp; Yoast integration.</p>
+                    </div>
+                    <button onclick="openCmsModal()" class="bg-gradient-to-r from-pink-500 to-indigo-500 hover:from-pink-600 hover:to-indigo-600 text-white text-xs px-4 py-2.5 rounded-xl font-bold shadow-md transition">
+                        + Add Page or Post
+                    </button>
+                </div>
 
-    <!-- WordPress-style CMS Page/Blog Creator with Yoast/RankMath SEO Grader -->
-    <div class="glass-panel p-8 rounded-3xl shadow-xl border border-white/60 bg-white/85 backdrop-blur-md mb-8">
-        <div class="flex justify-between items-center mb-6 border-b border-gray-100 pb-4">
-            <div>
-                <h2 class="text-2xl font-extrabold text-gray-900 serif-font">📝 WordPress-style Page &amp; Blog Editor</h2>
-                <p class="text-gray-500 text-xs mt-0.5">Manage public pages, write blog posts, and grade SEO in real-time with RankMath &amp; Yoast integration.</p>
-            </div>
-            <button onclick="openCmsModal()" class="bg-gradient-to-r from-pink-500 to-indigo-500 hover:from-pink-600 hover:to-indigo-600 text-white text-xs px-4 py-2.5 rounded-xl font-bold shadow-md transition">
-                + Add Page or Post
-            </button>
-        </div>
+                <div id="cms-status-box" class="hidden px-4 py-2.5 rounded-xl text-sm mb-6"></div>
 
-        <div id="cms-status-box" class="hidden px-4 py-2.5 rounded-xl text-sm mb-6"></div>
+                <!-- CMS Items List Table -->
+                <div class="overflow-x-auto rounded-2xl border border-gray-200/50 mb-8 bg-white/30">
+                    <table class="w-full text-left border-collapse">
+                        <thead>
+                            <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
+                                <th class="py-3.5 px-4">Type</th>
+                                <th class="py-3.5 px-4">Title</th>
+                                <th class="py-3.5 px-4">Slug</th>
+                                <th class="py-3.5 px-4">Focus Keyword</th>
+                                <th class="py-3.5 px-4">SEO Score</th>
+                                <th class="py-3.5 px-4 text-right">Actions</th>
+                            </tr>
+                        </thead>
+                        <tbody id="cms-items-list" class="divide-y divide-gray-100 text-sm">
+                            <!-- Loaded dynamically via JS -->
+                        </tbody>
+                    </table>
+                </div>
 
-        <!-- CMS Items List Table -->
-        <div class="overflow-x-auto rounded-2xl border border-gray-200/50 mb-8 bg-white/30">
-            <table class="w-full text-left border-collapse">
-                <thead>
-                    <tr class="border-b border-gray-200 bg-gray-50/50 text-xs font-bold text-gray-500 uppercase tracking-wider">
-                        <th class="py-3.5 px-4">Type</th>
-                        <th class="py-3.5 px-4">Title</th>
-                        <th class="py-3.5 px-4">Slug</th>
-                        <th class="py-3.5 px-4">Focus Keyword</th>
-                        <th class="py-3.5 px-4">SEO Score</th>
-                        <th class="py-3.5 px-4 text-right">Actions</th>
-                    </tr>
-                </thead>
-                <tbody id="cms-items-list" class="divide-y divide-gray-100 text-sm">
-                    <!-- Loaded dynamically via JS -->
-                </tbody>
-            </table>
-        </div>
-
-        <!-- WordPress Editor & SEO Grader Grid (Hidden by default, shown when adding/editing) -->
-        <div id="cms-editor-container" class="hidden border-t border-gray-150 pt-6">
-            <h3 id="cms-editor-title" class="text-lg font-bold text-gray-800 mb-4">Create New Page or Post</h3>
-            
-            <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
-                <!-- Editor Form (2/3 width) -->
-                <div class="lg:col-span-2 space-y-4">
-                    <input type="hidden" id="cms-id" value="" />
+                <!-- WordPress Editor & SEO Grader Grid (Hidden by default, shown when adding/editing) -->
+                <div id="cms-editor-container" class="hidden border-t border-gray-150 pt-6">
+                    <h3 id="cms-editor-title" class="text-lg font-bold text-gray-800 mb-4">Create New Page or Post</h3>
                     
-                    <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Content Type</label>
-                            <select id="cms-type" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold">
-                                <option value="post">Blog Post</option>
-                                <option value="page">Custom Page</option>
-                            </select>
-                        </div>
-                        <div>
-                            <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Focus Keyword</label>
-                            <input type="text" id="cms-focus-keyword" placeholder="e.g. safe dating" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold" />
-                        </div>
-                    </div>
+                    <div class="grid grid-cols-1 lg:grid-cols-3 gap-8">
+                        <!-- Editor Form (2/3 width) -->
+                        <div class="lg:col-span-2 space-y-4">
+                            <input type="hidden" id="cms-id" value="" />
+                            
+                            <div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Content Type</label>
+                                    <select id="cms-type" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold">
+                                        <option value="post">Blog Post</option>
+                                        <option value="page">Custom Page</option>
+                                    </select>
+                                </div>
+                                <div>
+                                    <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Focus Keyword</label>
+                                    <input type="text" id="cms-focus-keyword" placeholder="e.g. safe dating" class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold" />
+                                </div>
+                            </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Title</label>
-                        <input type="text" id="cms-title" placeholder="Enter title..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold" />
-                    </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Title</label>
+                                <input type="text" id="cms-title" placeholder="Enter title..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold" />
+                            </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Custom Slug</label>
-                        <div class="flex">
-                            <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-gray-200 bg-gray-55 text-gray-500 text-xs font-semibold">
-                                /blog/ or /page/
-                            </span>
-                            <input type="text" id="cms-slug" placeholder="e.g. safe-dating-tips" class="w-full px-4 py-2.5 rounded-r-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold" />
-                        </div>
-                    </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Custom Slug</label>
+                                <div class="flex">
+                                    <span class="inline-flex items-center px-3 rounded-l-xl border border-r-0 border-gray-200 bg-gray-55 text-gray-500 text-xs font-semibold">
+                                        /blog/ or /page/
+                                    </span>
+                                    <input type="text" id="cms-slug" placeholder="e.g. safe-dating-tips" class="w-full px-4 py-2.5 rounded-r-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold" />
+                                </div>
+                            </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Meta Description</label>
-                        <textarea id="cms-meta-desc" rows="2" placeholder="Write meta description for search engines..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold"></textarea>
-                    </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Meta Description</label>
+                                <textarea id="cms-meta-desc" rows="2" placeholder="Write meta description for search engines..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-semibold"></textarea>
+                            </div>
 
-                    <div>
-                        <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Content Body</label>
-                        <textarea id="cms-content" rows="12" placeholder="Write page content in HTML or plain text..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-mono"></textarea>
-                    </div>
+                            <div>
+                                <label class="block text-xs font-bold text-gray-400 uppercase tracking-wider mb-1">Content Body</label>
+                                <textarea id="cms-content" rows="12" placeholder="Write page content in HTML or plain text..." class="w-full px-4 py-2.5 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-pink-500 bg-white text-sm font-mono"></textarea>
+                            </div>
 
-                    <div class="flex justify-end gap-3 pt-2">
-                        <button type="button" onclick="closeCmsEditor()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-4 py-2 rounded-xl font-bold transition">
-                            Cancel
-                        </button>
-                        <button type="button" onclick="saveCmsContent()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-xl font-bold shadow-md transition">
-                            Publish &amp; Save
-                        </button>
-                    </div>
-                </div>
+                            <div class="flex justify-end gap-3 pt-2">
+                                <button type="button" onclick="closeCmsEditor()" class="bg-gray-100 hover:bg-gray-200 text-gray-700 text-xs px-4 py-2 rounded-xl font-bold transition">
+                                    Cancel
+                                </button>
+                                <button type="button" onclick="saveCmsContent()" class="bg-indigo-600 hover:bg-indigo-700 text-white text-xs px-4 py-2.5 rounded-xl font-bold shadow-md transition">
+                                    Publish &amp; Save
+                                </button>
+                            </div>
+                        </div>
 
-                <!-- Yoast/RankMath Real-time SEO Grader (1/3 width) -->
-                <div class="glass-panel p-6 rounded-2xl border border-gray-200/50 bg-gray-50/50 flex flex-col space-y-6">
-                    <div>
-                        <h4 class="text-sm font-bold text-gray-800 flex items-center justify-between">
-                            <span>🚦 Yoast &amp; RankMath SEO Grader</span>
-                            <span id="seo-score-badge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-red-100 text-red-700">0/100</span>
-                        </h4>
-                        <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden mt-3">
-                            <div id="seo-score-bar" class="bg-red-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
-                        </div>
-                    </div>
+                        <!-- Yoast/RankMath Real-time SEO Grader (1/3 width) -->
+                        <div class="glass-panel p-6 rounded-2xl border border-gray-200/50 bg-gray-50/50 flex flex-col space-y-6">
+                            <div>
+                                <h4 class="text-sm font-bold text-gray-800 flex items-center justify-between">
+                                    <span>🚦 Yoast &amp; RankMath SEO Grader</span>
+                                    <span id="seo-score-badge" class="px-2.5 py-0.5 rounded-full text-xs font-black bg-red-100 text-red-700">0/100</span>
+                                </h4>
+                                <div class="w-full bg-gray-200 h-2 rounded-full overflow-hidden mt-3">
+                                    <div id="seo-score-bar" class="bg-red-500 h-full rounded-full transition-all duration-300" style="width: 0%"></div>
+                                </div>
+                            </div>
 
-                    <!-- Grader Checklist -->
-                    <div class="space-y-3 text-xs">
-                        <div id="check-keyword" class="flex items-start gap-2 text-gray-500">
-                            <span class="status-icon text-sm">❌</span>
-                            <span class="label font-medium">Focus keyword is defined</span>
-                        </div>
-                        <div id="check-title" class="flex items-start gap-2 text-gray-500">
-                            <span class="status-icon text-sm">❌</span>
-                            <span class="label font-medium">Keyword exists in title</span>
-                        </div>
-                        <div id="check-slug" class="flex items-start gap-2 text-gray-500">
-                            <span class="status-icon text-sm">❌</span>
-                            <span class="label font-medium">Keyword exists in slug URL</span>
-                        </div>
-                        <div id="check-meta" class="flex items-start gap-2 text-gray-500">
-                            <span class="status-icon text-sm">❌</span>
-                            <span class="label font-medium">Keyword exists in Meta Description</span>
-                        </div>
-                        <div id="check-first-para" class="flex items-start gap-2 text-gray-500">
-                            <span class="status-icon text-sm">❌</span>
-                            <span class="label font-medium">Keyword is in first paragraph</span>
-                        </div>
-                        <div id="check-density" class="flex items-start gap-2 text-gray-500">
-                            <span class="status-icon text-sm">❌</span>
-                            <span class="label font-medium">Keyword density (ideal: 0.8% - 2.5%)</span>
-                        </div>
-                        <div id="check-length-title" class="flex items-start gap-2 text-gray-500">
-                            <span class="status-icon text-sm">❌</span>
-                            <span class="label font-medium">Title length (ideal: 40-60 chars)</span>
-                        </div>
-                        <div id="check-length-meta" class="flex items-start gap-2 text-gray-500">
-                            <span class="status-icon text-sm">❌</span>
-                            <span class="label font-medium">Meta Description length (ideal: 120-160 chars)</span>
-                        </div>
-                        <div id="check-wordcount" class="flex items-start gap-2 text-gray-500">
-                            <span class="status-icon text-sm">❌</span>
-                            <span class="label font-medium">Content contains at least 300 words</span>
-                        </div>
-                    </div>
+                            <!-- Grader Checklist -->
+                            <div class="space-y-3 text-xs text-left">
+                                <div id="check-keyword" class="flex items-start gap-2 text-gray-500">
+                                    <span class="status-icon text-sm">❌</span>
+                                    <span class="label font-medium">Focus keyword is defined</span>
+                                </div>
+                                <div id="check-title" class="flex items-start gap-2 text-gray-500">
+                                    <span class="status-icon text-sm">❌</span>
+                                    <span class="label font-medium">Keyword exists in title</span>
+                                </div>
+                                <div id="check-slug" class="flex items-start gap-2 text-gray-500">
+                                    <span class="status-icon text-sm">❌</span>
+                                    <span class="label font-medium">Keyword exists in slug URL</span>
+                                </div>
+                                <div id="check-meta" class="flex items-start gap-2 text-gray-500">
+                                    <span class="status-icon text-sm">❌</span>
+                                    <span class="label font-medium">Keyword exists in Meta Description</span>
+                                </div>
+                                <div id="check-first-para" class="flex items-start gap-2 text-gray-500">
+                                    <span class="status-icon text-sm">❌</span>
+                                    <span class="label font-medium">Keyword is in first paragraph</span>
+                                </div>
+                                <div id="check-density" class="flex items-start gap-2 text-gray-500">
+                                    <span class="status-icon text-sm">❌</span>
+                                    <span class="label font-medium">Keyword density (ideal: 0.8% - 2.5%)</span>
+                                </div>
+                                <div id="check-length-title" class="flex items-start gap-2 text-gray-500">
+                                    <span class="status-icon text-sm">❌</span>
+                                    <span class="label font-medium">Title length (ideal: 40-60 chars)</span>
+                                </div>
+                                <div id="check-length-meta" class="flex items-start gap-2 text-gray-500">
+                                    <span class="status-icon text-sm">❌</span>
+                                    <span class="label font-medium">Meta Description length (ideal: 120-160 chars)</span>
+                                </div>
+                                <div id="check-wordcount" class="flex items-start gap-2 text-gray-500">
+                                    <span class="status-icon text-sm">❌</span>
+                                    <span class="label font-medium">Content contains at least 300 words</span>
+                                </div>
+                            </div>
 
-                    <!-- SEO Advice Snippet -->
-                    <div class="border-t border-gray-200/50 pt-4 mt-2">
-                        <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Google Search Preview</span>
-                        <div class="mt-2 bg-white border border-gray-200 p-3.5 rounded-xl space-y-1 shadow-sm">
-                            <span id="preview-url" class="text-[10px] text-gray-550 block truncate">https://lgbtqmatrimony.local/blog/</span>
-                            <span id="preview-title" class="text-sm text-indigo-700 font-semibold hover:underline cursor-pointer block leading-snug">Please enter a title</span>
-                            <span id="preview-desc" class="text-xs text-gray-600 block leading-normal">Please write a meta description to see how it appears in Google SERP results.</span>
+                            <!-- SEO Advice Advice -->
+                            <div class="border-t border-gray-200/50 pt-4 mt-2">
+                                <span class="text-[10px] font-bold text-gray-400 uppercase tracking-wider block">Google Search Preview</span>
+                                <div class="mt-2 bg-white border border-gray-200 p-3.5 rounded-xl space-y-1 shadow-sm text-left">
+                                    <span id="preview-url" class="text-[10px] text-gray-550 block truncate">https://lgbtqmatrimony.local/blog/</span>
+                                    <span id="preview-title" class="text-sm text-indigo-700 font-semibold hover:underline cursor-pointer block leading-snug">Please enter a title</span>
+                                    <span id="preview-desc" class="text-xs text-gray-600 block leading-normal">Please write a meta description to see how it appears in Google SERP results.</span>
+                                </div>
+                            </div>
                         </div>
                     </div>
                 </div>
             </div>
+        </div>
         </div>
     </div>
 </div>
 
 <script>
+    // --- SIDEBAR TAB NAVIGATION WITH PERSISTENCE ---
+    function switchTab(tabName) {
+        localStorage.setItem('admin_active_tab', tabName);
+        const sections = ['overview', 'crm', 'analytics', 'cms'];
+        sections.forEach(s => {
+            const el = document.getElementById('section-' + s);
+            if (el) el.classList.add('hidden');
+            
+            const btn = document.getElementById('tab-' + s);
+            if (btn) {
+                btn.className = "w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-2.5 text-gray-600 hover:bg-pink-50 hover:text-pink-600 font-bold uppercase tracking-wider text-xs";
+            }
+        });
+        
+        const activeSection = document.getElementById('section-' + tabName);
+        if (activeSection) activeSection.classList.remove('hidden');
+        
+        const activeBtn = document.getElementById('tab-' + tabName);
+        if (activeBtn) {
+            activeBtn.className = "w-full text-left px-4 py-3 rounded-xl transition flex items-center gap-2.5 bg-gradient-to-r from-pink-500 to-rose-500 text-white shadow-sm font-bold uppercase tracking-wider text-xs";
+        }
+    }
+
     // --- USER MANAGEMENT FILTER LOGIC ---
     function filterUsers() {
         const query = document.getElementById('user-search').value.toLowerCase();
@@ -933,6 +1010,9 @@ foreach ($users as $u) {
 
     // --- DOMContentLoaded INIT ---
     document.addEventListener('DOMContentLoaded', () => {
+        const savedTab = localStorage.getItem('admin_active_tab') || 'overview';
+        switchTab(savedTab);
+        
         loadCmsContents();
         
         document.getElementById('user-search').addEventListener('input', filterUsers);

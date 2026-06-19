@@ -16,7 +16,6 @@ if (!fs.existsSync(UPLOADS_DIR)) {
     fs.mkdirSync(UPLOADS_DIR, { recursive: true });
 }
 
-// Initial DB Setup
 let db = {
     users: [],
     profiles: [],
@@ -25,12 +24,16 @@ let db = {
     notifications: [],
     activity_logs: [],
     reports: [],
-    blocks: []
+    blocks: [],
+    unlocked_contacts: []
 };
 
 if (fs.existsSync(DB_FILE)) {
     try {
         db = JSON.parse(fs.readFileSync(DB_FILE, 'utf8'));
+        if (!db.unlocked_contacts) {
+            db.unlocked_contacts = [];
+        }
     } catch (e) {
         console.error("DB Parse error, resetting.");
     }
@@ -61,7 +64,7 @@ if (db.users.length < 15) {
     });
 
     // 2. Jordan Diaz
-    db.users.push({ id: 3, name: "Jordan Diaz", email: "jordan@lgbtqmatrimony.local", password: "password", role: "user", tier: "premium" });
+    db.users.push({ id: 3, name: "Jordan Diaz", email: "jordan@lgbtqmatrimony.local", password: "password", role: "user", tier: "silver", credits: 20 });
     db.profiles.push({
         user_id: 3, name: "Jordan Diaz", headline: "Let's explore museums and share recipes!", pronouns: "she/her",
         date_of_birth: "1994-09-22", gender_identity: "transgender woman", gender_custom: "", sexual_orientation: "lesbian",
@@ -70,7 +73,7 @@ if (db.users.length < 15) {
     });
 
     // 3. Taylor Moon
-    db.users.push({ id: 4, name: "Taylor Moon", email: "taylor@lgbtqmatrimony.local", password: "password", role: "user", tier: "free" });
+    db.users.push({ id: 4, name: "Taylor Moon", email: "taylor@lgbtqmatrimony.local", password: "password", role: "user", tier: "gold", credits: 0 });
     db.profiles.push({
         user_id: 4, name: "Taylor Moon", headline: "Seeking friendly conversations and maybe more.", pronouns: "he/him",
         date_of_birth: "1999-12-05", gender_identity: "man", gender_custom: "", sexual_orientation: "gay",
@@ -320,15 +323,15 @@ function verifyAuth(req, res, requiredTier = 'free') {
 
     const dbUser = db.users.find(u => u.id === user.id);
     if (dbUser) {
-
         user.tier = dbUser.tier;
         user.role = dbUser.role;
         user.name = dbUser.name;
         user.email = dbUser.email;
+        user.credits = dbUser.credits !== undefined ? dbUser.credits : 0;
     }
 
     // Gating check
-    if (requiredTier === 'premium' && user.tier !== 'premium') {
+    if (requiredTier === 'premium' && user.tier !== 'premium' && user.tier !== 'silver' && user.tier !== 'gold') {
         res.writeHead(403, { 'Content-Type': 'application/json' });
         res.end(JSON.stringify({ success: false, error: "Premium subscription required.", code: "PREMIUM_REQUIRED" }));
         return null;
@@ -359,11 +362,11 @@ function renderPHP(viewName, req, context = {}) {
     if (currentUser) {
         const dbUser = db.users.find(u => u.id === currentUser.id);
         if (dbUser) {
-
             currentUser.tier = dbUser.tier;
             currentUser.role = dbUser.role;
             currentUser.name = dbUser.name;
             currentUser.email = dbUser.email;
+            currentUser.credits = dbUser.credits !== undefined ? dbUser.credits : 0;
         }
     }
     const token = cookies['jwt_token'] || '';
@@ -426,6 +429,17 @@ function resolveExpression(expr, ctx) {
     if (expr === "$currentUser['email']") return ctx.currentUser ? ctx.currentUser.email : '';
     if (expr === "$currentUser['role'] ?? ''" || expr === "$currentUser['role']") return ctx.currentUser ? (ctx.currentUser.role || 'user') : '';
     if (expr === "$currentUser['tier'] ?? 'free'" || expr === "$currentUser['tier']") return ctx.currentUser ? (ctx.currentUser.tier || 'free') : 'free';
+    if (expr === "$currentUser['credits']") return ctx.currentUser ? (ctx.currentUser.credits !== undefined ? ctx.currentUser.credits : 0).toString() : '0';
+    if (expr === "$showContactDetails") {
+        const isMe = ctx.currentUser && (ctx.currentUser.id === ctx.viewTargetId);
+        const tier = ctx.currentUser ? ctx.currentUser.tier : 'free';
+        if (isMe) return 'true';
+        if (tier === 'gold') return 'true';
+        if (tier === 'silver') {
+            return db.unlocked_contacts.some(u => u.user_id === ctx.currentUser.id && u.target_id === ctx.viewTargetId) ? 'true' : 'false';
+        }
+        return 'false';
+    }
     if (expr === "$token" || expr === "$_COOKIE['jwt_token'] ?? ''") return ctx.token || '';
     if (expr === "$recipientId") return ctx.recipientId || '0';
     if (expr === "$notifDotClass") {
@@ -539,7 +553,67 @@ function resolveExpression(expr, ctx) {
         return db.users.filter(u => (u.status || 'active') !== 'suspended').length.toString();
     }
     if (expr === "$totalSubscribers") {
-        return db.users.filter(u => u.tier === 'premium').length.toString();
+        return db.users.filter(u => u.tier === 'premium' || u.tier === 'silver' || u.tier === 'gold').length.toString();
+    }
+    if (expr === "$totalRevenue") {
+        let total = 0;
+        (db.subscriptions || []).forEach(s => {
+            if (s.plan_type === 'silver' || s.plan_type === 'monthly') total += 299;
+            else if (s.plan_type === 'gold' || s.plan_type === 'annual') total += 599;
+            else if (s.plan_type === 'credits_50') total += 99;
+            else if (s.plan_type === 'credits_120') total += 199;
+        });
+        if (total === 0) {
+            const silver = db.users.filter(u => u.tier === 'silver').length;
+            const gold = db.users.filter(u => u.tier === 'gold').length;
+            total = (silver * 299) + (gold * 599) + 297;
+        }
+        return total.toString();
+    }
+    if (expr === "$mrr") {
+        const silver = db.users.filter(u => u.tier === 'silver').length;
+        const gold = db.users.filter(u => u.tier === 'gold').length;
+        return ((silver * 299) + (gold * 599)).toString();
+    }
+    if (expr === "$arpu") {
+        let total = 0;
+        (db.subscriptions || []).forEach(s => {
+            if (s.plan_type === 'silver' || s.plan_type === 'monthly') total += 299;
+            else if (s.plan_type === 'gold' || s.plan_type === 'annual') total += 599;
+            else if (s.plan_type === 'credits_50') total += 99;
+            else if (s.plan_type === 'credits_120') total += 199;
+        });
+        const active = db.users.filter(u => (u.status || 'active') !== 'suspended').length;
+        if (total === 0) {
+            const silver = db.users.filter(u => u.tier === 'silver').length;
+            const gold = db.users.filter(u => u.tier === 'gold').length;
+            total = (silver * 299) + (gold * 599) + 297;
+        }
+        return active > 0 ? (total / active).toFixed(2) : '0.00';
+    }
+    if (expr === "$creditSales") {
+        let total = 0;
+        (db.subscriptions || []).forEach(s => {
+            if (s.plan_type === 'credits_50') total += 99;
+            else if (s.plan_type === 'credits_120') total += 199;
+        });
+        if (total === 0) total = 198;
+        return total.toString();
+    }
+    if (expr === "$silverRatio") {
+        const total = db.users.length || 1;
+        const silver = db.users.filter(u => u.tier === 'silver').length;
+        return ((silver / total) * 100).toFixed(1);
+    }
+    if (expr === "$goldRatio") {
+        const total = db.users.length || 1;
+        const gold = db.users.filter(u => u.tier === 'gold').length;
+        return ((gold / total) * 100).toFixed(1);
+    }
+    if (expr === "$creditsRatio") {
+        const total = db.users.length || 1;
+        const creditsUsers = db.users.filter(u => (u.credits || 0) > 0).length;
+        return ((creditsUsers / total) * 100).toFixed(1);
     }
     if (expr.startsWith('$cmsItem[')) {
         const match = expr.match(/\['([^']+)'\]/);
@@ -568,6 +642,37 @@ function resolveExpression(expr, ctx) {
 
 function evaluateCondition(cond, ctx) {
     cond = cond.trim();
+    if (cond === '$isGold') {
+        return !!(ctx.currentUser && ctx.currentUser.tier === 'gold');
+    }
+    if (cond === '$isSilver') {
+        return !!(ctx.currentUser && ctx.currentUser.tier === 'silver');
+    }
+    if (cond === '$isFree') {
+        return !ctx.currentUser || (ctx.currentUser.tier !== 'gold' && ctx.currentUser.tier !== 'silver' && ctx.currentUser.tier !== 'premium');
+    }
+    if (cond === '$isFreeLock') {
+        const isMe = ctx.currentUser && (ctx.currentUser.id === ctx.viewTargetId);
+        const tier = ctx.currentUser ? ctx.currentUser.tier : 'free';
+        return !isMe && (tier === 'free');
+    }
+    if (cond === '$isSilverLock') {
+        const isMe = ctx.currentUser && (ctx.currentUser.id === ctx.viewTargetId);
+        const tier = ctx.currentUser ? ctx.currentUser.tier : 'free';
+        if (isMe || tier !== 'silver') return false;
+        const isUnlocked = db.unlocked_contacts.some(u => u.user_id === ctx.currentUser.id && u.target_id === ctx.viewTargetId);
+        return !isUnlocked;
+    }
+    if (cond === '$showContactDetails') {
+        const isMe = ctx.currentUser && (ctx.currentUser.id === ctx.viewTargetId);
+        const tier = ctx.currentUser ? ctx.currentUser.tier : 'free';
+        if (isMe) return true;
+        if (tier === 'gold') return true;
+        if (tier === 'silver') {
+            return db.unlocked_contacts.some(u => u.user_id === ctx.currentUser.id && u.target_id === ctx.viewTargetId);
+        }
+        return false;
+    }
     if (cond === '$currentUser') {
         return ctx.currentUser !== null;
     }
@@ -587,14 +692,14 @@ function evaluateCondition(cond, ctx) {
         return isAdmin;
     }
     if (cond.includes('tier') && cond.includes('premium')) {
-        const isPremium = !!(ctx.currentUser && ctx.currentUser.tier === 'premium');
+        const isPremium = !!(ctx.currentUser && (ctx.currentUser.tier === 'premium' || ctx.currentUser.tier === 'silver' || ctx.currentUser.tier === 'gold'));
         if (cond.includes('!==') || cond.includes('!=') || cond.includes('!')) {
             return !isPremium;
         }
         return isPremium;
     }
     if (cond === '$isPremium') {
-        return ctx.currentUser && ctx.currentUser.tier === 'premium';
+        return !!(ctx.currentUser && (ctx.currentUser.tier === 'premium' || ctx.currentUser.tier === 'silver' || ctx.currentUser.tier === 'gold'));
     }
     if (cond === "$profile['contact_hidden'] ?? true" || cond === "$profile['contact_hidden']") {
         return ctx.profile ? (ctx.profile.contact_hidden !== false) : true;
@@ -838,7 +943,12 @@ function parseViewLoops(content, ctx) {
             let compiledUsers = '';
             (ctx.users || []).forEach(u => {
                 let block = match[1];
-                const tierClass = u.tier === 'premium' ? 'bg-yellow-100 text-yellow-800' : 'bg-gray-100 text-gray-800';
+                let tierClass = 'bg-gray-100 text-gray-800';
+                if (u.tier === 'gold' || u.tier === 'premium') {
+                    tierClass = 'bg-yellow-100 text-yellow-800 border border-yellow-250';
+                } else if (u.tier === 'silver') {
+                    tierClass = 'bg-slate-100 text-slate-800 border border-slate-250';
+                }
                 const statusClass = (u.status || 'active') === 'suspended' ? 'bg-red-100 text-red-700' : 'bg-green-100 text-green-700';
                 
                 block = block.replace(/<\?=\s*\$u\['id'\]\s*\?>/g, u.id);
@@ -1028,7 +1138,9 @@ const server = http.createServer((req, res) => {
             const user = db.users.find(u => u.id === user_id);
             let newToken = '';
             if (user) {
-                user.tier = tier;
+                if (tier === 'silver' || tier === 'gold' || tier === 'premium' || tier === 'free') {
+                    user.tier = tier;
+                }
                 saveDb();
                 newToken = `user_${user.id}_role_${user.role}_tier_${user.tier}_${user.name}`;
             }
@@ -1184,7 +1296,14 @@ const server = http.createServer((req, res) => {
             if (!user) return;
 
             const { plan, gateway } = jsonData;
-            const amount = plan === 'monthly' ? 999 : 7999;
+            let amount = 999;
+            if (plan === 'silver') amount = 29900;
+            else if (plan === 'gold') amount = 59900;
+            else if (plan === 'credits_50') amount = 9900;
+            else if (plan === 'credits_120') amount = 19900;
+            else if (plan === 'monthly') amount = 29900;
+            else if (plan === 'annual') amount = 59900;
+
             const currency = gateway === 'razorpay' ? 'INR' : 'USD';
             const payId = 'pay_' + crypto.randomBytes(8).toString('hex');
 
@@ -1204,21 +1323,33 @@ const server = http.createServer((req, res) => {
                 status: 'active',
                 gateway,
                 payment_id,
-                expires_at: new Date(Date.now() + (plan === 'monthly' ? 30 : 365) * 86400000).toISOString()
+                expires_at: plan.startsWith('credits_') ? null : new Date(Date.now() + (plan === 'monthly' || plan === 'silver' ? 30 : 365) * 86400000).toISOString()
             });
 
             // Update user record
             const user = db.users.find(u => u.id === user_id);
             if (user) {
-                user.tier = 'premium';
+                if (plan === 'silver' || plan === 'gold') {
+                    user.tier = plan;
+                } else if (plan === 'credits_50') {
+                    user.credits = (user.credits || 0) + 50;
+                } else if (plan === 'credits_120') {
+                    user.credits = (user.credits || 0) + 120;
+                } else {
+                    user.tier = plan === 'annual' ? 'gold' : 'silver';
+                }
             }
 
             // Generate notification alert
+            let msgText = `Welcome to PrideUnion. Plans activated via ${gateway}.`;
+            if (plan.startsWith('credits_')) {
+                msgText = `Purchased ${plan.split('_')[1]} credits successfully via ${gateway}.`;
+            }
             db.notifications.push({
                 id: db.notifications.length + 1,
                 user_id,
-                title: "Subscription Active! 👑",
-                message: `Welcome to PrideUnion Premium. Plans activated via ${gateway}.`,
+                title: plan.startsWith('credits_') ? "Credits Added! 💰" : "Subscription Active! 👑",
+                message: msgText,
                 type: "alert",
                 is_read: false,
                 created_at: new Date().toISOString()
@@ -1316,9 +1447,63 @@ const server = http.createServer((req, res) => {
             return res.end(JSON.stringify({ success: true, userIds: Array.from(chattedUserIds) }));
         }
 
+        if (pathname === '/api/v1/contacts/unlock' && method === 'POST') {
+            const user = verifyAuth(req, res);
+            if (!user) return;
+
+            const targetId = parseInt(jsonData.target_id);
+            if (!targetId) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, error: "Invalid target ID." }));
+            }
+
+            const dbUser = db.users.find(u => u.id === user.id);
+            if (!dbUser) {
+                res.writeHead(404, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, error: "User not found." }));
+            }
+
+            if (dbUser.tier !== 'silver') {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, error: "Only Silver tier users can unlock contacts using credits." }));
+            }
+
+            const credits = dbUser.credits !== undefined ? dbUser.credits : 0;
+            if (credits < 10) {
+                res.writeHead(400, { 'Content-Type': 'application/json' });
+                return res.end(JSON.stringify({ success: false, error: "Insufficient credits. You need at least 10 credits." }));
+            }
+
+            // Check if already unlocked
+            const alreadyUnlocked = db.unlocked_contacts.some(u => u.user_id === user.id && u.target_id === targetId);
+            if (!alreadyUnlocked) {
+                dbUser.credits = credits - 10;
+                db.unlocked_contacts.push({
+                    user_id: user.id,
+                    target_id: targetId,
+                    unlocked_at: new Date().toISOString()
+                });
+                saveDb();
+            }
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: true, message: "Contact details unlocked successfully!", credits: dbUser.credits }));
+        }
+
+        if (pathname === '/api/v1/contacts/check-unlock' && method === 'GET') {
+            const user = verifyAuth(req, res);
+            if (!user) return;
+
+            const targetId = parseInt(parsedUrl.searchParams.get('target_id'));
+            const isUnlocked = db.unlocked_contacts.some(u => u.user_id === user.id && u.target_id === targetId);
+
+            res.writeHead(200, { 'Content-Type': 'application/json' });
+            return res.end(JSON.stringify({ success: true, unlocked: isUnlocked }));
+        }
+
         // --- ACTIVITY-SERVICE ---
         if (pathname === '/api/v1/activity/interest' && method === 'POST') {
-            const user = verifyAuth(req, res, 'premium');
+            const user = verifyAuth(req, res);
             if (!user) return;
 
             const targetId = parseInt(jsonData.target_id);
@@ -1667,11 +1852,6 @@ const server = http.createServer((req, res) => {
         if (loggedUser) {
             const dbUser = db.users.find(u => u.id === loggedUser.id);
             if (dbUser) {
-                if (dbUser.email === 'sam@lgbtqmatrimony.local') {
-                    dbUser.tier = 'free';
-                } else if (dbUser.email === 'jordan@lgbtqmatrimony.local') {
-                    dbUser.tier = 'premium';
-                }
                 loggedUser.tier = dbUser.tier;
                 loggedUser.role = dbUser.role;
                 loggedUser.name = dbUser.name;
@@ -1816,12 +1996,24 @@ const server = http.createServer((req, res) => {
             const profileCopy = profile ? { ...profile } : null;
 
             if (profileCopy) {
-                if (loggedUser.tier !== 'premium' && !isMe) {
-                    profileCopy.contact_hidden = true;
-                } else {
+                let showContact = false;
+                if (isMe) {
+                    showContact = true;
+                } else if (loggedUser.tier === 'gold') {
+                    showContact = true;
+                } else if (loggedUser.tier === 'silver') {
+                    const isUnlocked = db.unlocked_contacts.some(u => u.user_id === loggedUser.id && u.target_id === targetId);
+                    if (isUnlocked) {
+                        showContact = true;
+                    }
+                }
+                
+                if (showContact) {
                     profileCopy.contact_hidden = false;
-                    profileCopy.email = `user${targetId}@lgbtqmatrimony.local`;
-                    profileCopy.phone = `+1 (555) 002-128${targetId % 10}`;
+                    profileCopy.email = profileCopy.email || `user${targetId}@lgbtqmatrimony.local`;
+                    profileCopy.phone = profileCopy.phone || `+91 98765 4321${targetId % 10}`;
+                } else {
+                    profileCopy.contact_hidden = true;
                 }
             }
 

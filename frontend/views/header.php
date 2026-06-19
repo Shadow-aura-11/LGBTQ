@@ -14,34 +14,35 @@
     <style>
         body {
             font-family: 'Outfit', sans-serif;
-            background: linear-gradient(135deg, #FFF1F6 0%, #FFE4EC 50%, #F8EEFF 100%);
+            background: linear-gradient(135deg, #FFF1F6 0%, #FFF0F5 40%, #FDF4FF 70%, #F3E8FF 100%);
             min-height: 100vh;
         }
         .serif-font {
             font-family: 'Playfair Display', serif;
         }
         .btn-primary {
-            background: linear-gradient(135deg, #F48FB1 0%, #ec7ca4 100%);
+            background: linear-gradient(135deg, #f43f5e 0%, #ec4899 50%, #a855f7 100%);
             color: white;
             transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+            border: none;
         }
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 10px 20px -10px rgba(236, 124, 164, 0.5);
-            background: linear-gradient(135deg, #ec7ca4 0%, #e0608c 100%);
+            box-shadow: 0 10px 20px -10px rgba(236, 72, 153, 0.5);
+            background: linear-gradient(135deg, #db2777 0%, #a855f7 50%, #6366f1 100%);
         }
         .glass-panel {
-            background: rgba(255, 255, 255, 0.7);
-            backdrop-filter: blur(16px);
-            border: 1px solid rgba(255, 255, 255, 0.4);
-            box-shadow: 0 8px 32px 0 rgba(244, 143, 177, 0.08);
+            background: rgba(255, 255, 255, 0.75);
+            backdrop-filter: blur(20px);
+            border: 1px solid rgba(255, 255, 255, 0.5);
+            box-shadow: 0 8px 32px 0 rgba(236, 72, 153, 0.05);
         }
         .card-premium {
             transition: all 0.3s ease;
         }
         .card-premium:hover {
             transform: translateY(-4px);
-            box-shadow: 0 20px 40px -15px rgba(244, 143, 177, 0.2);
+            box-shadow: 0 20px 40px -15px rgba(236, 72, 153, 0.15);
         }
     </style>
 </head>
@@ -84,10 +85,14 @@
                     <?php endif; ?>
 
                     <!-- Tier Badge -->
-                    <?php if (($currentUser['tier'] ?? 'free') === 'premium'): ?>
-                        <span class="bg-gradient-to-r from-yellow-400 to-amber-500 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-sm flex items-center gap-1">👑 Premium</span>
-                    <?php else: ?>
-                        <a href="/demo-premium" class="bg-green-100 text-green-700 text-xs px-3 py-1.5 rounded-full font-bold border border-green-200 hover:bg-green-200 transition flex items-center gap-1">🔓 Demo Premium</a>
+                    <?php if ($isGold): ?>
+                        <span class="bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-500 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-sm flex items-center gap-1">👑 Gold</span>
+                    <?php endif; ?>
+                    <?php if ($isSilver): ?>
+                        <span class="bg-gradient-to-r from-slate-400 to-slate-500 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-sm flex items-center gap-1">🥈 Silver</span>
+                        <span class="bg-amber-50 text-amber-700 text-xs px-3 py-1.5 rounded-full font-bold border border-amber-200 flex items-center gap-1">💰 <?= htmlspecialchars($currentUser['credits']) ?> Credits</span>
+                    <?php endif; ?>
+                    <?php if ($isFree): ?>
                         <a href="/subscription" class="bg-pink-100 text-pink-700 text-xs px-3 py-1.5 rounded-full font-bold border border-pink-200 hover:bg-pink-200 transition flex items-center gap-1">✨ Go Premium</a>
                     <?php endif; ?>
 

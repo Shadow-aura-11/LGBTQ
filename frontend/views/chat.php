@@ -8,7 +8,7 @@ if (!$currentUser) {
 }
 ?>
 
-<?php if (($currentUser['tier'] ?? 'free') !== 'premium'): ?>
+<?php if (!$isPremium): ?>
     <div class='glass-panel p-12 rounded-3xl text-center border border-white/60 my-12 max-w-xl mx-auto shadow-xl'>
         <span class='text-5xl'>👑</span>
         <h3 class='text-3xl font-extrabold text-gray-900 mt-5 serif-font'>Unlock Live Messaging</h3>
@@ -38,7 +38,7 @@ if (!$currentUser) {
 
     // Build contact list
     $chatContacts = [];
-    if ($currentUser && ($currentUser['tier'] ?? 'free') === 'premium') {
+    if ($isPremium) {
         $convRes = makeApiRequest('GET', '/api/v1/chats/conversations', [], $token);
         if ($convRes['status'] === 200 && isset($convRes['data']['userIds'])) {
             foreach ($convRes['data']['userIds'] as $uid) {

@@ -1,18 +1,8 @@
-- [x] Update header.php & footer.php logo links to "/"
-- [x] Implement unread notification dot load checks
-- [x] Fix notifications.php foreach loop syntax and remove inline PHP variables
-- [x] Fix double footer duplication on chat.php and mock_payment.php (convert curly braces to colon if syntax)
-- [x] Fix mock checkout to update cookie and redirect without forced sign out
-- [x] Update chat.php sidebar to show all previous conversations and add websocket safety checks
-- [x] Remove dating preferences (relationship intent) from register.php, profile_setup.php, and profile_view.php
-- [x] Upgrade admin.php:
-    - [x] Add user search, tier filter, and status filter
-    - [x] Add "Total Active Users" and "Total Subscribers" stats cards
-    - [x] Add visual Analytics Dashboard (SVG charts & funnels)
-    - [x] Add WordPress-style Page/Blog CMS Creator with Yoast/RankMath real-time SEO scoring
-- [x] Update start_app.js:
-    - [x] Update update-tier endpoint to return new JWT token
-    - [x] Add hasUnreadNotifs compiler rule
-    - [x] Support CMS API endpoints (contents list, save, delete)
-- [x] Update index.php (routes) & create new cms_view.php for custom pages/blog posts rendering
-- [x] Run application and verify all features manually
+- [x] Update header.php design system (gradients and badges for Gold, Silver, Free, Credits balance)
+- [x] Implement start_app.js backend API changes (unlocked_contacts schema, credit deduction endpoints, checkout/webhook upgrades)
+- [x] Modify profile_view.php (add fallback profile fetching, credits gated contact cards, AJAX unlock triggers)
+- [x] Modify chat.php & browse.php (adjust tier gates to allow both silver & gold)
+- [x] Modify subscription.php (three-column grid for Silver, Gold, and Credits packages)
+- [x] Modify mock_payment.php (pass plan value to webhook and token updater)
+- [x] Upgrade admin.php (left sidebar layout, tab switcher, Overview reports, CRM user list, Analytics revenue KPIs and charts, WordPress CMS)
+- [x] Run application and verify all features with verification tests

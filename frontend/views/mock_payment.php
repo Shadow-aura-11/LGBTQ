@@ -82,7 +82,7 @@ $userId = (int)($_GET['user_id'] ?? 0);
                 const syncRes = await fetch('/api/v1/auth/internal/update-tier', {
                     method: 'POST',
                     headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify({ user_id: <?= $userId ?>, tier: 'premium' })
+                    body: JSON.stringify({ user_id: <?= $userId ?>, tier: "<?= htmlspecialchars($plan) ?>" })
                 });
                 const syncData = await syncRes.json();
                 
@@ -91,7 +91,7 @@ $userId = (int)($_GET['user_id'] ?? 0);
                     document.cookie = `jwt_token=${syncData.token}; path=/; max-age=3600; SameSite=Lax`;
                 }
 
-                alert("Payment Confirmed! Your Premium Status is now active!");
+                alert("Payment Confirmed! Your subscription/credits status is now active!");
                 window.location.href = '/dashboard';
             } else {
                 errBox.innerText = data.error || 'Checkout verification failed.';
@@ -104,6 +104,7 @@ $userId = (int)($_GET['user_id'] ?? 0);
             errBox.classList.remove('hidden');
             btn.disabled = false;
             btn.innerText = "Complete Payment";
+        }
     });
 </script>
 

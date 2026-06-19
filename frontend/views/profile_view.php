@@ -169,7 +169,7 @@ $targetId = (int)($viewTargetId ?? 0);
         <div class="glass-panel p-8 rounded-3xl border border-white/60 shadow-md bg-white">
             <h4 class="text-sm font-extrabold text-gray-900 uppercase tracking-wider mb-6">Contact Information</h4>
             
-            <?php if ($profile['contact_hidden'] ?? true): ?>
+            <?php if ($isFreeLock): ?>
                 <!-- Gated Lock Box for Free Tier Users -->
                 <div class="border border-[#fce7f3] bg-[#fff8fa] rounded-2xl p-8 text-center flex flex-col items-center justify-center space-y-4">
                     <!-- Padlock Icon -->
@@ -177,16 +177,45 @@ $targetId = (int)($viewTargetId ?? 0);
                         <span class="text-[#db2777] text-lg font-bold">🔒</span>
                     </div>
                     
-                    <h5 class="text-gray-800 font-bold text-base mt-2">Contact details are locked for free tier users</h5>
+                    <h5 class="text-gray-800 font-bold text-base mt-2">Contact details are locked</h5>
                     <p class="text-gray-500 text-xs max-w-md">
-                        Upgrade to a premium plan to see mobile numbers, social links, and start direct messages.
+                        Upgrade to a paid membership plan to unlock chat features and contact numbers.
                     </p>
                     
-                    <a href="/subscription" class="bg-[#ec4899] hover:bg-[#db2777] text-white px-6 py-2.5 rounded-xl font-bold text-xs transition shadow-md">
-                        Unlock with Premium — ₹499/mo
+                    <a href="/subscription" class="bg-gradient-to-r from-rose-500 via-pink-500 to-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold text-xs transition shadow-md hover:scale-105">
+                        Upgrade Plan
                     </a>
                 </div>
-            <?php else: ?>
+            <?php endif; ?>
+
+            <?php if ($isSilverLock): ?>
+                <!-- Gated Lock Box for Silver Tier Users -->
+                <div class="border border-[#fce7f3] bg-[#fff8fa] rounded-2xl p-8 text-center flex flex-col items-center justify-center space-y-4">
+                    <!-- Padlock Icon -->
+                    <div class="w-12 h-12 rounded-full border border-[#fce7f3] flex items-center justify-center bg-white shadow-sm shrink-0">
+                        <span class="text-indigo-600 text-lg font-bold">🔒</span>
+                    </div>
+                    
+                    <h5 class="text-gray-800 font-bold text-base mt-2">Contact details locked (Silver Plan)</h5>
+                    <p class="text-gray-500 text-xs max-w-md">
+                        Revealing phone number & email costs <strong>10 Credits</strong>.
+                    </p>
+                    <p class="text-xs text-gray-600 font-semibold">
+                        Your Wallet: <span class="text-pink-600 font-black"><?= htmlspecialchars($currentUser['credits']) ?> Credits</span>
+                    </p>
+                    
+                    <div class="flex flex-col sm:flex-row gap-3">
+                        <button id="unlock-btn" onclick="unlockContact(<?= $targetId ?>)" class="bg-[#ec4899] hover:bg-[#db2777] text-white px-6 py-2.5 rounded-xl font-bold text-xs transition shadow-md">
+                            Unlock for 10 Credits
+                        </button>
+                        <a href="/subscription" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 px-6 py-2.5 rounded-xl font-bold text-xs transition">
+                            Buy Credits
+                        </a>
+                    </div>
+                </div>
+            <?php endif; ?>
+
+            <?php if ($showContactDetails): ?>
                 <!-- Unlocked Contact Info for Premium Users -->
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <div class="space-y-1">
@@ -332,6 +361,43 @@ $targetId = (int)($viewTargetId ?? 0);
             }
         } catch (err) {
             msg.innerText = "Network error.";
+        }
+    }
+
+    async function unlockContact(targetId) {
+        const btn = document.getElementById('unlock-btn');
+        if (btn) {
+            btn.disabled = true;
+            btn.innerText = "Unlocking...";
+        }
+        
+        try {
+            const res = await fetch('/api/v1/contacts/unlock', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Authorization': 'Bearer ' + '<?= $token ?>'
+                },
+                body: JSON.stringify({ target_id: targetId })
+            });
+            const data = await res.json();
+            
+            if (data.success) {
+                alert(data.message || "Contact details unlocked!");
+                window.location.reload();
+            } else {
+                alert(data.error || "Failed to unlock contact.");
+                if (btn) {
+                    btn.disabled = false;
+                    btn.innerText = "Unlock for 10 Credits";
+                }
+            }
+        } catch (err) {
+            alert("Connection error unlocking contact details.");
+            if (btn) {
+                btn.disabled = false;
+                btn.innerText = "Unlock for 10 Credits";
+            }
         }
     }
 </script>
