@@ -60,24 +60,27 @@ if (db.users.length < 15) {
         user_id: 2, name: "Sam Vance", headline: "Hopeless romantic searching for a co-pilot ✈️", pronouns: "they/them",
         date_of_birth: "1997-06-15", gender_identity: "non-binary", gender_custom: "", sexual_orientation: "queer",
         city: "San Francisco", country: "USA", relationship_intent: "long-term", about_me: "I love hiking, reading poetry, and exploring local coffee shops. Let's build something authentic.",
+        hobbies: "Hiking, Poetry, Coffee", salary: "₹12,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80"])
     });
 
     // 2. Jordan Diaz
-    db.users.push({ id: 3, name: "Jordan Diaz", email: "jordan@lgbtqmatrimony.local", password: "password", role: "user", tier: "silver", credits: 20 });
+    db.users.push({ id: 3, name: "Jordan Diaz", email: "jordan@lgbtqmatrimony.local", password: "password", role: "user", tier: "silver" });
     db.profiles.push({
         user_id: 3, name: "Jordan Diaz", headline: "Let's explore museums and share recipes!", pronouns: "she/her",
         date_of_birth: "1994-09-22", gender_identity: "transgender woman", gender_custom: "", sexual_orientation: "lesbian",
         city: "New York", country: "USA", relationship_intent: "marriage", about_me: "Chef by day, history nerd by night. Searching for a warm connection to cook with.",
+        hobbies: "Museums, Cooking, Baking", salary: "₹9,50,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1494790108377-be9c29b29330?auto=format&fit=crop&w=300&q=80"])
     });
 
     // 3. Taylor Moon
-    db.users.push({ id: 4, name: "Taylor Moon", email: "taylor@lgbtqmatrimony.local", password: "password", role: "user", tier: "gold", credits: 0 });
+    db.users.push({ id: 4, name: "Taylor Moon", email: "taylor@lgbtqmatrimony.local", password: "password", role: "user", tier: "gold" });
     db.profiles.push({
         user_id: 4, name: "Taylor Moon", headline: "Seeking friendly conversations and maybe more.", pronouns: "he/him",
         date_of_birth: "1999-12-05", gender_identity: "man", gender_custom: "", sexual_orientation: "gay",
         city: "London", country: "UK", relationship_intent: "dating", about_me: "Musician playing guitar. Loves late nights, indie bands, and record shopping.",
+        hobbies: "Music, Guitar, Indie Bands", salary: "₹15,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -87,6 +90,7 @@ if (db.users.length < 15) {
         user_id: 5, name: "Alex Rivera", headline: "Art curator seeking meaningful lifetime connection 🎨", pronouns: "they/them",
         date_of_birth: "1995-03-12", gender_identity: "genderqueer", gender_custom: "", sexual_orientation: "bisexual",
         city: "Toronto", country: "Canada", relationship_intent: "marriage", about_me: "Loves modern art, vegan cooking, gardening, and community activism. Looking for a partner to build a cozy, artistic life together.",
+        hobbies: "Modern Art, Vegan Cooking, Gardening", salary: "₹18,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -96,6 +100,7 @@ if (db.users.length < 15) {
         user_id: 6, name: "Elena Rostova", headline: "Photojournalist looking for life partner 📸", pronouns: "she/her",
         date_of_birth: "1992-08-20", gender_identity: "woman", gender_custom: "", sexual_orientation: "pansexual",
         city: "Paris", country: "France", relationship_intent: "long-term", about_me: "Traveler, dog lover, vinyl collector. I enjoy exploring local cultures and looking for a warm heart to share stories with.",
+        hobbies: "Travel, Dogs, Vinyl Records", salary: "₹11,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -105,6 +110,7 @@ if (db.users.length < 15) {
         user_id: 7, name: "Kai Chen", headline: "Let's explore the outdoors and camp together 🌲", pronouns: "he/him",
         date_of_birth: "1996-11-30", gender_identity: "transgender man", gender_custom: "", sexual_orientation: "gay",
         city: "Vancouver", country: "Canada", relationship_intent: "dating", about_me: "Software developer, kayaker, board game enthusiast. I value deep conversations, vulnerability, and active weekend adventures.",
+        hobbies: "Kayaking, Board Games, Software", salary: "₹22,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -114,6 +120,7 @@ if (db.users.length < 15) {
         user_id: 8, name: "Morgan Finch", headline: "Matcha, gardening, and sustainable design 🌱", pronouns: "they/them",
         date_of_birth: "1993-05-18", gender_identity: "non-binary", gender_custom: "", sexual_orientation: "queer",
         city: "Sydney", country: "Australia", relationship_intent: "marriage", about_me: "Landscape architect. Designing sustainable spaces. Enjoys gardening, indie music, and slow Sunday mornings with a good book.",
+        hobbies: "Matcha, Gardening, Design", salary: "₹14,50,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -123,6 +130,7 @@ if (db.users.length < 15) {
         user_id: 9, name: "Maya Patel", headline: "Pediatrician seeking an ambitious, warm-hearted woman 🩺", pronouns: "she/her",
         date_of_birth: "1994-04-25", gender_identity: "woman", gender_custom: "", sexual_orientation: "lesbian",
         city: "Mumbai", country: "India", relationship_intent: "marriage", about_me: "Passionate about child healthcare, classical dance, and mountain hiking. Looking for an honest, goal-oriented partner to build a future together.",
+        hobbies: "Hiking, Classical Dance, Healthcare", salary: "₹25,0,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -132,6 +140,7 @@ if (db.users.length < 15) {
         user_id: 10, name: "Chris Lopez", headline: "Searching for mutual friendship & outdoor adventures 🏞️", pronouns: "they/them",
         date_of_birth: "1995-07-14", gender_identity: "non-binary", gender_custom: "", sexual_orientation: "pansexual",
         city: "Chicago", country: "USA", relationship_intent: "friendship", about_me: "Love record stores, vintage style, and biking. Let's hang out and talk music.",
+        hobbies: "Biking, Vinyl Records, Vintage Style", salary: "₹8,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1539571696357-5a69c17a67c6?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -141,6 +150,7 @@ if (db.users.length < 15) {
         user_id: 11, name: "Sophie Dubois", headline: "Let's explore Paris and enjoy red wine 🍷", pronouns: "she/her",
         date_of_birth: "1993-11-02", gender_identity: "woman", gender_custom: "", sexual_orientation: "bisexual",
         city: "Paris", country: "France", relationship_intent: "dating", about_me: "Literature student and coffee enthusiast. Searching for deep matching conversations.",
+        hobbies: "Literature, Coffee, Red Wine", salary: "₹7,50,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -150,6 +160,7 @@ if (db.users.length < 15) {
         user_id: 12, name: "Leo Sterling", headline: "Trans man searching for long-term connection 💫", pronouns: "he/him",
         date_of_birth: "1991-03-24", gender_identity: "transgender man", gender_custom: "", sexual_orientation: "queer",
         city: "New York", country: "USA", relationship_intent: "long-term", about_me: "Architect and writer. Looking for a partner who values mutual growth and creativity.",
+        hobbies: "Architecture, Writing, Design", salary: "₹20,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -159,6 +170,7 @@ if (db.users.length < 15) {
         user_id: 13, name: "Zara Ahmed", headline: "Ready for commitment and family life 💍", pronouns: "she/her",
         date_of_birth: "1992-05-18", gender_identity: "transgender woman", gender_custom: "", sexual_orientation: "lesbian",
         city: "London", country: "UK", relationship_intent: "marriage", about_me: "Clinical psychologist. Love cooking, opera, and family gatherings. Looking for a woman ready to settle down.",
+        hobbies: "Cooking, Opera, Psychology", salary: "₹16,0,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -168,6 +180,7 @@ if (db.users.length < 15) {
         user_id: 14, name: "Riley Park", headline: "Let's share matcha lattes and design ideas 🎨", pronouns: "they/them",
         date_of_birth: "1998-09-09", gender_identity: "genderqueer", gender_custom: "", sexual_orientation: "queer",
         city: "Seoul", country: "South Korea", relationship_intent: "friendship", about_me: "UX designer. Loves photography, indie gaming, and plant shopping.",
+        hobbies: "Photography, Indie Gaming, Plants", salary: "₹13,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -177,6 +190,7 @@ if (db.users.length < 15) {
         user_id: 15, name: "Marcus Aurelius", headline: "Seeking compatibility and lifetime partnership 🏛️", pronouns: "he/him",
         date_of_birth: "1989-08-23", gender_identity: "man", gender_custom: "", sexual_orientation: "gay",
         city: "Rome", country: "Italy", relationship_intent: "marriage", about_me: "Historian and runner. Values honesty, philosophy, and quiet evenings with books.",
+        hobbies: "Running, History, Philosophy", salary: "₹19,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -186,6 +200,7 @@ if (db.users.length < 15) {
         user_id: 16, name: "Nina Simone", headline: "Musician looking for deep love and harmony 🎹", pronouns: "she/her",
         date_of_birth: "1994-06-12", gender_identity: "woman", gender_custom: "", sexual_orientation: "lesbian",
         city: "Los Angeles", country: "USA", relationship_intent: "long-term", about_me: "Jazz pianist. Love vinyl records, beach walks, and vegan dining. Let's make music together.",
+        hobbies: "Music, Piano, Vegan Dining", salary: "₹10,50,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -195,6 +210,7 @@ if (db.users.length < 15) {
         user_id: 17, name: "Jamie Oliver", headline: "Lover of good food, slow Sunday mornings, and cozy dates 🍳", pronouns: "they/them",
         date_of_birth: "1996-01-30", gender_identity: "non-binary", gender_custom: "", sexual_orientation: "bisexual",
         city: "London", country: "UK", relationship_intent: "dating", about_me: "Chef. Loves food trucks, comedy shows, and hosting dinners.",
+        hobbies: "Cooking, Food Trucks, Comedy", salary: "₹9,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -204,6 +220,7 @@ if (db.users.length < 15) {
         user_id: 18, name: "Priya Sharma", headline: "Searching for my forever partner and co-dreamer 🌌", pronouns: "she/her",
         date_of_birth: "1995-10-15", gender_identity: "woman", gender_custom: "", sexual_orientation: "pansexual",
         city: "Delhi", country: "India", relationship_intent: "marriage", about_me: "Corporate lawyer. Enjoys theater, classical music, and driving. Looking for an ambitious and kind-hearted partner.",
+        hobbies: "Theater, Classical Music, Driving", salary: "₹28,0,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1589156280159-27698a70f29e?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -213,6 +230,7 @@ if (db.users.length < 15) {
         user_id: 19, name: "Lucas Silva", headline: "Let's dance samba and travel the world together ✈️", pronouns: "he/him",
         date_of_birth: "1993-02-14", gender_identity: "man", gender_custom: "", sexual_orientation: "bisexual",
         city: "Sao Paulo", country: "Brazil", relationship_intent: "dating", about_me: "Dancer and physical therapist. Lover of nature, fitness, and beach volleyball.",
+        hobbies: "Dancing, Fitness, Beach Volleyball", salary: "₹11,50,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1506794778202-cad84cf45f1d?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -222,6 +240,7 @@ if (db.users.length < 15) {
         user_id: 20, name: "Casey Smith", headline: "Seeking standard matching parameters and slow romance 🕯️", pronouns: "they/them",
         date_of_birth: "1992-06-25", gender_identity: "genderqueer", gender_custom: "", sexual_orientation: "pansexual",
         city: "Sydney", country: "Australia", relationship_intent: "long-term", about_me: "Landscape designer. Loves hiking, poetry, and sustainable living.",
+        hobbies: "Hiking, Poetry, Sustainable Living", salary: "₹14,00,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1519085360753-af0119f7cbe7?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -231,6 +250,7 @@ if (db.users.length < 15) {
         user_id: 21, name: "Kim Nguyen", headline: "Let's explore coffee shops and local art exhibits 🎨", pronouns: "she/her",
         date_of_birth: "1997-12-05", gender_identity: "transgender woman", gender_custom: "", sexual_orientation: "bisexual",
         city: "Hanoi", country: "Vietnam", relationship_intent: "dating", about_me: "Curator. Loves modern art, traditional coffee, and indie bands.",
+        hobbies: "Modern Art, Coffee, Indie Bands", salary: "₹12,50,000",
         photos: JSON.stringify(["https://images.unsplash.com/photo-1534528741775-53994a69daeb?auto=format&fit=crop&w=300&q=80"])
     });
 
@@ -380,6 +400,11 @@ function renderPHP(viewName, req, context = {}) {
         const orientation = parsedUrl.searchParams.get('sexual_orientation');
         if (gender && gender.trim() !== '') matches = matches.filter(p => p.gender_identity === gender);
         if (orientation && orientation.trim() !== '') matches = matches.filter(p => p.sexual_orientation === orientation);
+        const hobby = parsedUrl.searchParams.get('hobby');
+        if (hobby && hobby.trim() !== '') {
+            const hobbyQuery = hobby.trim().toLowerCase();
+            matches = matches.filter(p => p.hobbies && p.hobbies.toLowerCase().includes(hobbyQuery));
+        }
         feed = matches;
     }
 
@@ -668,9 +693,6 @@ function evaluateCondition(cond, ctx) {
         const tier = ctx.currentUser ? ctx.currentUser.tier : 'free';
         if (isMe) return true;
         if (tier === 'gold') return true;
-        if (tier === 'silver') {
-            return db.unlocked_contacts.some(u => u.user_id === ctx.currentUser.id && u.target_id === ctx.viewTargetId);
-        }
         return false;
     }
     if (cond === '$currentUser') {
@@ -784,6 +806,26 @@ function compilePhpTemplate(html, ctx) {
     return output;
 }
 
+function calculateMatchScore(currentUser, targetProfile) {
+    if (!currentUser || !targetProfile) return 50;
+    const currentProfile = db.profiles.find(p => p.user_id === currentUser.id);
+    if (!currentProfile) return 60;
+
+    let score = 50; // base score
+
+    const myHobbies = (currentProfile.hobbies || '').split(',').map(h => h.trim().toLowerCase()).filter(h => h.length > 0);
+    const targetHobbies = (targetProfile.hobbies || '').split(',').map(h => h.trim().toLowerCase()).filter(h => h.length > 0);
+    const commonHobbies = myHobbies.filter(h => targetHobbies.includes(h));
+    score += commonHobbies.length * 10;
+
+    if (currentProfile.relationship_intent && targetProfile.relationship_intent &&
+        currentProfile.relationship_intent.trim().toLowerCase() === targetProfile.relationship_intent.trim().toLowerCase()) {
+        score += 10;
+    }
+
+    return Math.min(100, Math.max(0, score));
+}
+
 function parseViewLoops(content, ctx) {
     // Matches discovery feed loops - use partial match to avoid whitespace issues
     if (content.includes('foreach ($feed as $item):')) {
@@ -809,7 +851,8 @@ function parseViewLoops(content, ctx) {
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$displayPhoto\)\s*\?>/g, displayPhoto);
                 block = block.replace(/<\?=\s*\$item\['user_id'\]\s*\?>/g, item.user_id);
                 // Also handle $comp for compatibility score
-                block = block.replace(/<\?=\s*\$comp\s*\?>/g, Math.floor(Math.random() * (98 - 82 + 1)) + 82);
+                const compScore = calculateMatchScore(ctx.currentUser, item);
+                block = block.replace(/<\?=\s*\$comp\s*\?>/g, compScore);
                 
                 compiledFeed += block;
             });
@@ -842,7 +885,8 @@ function parseViewLoops(content, ctx) {
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['headline'\]\s*(?:\?\?|:\?)\s*'[^']+'\)\s*\?>/g, item.headline || 'Match');
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$displayPhoto\)\s*\?>/g, displayPhoto);
                 block = block.replace(/<\?=\s*\$item\['user_id'\]\s*\?>/g, item.user_id);
-                block = block.replace(/<\?=\s*\$scoreVal\s*\?>/g, Math.floor(Math.random() * (98 - 84 + 1)) + 84);
+                const compScore = calculateMatchScore(ctx.currentUser, item);
+                block = block.replace(/<\?=\s*\$scoreVal\s*\?>/g, compScore);
                 // Handle direct $item['city'] and $item['country'] without ternary
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['city'\]\)\s*\?>/g, item.city || 'Unknown');
                 block = block.replace(/<\?=\s*htmlspecialchars\(\$item\['country'\]\)\s*\?>/g, item.country || '');
@@ -1179,6 +1223,7 @@ const server = http.createServer((req, res) => {
                     photos: JSON.stringify(jsonData.photos || []),
                     pronouns: jsonData.pronouns || 'they/them',
                     hobbies: jsonData.hobbies || '',
+                    salary: jsonData.salary || '',
                     lifestyle_habits: jsonData.lifestyle_habits || '',
                     family_details: jsonData.family_details || '',
                     partner_pref: jsonData.partner_pref || '',
@@ -1278,8 +1323,14 @@ const server = http.createServer((req, res) => {
             if (gender && gender.trim() !== '' && gender.trim() !== 'Any') matches = matches.filter(p => p.gender_identity === gender.trim());
             if (orientation && orientation.trim() !== '' && orientation.trim() !== 'Any') matches = matches.filter(p => p.sexual_orientation === orientation.trim());
 
+            const hobby = parsedUrl.searchParams.get('hobby');
+            if (hobby && hobby.trim() !== '') {
+                const hobbyQuery = hobby.trim().toLowerCase();
+                matches = matches.filter(p => p.hobbies && p.hobbies.toLowerCase().includes(hobbyQuery));
+            }
+
             // Gated Premium filters
-            if (user.tier === 'premium') {
+            if (user.tier === 'premium' || user.tier === 'silver' || user.tier === 'gold') {
                 const city = parsedUrl.searchParams.get('city');
                 const intent = parsedUrl.searchParams.get('relationship_intent');
                 if (city && city.trim() !== '') matches = matches.filter(p => p.city && p.city.toLowerCase().includes(city.toLowerCase().trim()));
@@ -1296,13 +1347,9 @@ const server = http.createServer((req, res) => {
             if (!user) return;
 
             const { plan, gateway } = jsonData;
-            let amount = 999;
-            if (plan === 'silver') amount = 29900;
-            else if (plan === 'gold') amount = 59900;
-            else if (plan === 'credits_50') amount = 9900;
-            else if (plan === 'credits_120') amount = 19900;
-            else if (plan === 'monthly') amount = 29900;
-            else if (plan === 'annual') amount = 59900;
+            let amount = 59900; // default to gold
+            if (plan === 'silver' || plan === 'monthly') amount = 29900;
+            else if (plan === 'gold' || plan === 'annual') amount = 59900;
 
             const currency = gateway === 'razorpay' ? 'INR' : 'USD';
             const payId = 'pay_' + crypto.randomBytes(8).toString('hex');
@@ -1323,7 +1370,7 @@ const server = http.createServer((req, res) => {
                 status: 'active',
                 gateway,
                 payment_id,
-                expires_at: plan.startsWith('credits_') ? null : new Date(Date.now() + (plan === 'monthly' || plan === 'silver' ? 30 : 365) * 86400000).toISOString()
+                expires_at: new Date(Date.now() + (plan === 'silver' || plan === 'monthly' ? 30 : 365) * 86400000).toISOString()
             });
 
             // Update user record
@@ -1331,10 +1378,6 @@ const server = http.createServer((req, res) => {
             if (user) {
                 if (plan === 'silver' || plan === 'gold') {
                     user.tier = plan;
-                } else if (plan === 'credits_50') {
-                    user.credits = (user.credits || 0) + 50;
-                } else if (plan === 'credits_120') {
-                    user.credits = (user.credits || 0) + 120;
                 } else {
                     user.tier = plan === 'annual' ? 'gold' : 'silver';
                 }
@@ -1342,13 +1385,10 @@ const server = http.createServer((req, res) => {
 
             // Generate notification alert
             let msgText = `Welcome to PrideUnion. Plans activated via ${gateway}.`;
-            if (plan.startsWith('credits_')) {
-                msgText = `Purchased ${plan.split('_')[1]} credits successfully via ${gateway}.`;
-            }
             db.notifications.push({
                 id: db.notifications.length + 1,
                 user_id,
-                title: plan.startsWith('credits_') ? "Credits Added! 💰" : "Subscription Active! 👑",
+                title: "Subscription Active! 👑",
                 message: msgText,
                 type: "alert",
                 is_read: false,
@@ -1447,59 +1487,7 @@ const server = http.createServer((req, res) => {
             return res.end(JSON.stringify({ success: true, userIds: Array.from(chattedUserIds) }));
         }
 
-        if (pathname === '/api/v1/contacts/unlock' && method === 'POST') {
-            const user = verifyAuth(req, res);
-            if (!user) return;
 
-            const targetId = parseInt(jsonData.target_id);
-            if (!targetId) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ success: false, error: "Invalid target ID." }));
-            }
-
-            const dbUser = db.users.find(u => u.id === user.id);
-            if (!dbUser) {
-                res.writeHead(404, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ success: false, error: "User not found." }));
-            }
-
-            if (dbUser.tier !== 'silver') {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ success: false, error: "Only Silver tier users can unlock contacts using credits." }));
-            }
-
-            const credits = dbUser.credits !== undefined ? dbUser.credits : 0;
-            if (credits < 10) {
-                res.writeHead(400, { 'Content-Type': 'application/json' });
-                return res.end(JSON.stringify({ success: false, error: "Insufficient credits. You need at least 10 credits." }));
-            }
-
-            // Check if already unlocked
-            const alreadyUnlocked = db.unlocked_contacts.some(u => u.user_id === user.id && u.target_id === targetId);
-            if (!alreadyUnlocked) {
-                dbUser.credits = credits - 10;
-                db.unlocked_contacts.push({
-                    user_id: user.id,
-                    target_id: targetId,
-                    unlocked_at: new Date().toISOString()
-                });
-                saveDb();
-            }
-
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: true, message: "Contact details unlocked successfully!", credits: dbUser.credits }));
-        }
-
-        if (pathname === '/api/v1/contacts/check-unlock' && method === 'GET') {
-            const user = verifyAuth(req, res);
-            if (!user) return;
-
-            const targetId = parseInt(parsedUrl.searchParams.get('target_id'));
-            const isUnlocked = db.unlocked_contacts.some(u => u.user_id === user.id && u.target_id === targetId);
-
-            res.writeHead(200, { 'Content-Type': 'application/json' });
-            return res.end(JSON.stringify({ success: true, unlocked: isUnlocked }));
-        }
 
         // --- ACTIVITY-SERVICE ---
         if (pathname === '/api/v1/activity/interest' && method === 'POST') {
@@ -2001,11 +1989,6 @@ const server = http.createServer((req, res) => {
                     showContact = true;
                 } else if (loggedUser.tier === 'gold') {
                     showContact = true;
-                } else if (loggedUser.tier === 'silver') {
-                    const isUnlocked = db.unlocked_contacts.some(u => u.user_id === loggedUser.id && u.target_id === targetId);
-                    if (isUnlocked) {
-                        showContact = true;
-                    }
                 }
                 
                 if (showContact) {

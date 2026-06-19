@@ -51,37 +51,20 @@
         </div>
     </div>
 
-    <!-- Interactive Onboarding Quiz Widget (eHarmony style) -->
-    <div class="w-full lg:w-[450px] z-10 shrink-0">
-        <div class="glass-panel p-8 rounded-3xl shadow-2xl border border-white/85">
-            <h3 class="font-extrabold text-gray-800 text-lg serif-font mb-4 flex items-center gap-2">
-                <span>⚡</span> Quick Matching Quiz
-            </h3>
-            
-            <div id="quiz-container" class="space-y-6">
-                <!-- Question 1 -->
-                <div id="quiz-q1" class="space-y-4">
-                    <p id="quiz-question-text" class="text-sm font-bold text-gray-700">What are you looking for in a compatible relationship?</p>
-                    <div id="quiz-options-container" class="grid grid-cols-1 gap-2.5">
-                        <button onclick="nextQuizStep('marriage')" class="w-full text-left p-3.5 rounded-xl border border-gray-200 bg-white/60 hover:bg-pink-50 hover:border-pink-300 font-semibold text-xs transition shadow-sm">
-                            💍 Marriage &amp; Matrimonial commitment
-                        </button>
-                        <button onclick="nextQuizStep('dating')" class="w-full text-left p-3.5 rounded-xl border border-gray-200 bg-white/60 hover:bg-pink-50 hover:border-pink-300 font-semibold text-xs transition shadow-sm">
-                            💑 Long-term dating &amp; romance
-                        </button>
-                        <button onclick="nextQuizStep('friendship')" class="w-full text-left p-3.5 rounded-xl border border-gray-200 bg-white/60 hover:bg-pink-50 hover:border-pink-300 font-semibold text-xs transition shadow-sm">
-                            🤝 Friendly networking &amp; community
-                        </button>
-                    </div>
-                </div>
-
-                <!-- Result Screen -->
-                <div id="quiz-result" class="hidden text-center py-6 space-y-4">
-                    <span class="text-4xl">🎉</span>
-                    <h4 class="font-extrabold text-gray-800 text-lg">Onboarding Check Complete</h4>
-                    <p class="text-xs text-gray-500 max-w-xs mx-auto">We have found over 12 highly compatible queer profiles in your city area. Proceed to setup your pronouns and view matches.</p>
-                    <a href="/register" class="w-full block btn-primary py-3.5 rounded-xl font-bold shadow text-xs">Claim My Compatibility Profile</a>
-                </div>
+    <!-- 2x2 Grid of Diverse LGBTQ+ Couples -->
+    <div class="w-full lg:w-[480px] z-10 shrink-0">
+        <div class="grid grid-cols-2 gap-4">
+            <div class="glass-panel p-2 rounded-2xl border border-white/80 shadow-md bg-white/50 overflow-hidden hover:shadow-lg transition">
+                <img src="/uploads/couple_gay_love.png" alt="Gay Couple" class="w-full aspect-square object-cover rounded-xl shadow-sm hover:scale-105 transition duration-300">
+            </div>
+            <div class="glass-panel p-2 rounded-2xl border border-white/80 shadow-md bg-white/50 overflow-hidden hover:shadow-lg transition">
+                <img src="/uploads/couple_lesbian_love.png" alt="Lesbian Couple" class="w-full aspect-square object-cover rounded-xl shadow-sm hover:scale-105 transition duration-300">
+            </div>
+            <div class="glass-panel p-2 rounded-2xl border border-white/80 shadow-md bg-white/50 overflow-hidden hover:shadow-lg transition">
+                <img src="/uploads/couple_trans_love.png" alt="Trans Couple" class="w-full aspect-square object-cover rounded-xl shadow-sm hover:scale-105 transition duration-300">
+            </div>
+            <div class="glass-panel p-2 rounded-2xl border border-white/80 shadow-md bg-white/50 overflow-hidden hover:shadow-lg transition">
+                <img src="/uploads/couple_queer_love.png" alt="Queer Couple" class="w-full aspect-square object-cover rounded-xl shadow-sm hover:scale-105 transition duration-300">
             </div>
         </div>
     </div>
@@ -177,8 +160,8 @@
                 <tr class="bg-gray-150 border-b border-gray-200 text-gray-600 font-bold uppercase tracking-wider">
                     <th class="py-4 px-6">Match Capabilities</th>
                     <th class="py-4 px-6 text-center">Free (₹0)</th>
-                    <th class="py-4 px-6 text-center text-pink-600">Premium (₹499)</th>
-                    <th class="py-4 px-6 text-center text-indigo-600">Platinum (₹999)</th>
+                    <th class="py-4 px-6 text-center text-pink-600">Silver (₹299)</th>
+                    <th class="py-4 px-6 text-center text-indigo-600">Gold (₹599)</th>
                 </tr>
             </thead>
             <tbody class="divide-y divide-gray-100 text-gray-700">
@@ -207,13 +190,13 @@
                     <td class="py-4 px-6 text-center">✔️ Yes</td>
                 </tr>
                 <tr>
-                    <td class="py-4 px-6 font-semibold">Advanced Filters (City/Intent)</td>
+                    <td class="py-4 px-6 font-semibold">View Direct Contact Details</td>
                     <td class="py-4 px-6 text-center">❌ No</td>
                     <td class="py-4 px-6 text-center">❌ No</td>
                     <td class="py-4 px-6 text-center">✔️ Yes</td>
                 </tr>
                 <tr class="bg-white/20">
-                    <td class="py-4 px-6 font-semibold">Real-Time Profile View Alerts</td>
+                    <td class="py-4 px-6 font-semibold">Advanced Search Filters</td>
                     <td class="py-4 px-6 text-center">❌ No</td>
                     <td class="py-4 px-6 text-center">❌ No</td>
                     <td class="py-4 px-6 text-center">✔️ Yes</td>
@@ -274,6 +257,64 @@
                     <p class="text-xs text-gray-500 line-clamp-3">Explore modern guidelines on starting chats, communicating relationship intent transparently, and setting mutual priorities.</p>
                 </div>
                 <span class="text-[10px] font-bold text-indigo-600 mt-2 block">Read Article &rarr;</span>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quotes Section -->
+<div class="py-16 bg-gradient-to-r from-pink-500/5 via-purple-500/5 to-indigo-500/5 border-t border-b border-white/20">
+    <div class="max-w-7xl mx-auto px-6">
+        <div class="text-center max-w-2xl mx-auto mb-12 space-y-2">
+            <span class="bg-pink-100 text-pink-700 text-[10px] px-3.5 py-1.5 rounded-full font-bold uppercase tracking-wider">Voices of Love</span>
+            <h2 class="text-3xl md:text-4xl font-extrabold text-gray-900 serif-font">Celebrating Connection &amp; Equality</h2>
+            <p class="text-gray-600 text-sm">Words of inspiration that guide our mission of inclusive and authentic matchmaking.</p>
+        </div>
+
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+            <!-- Quote 1 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/60 bg-white/40 flex flex-col justify-between space-y-6 relative shadow-sm hover:shadow-md transition">
+                <span class="text-pink-300 text-6xl absolute top-4 left-4 font-serif leading-none select-none opacity-40">“</span>
+                <p class="text-gray-700 text-sm italic relative z-10 leading-relaxed pt-4">
+                    "Love him and let him love you. Do you think anything else under heaven really matters?"
+                </p>
+                <div class="border-t border-gray-100 pt-4 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-pink-100 flex items-center justify-center text-xs font-bold text-pink-600">JB</div>
+                    <div>
+                        <h4 class="font-extrabold text-gray-800 text-xs">James Baldwin</h4>
+                        <p class="text-[10px] text-gray-400">Writer &amp; Activist</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quote 2 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/60 bg-white/40 flex flex-col justify-between space-y-6 relative shadow-sm hover:shadow-md transition">
+                <span class="text-pink-300 text-6xl absolute top-4 left-4 font-serif leading-none select-none opacity-40">“</span>
+                <p class="text-gray-700 text-sm italic relative z-10 leading-relaxed pt-4">
+                    "The choice to love is a choice to connect, to find ourselves in the other."
+                </p>
+                <div class="border-t border-gray-100 pt-4 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-purple-100 flex items-center justify-center text-xs font-bold text-purple-600">BH</div>
+                    <div>
+                        <h4 class="font-extrabold text-gray-800 text-xs">bell hooks</h4>
+                        <p class="text-[10px] text-gray-400">Author &amp; Philosopher</p>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Quote 3 -->
+            <div class="glass-panel p-8 rounded-3xl border border-white/60 bg-white/40 flex flex-col justify-between space-y-6 relative shadow-sm hover:shadow-md transition">
+                <span class="text-pink-300 text-6xl absolute top-4 left-4 font-serif leading-none select-none opacity-40">“</span>
+                <p class="text-gray-700 text-sm italic relative z-10 leading-relaxed pt-4">
+                    "The most important thing is love... It must be understood that love comes first."
+                </p>
+                <div class="border-t border-gray-100 pt-4 flex items-center gap-3">
+                    <div class="w-8 h-8 rounded-full bg-indigo-100 flex items-center justify-center text-xs font-bold text-indigo-600">SF</div>
+                    <div>
+                        <h4 class="font-extrabold text-gray-800 text-xs">Stephen Fry</h4>
+                        <p class="text-[10px] text-gray-400">Actor, Writer &amp; Advocate</p>
+                    </div>
+                </div>
             </div>
         </div>
     </div>

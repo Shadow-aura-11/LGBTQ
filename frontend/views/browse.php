@@ -19,12 +19,13 @@ if (!$currentUser) {
 $gender = $_GET['gender_identity'] ?? '';
 $orientation = $_GET['sexual_orientation'] ?? '';
 $city = $_GET['city'] ?? '';
+$hobby = $_GET['hobby'] ?? '';
 
 $minAge = $_GET['min_age'] ?? '18';
 $maxAge = $_GET['max_age'] ?? '60';
 
 // Fetch Matches via discovery endpoint
-$apiPath = "/api/v1/discovery/feed?min_age=$minAge&max_age=$maxAge&gender_identity=$gender&sexual_orientation=$orientation&city=$city";
+$apiPath = "/api/v1/discovery/feed?min_age=$minAge&max_age=$maxAge&gender_identity=$gender&sexual_orientation=$orientation&city=$city&hobby=" . urlencode($hobby);
 $feedResponse = makeApiRequest('GET', $apiPath, [], $token);
 $feed = [];
 if ($feedResponse['status'] === 200 && isset($feedResponse['data']['feed'])) {
@@ -93,6 +94,11 @@ if (empty($feed) && isset($context['feed'])) {
                     </div>
                 </div>
 
+                <div>
+                    <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1.5">Hobby / Interest</label>
+                    <input type="text" name="hobby" value="<?= htmlspecialchars($hobby ?? '') ?>" placeholder="e.g. Hiking" class="w-full px-3 py-2.5 rounded-xl border border-gray-300 bg-white/50 text-sm outline-none transition focus:ring-2 focus:ring-pink-300">
+                </div>
+
                 <div class="border-t border-gray-200/50 pt-4 space-y-4">
                     <div class="flex justify-between items-center">
                         <span class="text-xs font-bold text-gray-700 uppercase">Premium Filters</span>
@@ -149,6 +155,12 @@ if (empty($feed) && isset($context['feed'])) {
                             <!-- Online badge overlay -->
                             <div class="absolute top-4 left-4 z-10">
                                 <div class="bg-[#10b981] text-white text-[10px] font-bold px-3 py-1 rounded-full shadow-sm">Online Now</div>
+                            </div>
+                            <!-- Compatibility score badge overlay -->
+                            <div class="absolute top-4 right-4 z-10">
+                                <div class="bg-white/95 backdrop-blur-sm text-pink-600 text-[10px] font-extrabold px-3 py-1 rounded-full shadow-md border border-pink-100 flex items-center gap-1">
+                                    <span>🧭</span> <?= $comp ?>% Match
+                                </div>
                             </div>
 
                             <img src="<?= htmlspecialchars($displayPhoto) ?>" alt="<?= htmlspecialchars($item['name']) ?>" 

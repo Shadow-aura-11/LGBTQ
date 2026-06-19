@@ -110,6 +110,12 @@ if (!$currentUser) {
                     </div>
 
                     <div>
+                        <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Annual Income (Salary)</label>
+                        <input type="text" id="salary" value="<?= htmlspecialchars($profile['salary'] ?? '') ?>" placeholder="e.g. ₹12,00,000"
+                               class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm">
+                    </div>
+
+                    <div>
                         <label class="block text-xs font-bold text-gray-500 uppercase tracking-wider mb-1">Lifestyle Habits (Diet, Drinking, Smoking)</label>
                         <input type="text" id="lifestyle_habits" value="<?= htmlspecialchars($profile['lifestyle_habits'] ?? '') ?>" placeholder="e.g. Vegetarian, occasional drinker, non-smoker"
                                class="w-full px-4 py-3 rounded-xl border border-gray-300 focus:ring-2 focus:ring-pink-300 focus:border-transparent outline-none transition bg-white/60 text-sm">
@@ -252,6 +258,7 @@ if (!$currentUser) {
             photos: activePhotos,
             hometown: document.getElementById('hometown').value,
             hobbies: document.getElementById('hobbies').value,
+            salary: document.getElementById('salary').value,
             lifestyle_habits: document.getElementById('lifestyle_habits').value,
             family_details: document.getElementById('family_details').value,
             partner_pref: document.getElementById('partner_pref').value

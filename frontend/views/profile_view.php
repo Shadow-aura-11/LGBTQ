@@ -141,6 +141,13 @@ $targetId = (int)($viewTargetId ?? 0);
                         <?= htmlspecialchars($profile['hobbies'] ?: 'Reading, Traveling') ?>
                     </span>
                 </div>
+                <!-- Annual Income (Salary) -->
+                <div class="bg-[#fff8fa] border border-[#fce7f3]/30 p-5 rounded-2xl">
+                    <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Annual Income (Salary)</span>
+                    <span class="text-gray-800 font-bold text-sm mt-1 block">
+                        <?= htmlspecialchars($profile['salary'] ?: 'Not Specified') ?>
+                    </span>
+                </div>
                 <!-- Lifestyle Habits -->
                 <div class="bg-[#fff8fa] border border-[#fce7f3]/30 p-5 rounded-2xl col-span-1 md:col-span-2 lg:col-span-3">
                     <span class="text-[10px] text-gray-400 font-bold uppercase tracking-wider block">Lifestyle Habits</span>
@@ -168,9 +175,8 @@ $targetId = (int)($viewTargetId ?? 0);
         <!-- Contact Information Section -->
         <div class="glass-panel p-8 rounded-3xl border border-white/60 shadow-md bg-white">
             <h4 class="text-sm font-extrabold text-gray-900 uppercase tracking-wider mb-6">Contact Information</h4>
-            
-            <?php if ($isFreeLock): ?>
-                <!-- Gated Lock Box for Free Tier Users -->
+            <?php if (!$showContactDetails): ?>
+                <!-- Gated Lock Box for Free/Silver Tier Users -->
                 <div class="border border-[#fce7f3] bg-[#fff8fa] rounded-2xl p-8 text-center flex flex-col items-center justify-center space-y-4">
                     <!-- Padlock Icon -->
                     <div class="w-12 h-12 rounded-full border border-[#fce7f3] flex items-center justify-center bg-white shadow-sm shrink-0">
@@ -179,39 +185,12 @@ $targetId = (int)($viewTargetId ?? 0);
                     
                     <h5 class="text-gray-800 font-bold text-base mt-2">Contact details are locked</h5>
                     <p class="text-gray-500 text-xs max-w-md">
-                        Upgrade to a paid membership plan to unlock chat features and contact numbers.
+                        Contact details are locked. Upgrade to Gold to reveal phone number and email.
                     </p>
                     
-                    <a href="/subscription" class="bg-gradient-to-r from-rose-500 via-pink-500 to-indigo-500 text-white px-6 py-2.5 rounded-xl font-bold text-xs transition shadow-md hover:scale-105">
-                        Upgrade Plan
+                    <a href="/subscription" class="bg-gradient-to-r from-[#ec4899] to-[#db2777] hover:from-[#db2777] hover:to-[#be185d] text-white px-6 py-2.5 rounded-xl font-bold text-xs transition shadow-md hover:scale-105">
+                        Upgrade to Gold
                     </a>
-                </div>
-            <?php endif; ?>
-
-            <?php if ($isSilverLock): ?>
-                <!-- Gated Lock Box for Silver Tier Users -->
-                <div class="border border-[#fce7f3] bg-[#fff8fa] rounded-2xl p-8 text-center flex flex-col items-center justify-center space-y-4">
-                    <!-- Padlock Icon -->
-                    <div class="w-12 h-12 rounded-full border border-[#fce7f3] flex items-center justify-center bg-white shadow-sm shrink-0">
-                        <span class="text-indigo-600 text-lg font-bold">🔒</span>
-                    </div>
-                    
-                    <h5 class="text-gray-800 font-bold text-base mt-2">Contact details locked (Silver Plan)</h5>
-                    <p class="text-gray-500 text-xs max-w-md">
-                        Revealing phone number & email costs <strong>10 Credits</strong>.
-                    </p>
-                    <p class="text-xs text-gray-600 font-semibold">
-                        Your Wallet: <span class="text-pink-600 font-black"><?= htmlspecialchars($currentUser['credits']) ?> Credits</span>
-                    </p>
-                    
-                    <div class="flex flex-col sm:flex-row gap-3">
-                        <button id="unlock-btn" onclick="unlockContact(<?= $targetId ?>)" class="bg-[#ec4899] hover:bg-[#db2777] text-white px-6 py-2.5 rounded-xl font-bold text-xs transition shadow-md">
-                            Unlock for 10 Credits
-                        </button>
-                        <a href="/subscription" class="bg-gray-100 hover:bg-gray-200 text-gray-700 border border-gray-300 px-6 py-2.5 rounded-xl font-bold text-xs transition">
-                            Buy Credits
-                        </a>
-                    </div>
                 </div>
             <?php endif; ?>
 
@@ -364,42 +343,7 @@ $targetId = (int)($viewTargetId ?? 0);
         }
     }
 
-    async function unlockContact(targetId) {
-        const btn = document.getElementById('unlock-btn');
-        if (btn) {
-            btn.disabled = true;
-            btn.innerText = "Unlocking...";
-        }
-        
-        try {
-            const res = await fetch('/api/v1/contacts/unlock', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'Authorization': 'Bearer ' + '<?= $token ?>'
-                },
-                body: JSON.stringify({ target_id: targetId })
-            });
-            const data = await res.json();
-            
-            if (data.success) {
-                alert(data.message || "Contact details unlocked!");
-                window.location.reload();
-            } else {
-                alert(data.error || "Failed to unlock contact.");
-                if (btn) {
-                    btn.disabled = false;
-                    btn.innerText = "Unlock for 10 Credits";
-                }
-            }
-        } catch (err) {
-            alert("Connection error unlocking contact details.");
-            if (btn) {
-                btn.disabled = false;
-                btn.innerText = "Unlock for 10 Credits";
-            }
-        }
-    }
+
 </script>
 
 <?php include __DIR__ . '/footer.php'; ?>

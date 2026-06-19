@@ -64,36 +64,35 @@
             <div class="flex items-center gap-6">
                 <?php if ($currentUser): ?>
                     <a href="/dashboard" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
-                        🏠 Dashboard
+                        Dashboard
                     </a>
                     <a href="/discovery" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
-                        🧭 Discover
+                        Discover
                     </a>
                     <a href="/chat" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
-                        💬 Chat
+                        Chat
                     </a>
                     <a href="/notifications" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1 relative">
-                        🔔 Alerts
+                        Alerts
                         <span id="nav-notif-dot" class="<?= $notifDotClass ?> absolute -top-1 -right-2 bg-red-500 w-2.5 h-2.5 rounded-full ring-2 ring-white"></span>
                     </a>
                     <a href="/profile/setup" class="text-gray-600 hover:text-pink-600 font-semibold text-sm transition flex items-center gap-1">
-                        👤 Profile
+                        Profile
                     </a>
                     
                     <?php if (($currentUser['role'] ?? '') === 'admin'): ?>
-                        <a href="/admin" class="bg-indigo-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-indigo-700 transition">🛡️ Admin</a>
+                        <a href="/admin" class="bg-indigo-600 text-white px-3 py-1.5 rounded-full text-xs font-semibold hover:bg-indigo-700 transition">Admin</a>
                     <?php endif; ?>
 
                     <!-- Tier Badge -->
                     <?php if ($isGold): ?>
-                        <span class="bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-500 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-sm flex items-center gap-1">👑 Gold</span>
+                        <span class="bg-gradient-to-r from-yellow-400 via-amber-500 to-yellow-500 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-sm flex items-center gap-1">Gold</span>
                     <?php endif; ?>
                     <?php if ($isSilver): ?>
-                        <span class="bg-gradient-to-r from-slate-400 to-slate-500 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-sm flex items-center gap-1">🥈 Silver</span>
-                        <span class="bg-amber-50 text-amber-700 text-xs px-3 py-1.5 rounded-full font-bold border border-amber-200 flex items-center gap-1">💰 <?= htmlspecialchars($currentUser['credits']) ?> Credits</span>
+                        <span class="bg-gradient-to-r from-slate-400 to-slate-500 text-white text-xs px-3 py-1.5 rounded-full font-bold shadow-sm flex items-center gap-1">Silver</span>
                     <?php endif; ?>
                     <?php if ($isFree): ?>
-                        <a href="/subscription" class="bg-pink-100 text-pink-700 text-xs px-3 py-1.5 rounded-full font-bold border border-pink-200 hover:bg-pink-200 transition flex items-center gap-1">✨ Go Premium</a>
+                        <a href="/subscription" class="bg-pink-100 text-pink-700 text-xs px-3 py-1.5 rounded-full font-bold border border-pink-200 hover:bg-pink-200 transition flex items-center gap-1">Go Premium</a>
                     <?php endif; ?>
 
                     <div class="border-l border-gray-200 h-6 mx-1"></div>

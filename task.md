@@ -1,8 +1,12 @@
-- [x] Update header.php design system (gradients and badges for Gold, Silver, Free, Credits balance)
-- [x] Implement start_app.js backend API changes (unlocked_contacts schema, credit deduction endpoints, checkout/webhook upgrades)
-- [x] Modify profile_view.php (add fallback profile fetching, credits gated contact cards, AJAX unlock triggers)
-- [x] Modify chat.php & browse.php (adjust tier gates to allow both silver & gold)
-- [x] Modify subscription.php (three-column grid for Silver, Gold, and Credits packages)
-- [x] Modify mock_payment.php (pass plan value to webhook and token updater)
-- [x] Upgrade admin.php (left sidebar layout, tab switcher, Overview reports, CRM user list, Analytics revenue KPIs and charts, WordPress CMS)
-- [x] Run application and verify all features with verification tests
+- [ ] Update header.php (remove emojis and credit balances)
+- [ ] Update subscription.php (reorganize into 2-column layout and remove credit packs)
+- [ ] Update landing.php (replace quiz with 2x2 couple images, and add quotes section)
+- [ ] Update profile_setup.php (add salary input field and save binding)
+- [ ] Update profile_view.php (display salary, simplify lock card to Gold-only upgrade CTA)
+- [ ] Update start_app.js:
+    - [ ] Add mock salary and hobbies to initial database seed profiles
+    - [ ] Add hobbies match score calculation function (`calculateMatchScore`) and replace random score placeholders
+    - [ ] Update profiles update API `/api/v1/profiles/me` to support `salary` and `hobbies`
+    - [ ] Update discovery feed routing and API to support filtering by `hobby` query parameter
+    - [ ] Remove credit unlock APIs `/api/v1/contacts/unlock` and `/api/v1/contacts/check-unlock`, and remove credit packs webhook logic
+- [ ] Run automated verification tests (`verify.js`, `test_hobby_matching.js`)
